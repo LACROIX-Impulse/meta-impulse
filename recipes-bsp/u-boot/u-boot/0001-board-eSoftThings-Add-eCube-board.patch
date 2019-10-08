@@ -1,0 +1,698 @@
+From a2aa919daec0e16004fc40a60e4489fbb51cc314 Mon Sep 17 00:00:00 2001
+From: Benoit DESVAGES <bdesvages@esoftthings.com>
+Date: Tue, 8 Oct 2019 08:23:16 +0000
+Subject: [PATCH] board: eSoftThings: Add eCube board
+
+eCube is a board based on V3H Starter Kit (R-Car V3H SoC R8A77980)
+---
+ arch/arm/cpu/armv8/Kconfig   |   4 +
+ board/renesas/ecube/Kconfig  |  15 +++
+ board/renesas/ecube/Makefile |  11 ++
+ board/renesas/ecube/cpld.c   | 153 +++++++++++++++++++++++++
+ board/renesas/ecube/ecube.c  | 267 +++++++++++++++++++++++++++++++++++++++++++
+ configs/ecube_defconfig      |  10 ++
+ include/configs/ecube.h      | 160 ++++++++++++++++++++++++++
+ 7 files changed, 620 insertions(+)
+ create mode 100644 board/renesas/ecube/Kconfig
+ create mode 100644 board/renesas/ecube/Makefile
+ create mode 100644 board/renesas/ecube/cpld.c
+ create mode 100644 board/renesas/ecube/ecube.c
+ create mode 100644 configs/ecube_defconfig
+ create mode 100644 include/configs/ecube.h
+
+diff --git a/arch/arm/cpu/armv8/Kconfig b/arch/arm/cpu/armv8/Kconfig
+index 769c0ec..2f1be78 100644
+--- a/arch/arm/cpu/armv8/Kconfig
++++ b/arch/arm/cpu/armv8/Kconfig
+@@ -37,6 +37,9 @@ config TARGET_CONDOR
+ config TARGET_V3HSK
+         bool "V3HSK board"
+ 
++config TARGET_ECUBE
++        bool "eCube board"
++
+ endchoice
+ 
+ config R8A7796X
+@@ -82,5 +85,6 @@ source "board/renesas/v3msk/Kconfig"
+ source "board/renesas/condor/Kconfig"
+ source "board/renesas/v3mzf/Kconfig"
+ source "board/renesas/v3hsk/Kconfig"
++source "board/renesas/ecube/Kconfig"
+ 
+ endif
+diff --git a/board/renesas/ecube/Kconfig b/board/renesas/ecube/Kconfig
+new file mode 100644
+index 0000000..fb89d26
+--- /dev/null
++++ b/board/renesas/ecube/Kconfig
+@@ -0,0 +1,15 @@
++if TARGET_ECUBE
++
++config SYS_SOC
++	default "rcar_gen3"
++
++config SYS_BOARD
++	default "ecube"
++
++config SYS_VENDOR
++	default "renesas"
++
++config SYS_CONFIG_NAME
++	default "ecube" if R8A7798
++
++endif
+diff --git a/board/renesas/ecube/Makefile b/board/renesas/ecube/Makefile
+new file mode 100644
+index 0000000..fa7d780
+--- /dev/null
++++ b/board/renesas/ecube/Makefile
+@@ -0,0 +1,11 @@
++#
++# board/renesas/ecube/Makefile
++#
++# Copyright (C) 2018 Renesas Electronics Corp.
++# Copyright (C) 2018 Cogent Embedded, Inc.
++# Copyright (C) 2019 eSoftThings, Inc.
++#
++# SPDX-License-Identifier: GPL-2.0+
++#
++
++obj-y	:= ecube.o ../rcar-gen3-common/common.o cpld.o
+diff --git a/board/renesas/ecube/cpld.c b/board/renesas/ecube/cpld.c
+new file mode 100644
+index 0000000..6d0e9aa
+--- /dev/null
++++ b/board/renesas/ecube/cpld.c
+@@ -0,0 +1,153 @@
++/*
++ * eCube board CPLD access support
++ *
++ * Copyright (C) 2018 Renesas Electronics Corporation
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ * Copyright (C) 2019 eSoftThings, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++#include <common.h>
++#include <i2c.h>
++
++#define ADDR_PRODUCT_0		0x0000 /* R */
++#define ADDR_PRODUCT_1		0x0001 /* R */
++#define ADDR_PRODUCT_2		0x0002 /* R */
++#define ADDR_PRODUCT_3		0x0003 /* R */
++#define ADDR_CPLD_VERSION_D	0x0004 /* R */
++#define ADDR_CPLD_VERSION_M	0x0005 /* R */
++#define ADDR_CPLD_VERSION_Y_0	0x0006 /* R */
++#define ADDR_CPLD_VERSION_Y_1	0x0007 /* R */
++#define ADDR_MODE_SET_0		0x0008 /* R */
++#define ADDR_MODE_SET_1		0x0009 /* R */
++#define ADDR_MODE_SET_2		0x000A /* R */
++#define ADDR_MODE_SET_3		0x000B /* R */
++#define ADDR_MODE_SET_4		0x000C /* R */
++#define ADDR_MODE_LAST_0	0x0018 /* R */
++#define ADDR_MODE_LAST_1	0x0019 /* R */
++#define ADDR_MODE_LAST_2	0x001A /* R */
++#define ADDR_MODE_LAST_3	0x001B /* R */
++#define ADDR_MODE_LAST_4	0x001C /* R */
++#define ADDR_DIPSW4		0x0020 /* R */
++#define ADDR_DIPSW5		0x0021 /* R */
++#define ADDR_RESET		0x0024 /* R/W */
++#define ADDR_POWER_CFG		0x0025 /* R/W */
++#define ADDR_PERI_CFG_0		0x0030 /* R/W */
++#define ADDR_PERI_CFG_1		0x0031 /* R/W */
++#define ADDR_PERI_CFG_2		0x0032 /* R/W */
++#define ADDR_PERI_CFG_3		0x0033 /* R/W */
++#define ADDR_LEDS		0x0034 /* R/W */
++#define ADDR_LEDS_CFG		0x0035 /* R/W */
++#define ADDR_UART_CFG		0x0036 /* R/W */
++#define ADDR_UART_STATUS	0x0037 /* R */
++
++#define ADDR_PCB_VERSION_0	0x1000 /* R */
++#define ADDR_PCB_VERSION_1	0x1001 /* R */
++#define ADDR_SOC_VERSION_0	0x1002 /* R */
++#define ADDR_SOC_VERSION_1	0x1003 /* R */
++#define ADDR_PCB_SN_0		0x1004 /* R */
++#define ADDR_PCB_SN_1		0x1005 /* R */
++
++static u16 cpld_read(u16 addr)
++{
++	u8 data;
++
++	/* random flash reads require 2 reads: first read is unreliable */
++	if (addr >= ADDR_PCB_VERSION_0)
++		i2c_read(CONFIG_SYS_I2C_CPLD_ADDR, addr, 2, &data, 1);
++
++	i2c_read(CONFIG_SYS_I2C_CPLD_ADDR, addr, 2, &data, 1);
++
++	return data;
++}
++
++static void cpld_write(u16 addr, u8 data)
++{
++	i2c_write(CONFIG_SYS_I2C_CPLD_ADDR, addr, 2, &data, 1);
++}
++
++static void cpld_init(void)
++{
++	i2c_set_bus_num(0);
++	i2c_init(400000, 0);
++}
++
++static int do_cpld(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
++{
++	u16 addr, val;
++
++	cpld_init();
++
++	if (argc == 2 && strcmp(argv[1], "info") == 0) {
++		printf("Product:                0x%08x\n",
++		       (cpld_read(ADDR_PRODUCT_3) << 24) |
++		       (cpld_read(ADDR_PRODUCT_2) << 16) |
++		       (cpld_read(ADDR_PRODUCT_1) << 8) |
++		       cpld_read(ADDR_PRODUCT_0));
++		printf("CPLD version:           0x%08x\n",
++		       (cpld_read(ADDR_CPLD_VERSION_Y_1) << 24) |
++		       (cpld_read(ADDR_CPLD_VERSION_Y_0) << 16) |
++		       (cpld_read(ADDR_CPLD_VERSION_M) << 8) |
++		       cpld_read(ADDR_CPLD_VERSION_D));
++		printf("Mode setting (MD0..26): 0x%08x\n",
++		       (cpld_read(ADDR_MODE_LAST_3) << 24) |
++		       (cpld_read(ADDR_MODE_LAST_2) << 16) |
++		       (cpld_read(ADDR_MODE_LAST_1) << 8) |
++		       cpld_read(ADDR_MODE_LAST_0));
++		printf("DIPSW (SW4, SW5):       0x%02x, 0x%x\n",
++		       cpld_read(ADDR_DIPSW4) ^ 0xff,
++		       (cpld_read(ADDR_DIPSW5) ^ 0xff) & 0xf);
++		printf("Power config:           0x%08x\n",
++		       cpld_read(ADDR_POWER_CFG));
++		printf("Periferals config:      0x%08x\n",
++		       (cpld_read(ADDR_PERI_CFG_3) << 24) |
++		       (cpld_read(ADDR_PERI_CFG_2) << 16) |
++		       (cpld_read(ADDR_PERI_CFG_1) << 8) |
++		       cpld_read(ADDR_PERI_CFG_0));
++		printf("PCB version:            %d.%d\n",
++		       cpld_read(ADDR_PCB_VERSION_1),
++		       cpld_read(ADDR_PCB_VERSION_0));
++		printf("SOC version:            %d.%d\n",
++		       cpld_read(ADDR_SOC_VERSION_1),
++		       cpld_read(ADDR_SOC_VERSION_0));
++		printf("PCB S/N:                %d\n",
++		       (cpld_read(ADDR_PCB_SN_1) << 8) |
++		       cpld_read(ADDR_PCB_SN_0));
++		return 0;
++	}
++
++	if (argc < 3)
++		return CMD_RET_USAGE;
++
++	addr = simple_strtoul(argv[2], NULL, 16);
++	if (!(addr >= ADDR_PRODUCT_0 && addr <= ADDR_UART_STATUS)) {
++		printf("cpld invalid addr\n");
++		return CMD_RET_USAGE;
++	}
++
++	if (argc == 3 && strcmp(argv[1], "read") == 0) {
++		printf("0x%x\n", cpld_read(addr));
++	} else if (argc == 4 && strcmp(argv[1], "write") == 0) {
++		val = simple_strtoul(argv[3], NULL, 16);
++		cpld_write(addr, val);
++	}
++
++	return 0;
++}
++
++U_BOOT_CMD(
++	cpld, 4, 1, do_cpld,
++	"CPLD access",
++	"info\n"
++	"cpld read addr\n"
++	"cpld write addr val\n"
++);
++
++void reset_cpu(ulong addr)
++{
++#if defined(CONFIG_SYS_I2C) && defined(CONFIG_SYS_I2C_RCAR)
++	cpld_init();
++	cpld_write(ADDR_RESET, 1);
++#endif
++}
+diff --git a/board/renesas/ecube/ecube.c b/board/renesas/ecube/ecube.c
+new file mode 100644
+index 0000000..aac1895
+--- /dev/null
++++ b/board/renesas/ecube/ecube.c
+@@ -0,0 +1,267 @@
++/*
++ * board/renesas/ecube/ecube.c
++ *     This is eCube board support.
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ * Copyright (C) 2019 eSoftThings, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++#include <common.h>
++#include <malloc.h>
++#include <netdev.h>
++#include <dm.h>
++#include <dm/platform_data/serial_sh.h>
++#include <asm/processor.h>
++#include <asm/mach-types.h>
++#include <asm/io.h>
++#include <asm/errno.h>
++#include <asm/arch/sys_proto.h>
++#include <asm/gpio.h>
++#include <asm/arch/prr_depend.h>
++#include <asm/arch/gpio.h>
++#include <asm/arch/rcar_gen3.h>
++#include <asm/arch/rcar-mstp.h>
++#include <asm/arch/sh_sdhi.h>
++#include <i2c.h>
++#include <mmc.h>
++
++DECLARE_GLOBAL_DATA_PTR;
++
++#define SCIF0_MSTP207	(1 << 7)
++#define GETHER_MSTP813	(1 << 13)
++#define RPC_MSTP917	(1 << 17)
++#define SD0_MSTP314	(1 << 14)
++#define I2C0_MSTP931	(1 << 31)
++
++#define SD0CKCR		0xE6150074
++
++#define PFC_PMMR	0xe6060000
++#define PFC_POC1	0xe6060384
++#define POC_MMC_3V3	0x00fff800
++
++void s_init(void)
++{
++	struct rcar_rwdt *rwdt = (struct rcar_rwdt *)RWDT_BASE;
++	struct rcar_swdt *swdt = (struct rcar_swdt *)SWDT_BASE;
++
++	/* Watchdog init */
++	writel(0xA5A5A500, &rwdt->rwtcsra);
++	writel(0xA5A5A500, &swdt->swtcsra);
++}
++
++int board_early_init_f(void)
++{
++	int freq;
++
++	rcar_prr_init();
++
++	writel(0xa5a5ffff, 0xe6150900);
++	writel(0x5a5a0000, 0xe6150904);
++	mstp_clrbits_le32(MSTPSR1, SMSTPCR1, 0x02000000);
++	/* SCIF0 */
++	mstp_clrbits_le32(MSTPSR2, SMSTPCR2, SCIF0_MSTP207);
++	/* SDHI0/MMC */
++	mstp_clrbits_le32(MSTPSR3, SMSTPCR3, SD0_MSTP314);
++#if defined(CONFIG_RAVB)
++	/* RAVB Ethernet */
++	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, RAVB_MSTP812);
++#elif defined(CONFIG_SH_ETHER)
++	/* Gigabit Ethernet */
++	mstp_clrbits_le32(MSTPSR8, SMSTPCR8, GETHER_MSTP813);
++#endif
++	/* QSPI/RPC */
++	mstp_clrbits_le32(MSTPSR9, SMSTPCR9, RPC_MSTP917);
++	/* I2C0 */
++	mstp_clrbits_le32(MSTPSR9, SMSTPCR9, I2C0_MSTP931);
++
++	freq = rcar_get_sdhi_config_clk();
++	writel(freq, SD0CKCR);
++
++	return 0;
++}
++
++int board_init(void)
++{
++	/* address of boot parameters */
++	gd->bd->bi_boot_params = CONFIG_SYS_TEXT_BASE + 0x50000;
++
++	/* Init PFC controller */
++	pinmux_init();
++#if defined(CONFIG_RAVB)
++	gpio_request(GPIO_GFN_AVB0_AVTP_CAPTURE, NULL);
++	gpio_request(GPIO_GFN_AVB0_AVTP_MATCH, NULL);
++	gpio_request(GPIO_FN_AVB0_LINK, NULL);
++	gpio_request(GPIO_FN_AVB0_PHY_INT, NULL);
++	/* gpio_request(GPIO_FN_AVB0_MAGIC, NULL); - PHY reset gpio  */
++	gpio_request(GPIO_FN_AVB0_MDC, NULL);
++	gpio_request(GPIO_FN_AVB0_MDIO, NULL);
++	gpio_request(GPIO_FN_AVB0_TXCREFCLK, NULL);
++	gpio_request(GPIO_FN_AVB0_TD3, NULL);
++	gpio_request(GPIO_FN_AVB0_TD2, NULL);
++	gpio_request(GPIO_FN_AVB0_TD1, NULL);
++	gpio_request(GPIO_FN_AVB0_TD0, NULL);
++	gpio_request(GPIO_FN_AVB0_TXC, NULL);
++	gpio_request(GPIO_FN_AVB0_TX_CTL, NULL);
++	gpio_request(GPIO_FN_AVB0_RD3, NULL);
++	gpio_request(GPIO_FN_AVB0_RD2, NULL);
++	gpio_request(GPIO_FN_AVB0_RD1, NULL);
++	gpio_request(GPIO_FN_AVB0_RD0, NULL);
++	gpio_request(GPIO_FN_AVB0_RXC, NULL);
++	gpio_request(GPIO_FN_AVB0_RX_CTL, NULL);
++	gpio_request(GPIO_IFN_AVB0_AVTP_CAPTURE, NULL);
++	gpio_request(GPIO_FN_AVB0_AVTP_PPS, NULL);
++
++	/* PHY_RST */
++	gpio_request(GPIO_GP_1_16, NULL);
++	gpio_direction_output(GPIO_GP_1_16, 0);
++	mdelay(20);
++	gpio_set_value(GPIO_GP_1_16, 1);
++	udelay(1);
++#elif defined(CONFIG_SH_ETHER)
++	gpio_request(GPIO_FN_GETHER_LINK_A, NULL);
++	gpio_request(GPIO_FN_GETHER_PHY_INT_A, NULL);
++	/* gpio_request(GPIO_FN_GETHER_MAGIC, NULL); - PHY reset gpio  */
++	gpio_request(GPIO_FN_GETHER_MDC_A, NULL);
++	gpio_request(GPIO_FN_GETHER_MDIO_A, NULL);
++	gpio_request(GPIO_FN_GETHER_TXCREFCLK, NULL);
++	gpio_request(GPIO_FN_GETHER_TXCREFCLK_MEGA, NULL);
++	gpio_request(GPIO_FN_GETHER_TD3, NULL);
++	gpio_request(GPIO_FN_GETHER_TD2, NULL);
++	gpio_request(GPIO_FN_GETHER_TD1, NULL);
++	gpio_request(GPIO_FN_GETHER_TD0, NULL);
++	gpio_request(GPIO_FN_GETHER_TXC, NULL);
++	gpio_request(GPIO_FN_GETHER_TX_CTL, NULL);
++	gpio_request(GPIO_FN_GETHER_RD3, NULL);
++	gpio_request(GPIO_FN_GETHER_RD2, NULL);
++	gpio_request(GPIO_FN_GETHER_RD1, NULL);
++	gpio_request(GPIO_FN_GETHER_RD0, NULL);
++	gpio_request(GPIO_FN_GETHER_RXC, NULL);
++	gpio_request(GPIO_FN_GETHER_RX_CTL, NULL);
++
++	/* PHY_RST */
++	gpio_request(GPIO_GP_4_22, NULL);
++	gpio_direction_output(GPIO_GP_4_22, 0);
++	mdelay(20);
++	gpio_set_value(GPIO_GP_4_22, 1);
++	udelay(1);
++#endif
++	/* QSPI/RPC */
++	gpio_request(GPIO_FN_QSPI0_SPCLK, NULL);
++	gpio_request(GPIO_FN_QSPI0_MOSI_IO0, NULL);
++	gpio_request(GPIO_FN_QSPI0_MISO_IO1, NULL);
++	gpio_request(GPIO_FN_QSPI0_IO2, NULL);
++	gpio_request(GPIO_FN_QSPI0_IO3, NULL);
++	gpio_request(GPIO_FN_QSPI0_SSL, NULL);
++	gpio_request(GPIO_FN_QSPI1_SPCLK, NULL);
++	gpio_request(GPIO_FN_QSPI1_MOSI_IO0, NULL);
++	gpio_request(GPIO_FN_QSPI1_MISO_IO1, NULL);
++	gpio_request(GPIO_FN_QSPI1_IO2, NULL);
++	gpio_request(GPIO_FN_QSPI1_IO3, NULL);
++	gpio_request(GPIO_FN_QSPI1_SSL, NULL);
++	gpio_request(GPIO_FN_RPC_RESET_N, NULL);
++	gpio_request(GPIO_FN_RPC_WP_N, NULL);
++	gpio_request(GPIO_FN_RPC_INT_N, NULL);
++#if defined(CONFIG_SYS_I2C) && defined(CONFIG_SYS_I2C_RCAR)
++	/* I2C0 to access PMIC */
++	gpio_request(GPIO_IFN_SDA0, NULL);
++	gpio_request(GPIO_IFN_SCL0, NULL);
++#endif
++	return 0;
++}
++
++#if defined(CONFIG_RAVB)
++#define MAHR 0xE68005C0
++#define MALR 0xE68005C8
++#elif defined(CONFIG_SH_ETHER)
++#define MAHR 0xE74005C0
++#define MALR 0xE74005C8
++#endif
++int board_eth_init(bd_t *bis)
++{
++	int ret = -ENODEV;
++
++	u32 val;
++	unsigned char enetaddr[6];
++
++	if (!eth_getenv_enetaddr("ethaddr", enetaddr))
++		return ret;
++
++	/* Set Mac address */
++	val = enetaddr[0] << 24 | enetaddr[1] << 16 |
++	      enetaddr[2] << 8 | enetaddr[3];
++	writel(val, MAHR);
++
++	val = enetaddr[4] << 8 | enetaddr[5];
++	writel(val, MALR);
++#if defined(CONFIG_RAVB)
++	ret = ravb_initialize(bis);
++#elif defined(CONFIG_SH_ETHER)
++	ret = sh_eth_initialize(bis);
++#endif
++	return ret;
++}
++
++/* eCube has KSZ9031RNX */
++int board_phy_config(struct phy_device *phydev)
++{
++	return 0;
++}
++
++int board_mmc_init(bd_t *bis)
++{
++	int ret = -ENODEV;
++#ifdef CONFIG_SH_SDHI
++	u32 val;
++
++	/* SDHI2/eMMC */
++	gpio_request(GPIO_FN_MMC_D0, NULL);
++	gpio_request(GPIO_FN_MMC_D1, NULL);
++	gpio_request(GPIO_FN_MMC_D2, NULL);
++	gpio_request(GPIO_FN_MMC_D3, NULL);
++	gpio_request(GPIO_FN_MMC_D4, NULL);
++	gpio_request(GPIO_FN_MMC_D5, NULL);
++	gpio_request(GPIO_FN_MMC_D6, NULL);
++	gpio_request(GPIO_FN_MMC_D7, NULL);
++	gpio_request(GPIO_FN_MMC_CLK, NULL);
++	gpio_request(GPIO_FN_MMC_CMD, NULL);
++	gpio_request(GPIO_FN_MMC_CD, NULL);
++	gpio_request(GPIO_FN_MMC_WP, NULL);
++
++	val = readl(PFC_POC1);
++	val &= ~POC_MMC_3V3;		/* POC = 1.8V */
++	writel(~val, PFC_PMMR);
++	writel(val, PFC_POC1);
++
++	ret = sh_sdhi_init(CONFIG_SYS_SH_SDHI2_BASE, 0,
++			   SH_SDHI_QUIRK_64BIT_BUF);
++#endif
++	return ret;
++}
++
++int dram_init(void)
++{
++	gd->ram_size = PHYS_SDRAM_1_SIZE;
++
++	return 0;
++}
++
++void dram_init_banksize(void)
++{
++	gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
++	gd->bd->bi_dram[0].size = PHYS_SDRAM_1_SIZE;
++}
++
++const struct rcar_sysinfo sysinfo = {
++	CONFIG_RCAR_BOARD_STRING
++};
++
++#if defined(CONFIG_DISPLAY_BOARDINFO)
++int checkboard(void)
++{
++	printf("Board: %s\n", sysinfo.board_string);
++	return 0;
++}
++#endif
+diff --git a/configs/ecube_defconfig b/configs/ecube_defconfig
+new file mode 100644
+index 0000000..2e3d369
+--- /dev/null
++++ b/configs/ecube_defconfig
+@@ -0,0 +1,10 @@
++CONFIG_ARM=y
++CONFIG_RCAR_GEN3=y
++CONFIG_DM_SERIAL=y
++CONFIG_TARGET_ECUBE=y
++CONFIG_R8A7798=y
++CONFIG_SPL=y
++CONFIG_SH_SDHI=y
++CONFIG_SPI_FLASH=y
++CONFIG_SPI_FLASH_SPANSION=y
++CONFIG_SPI_FLASH_BAR=y
+diff --git a/include/configs/ecube.h b/include/configs/ecube.h
+new file mode 100644
+index 0000000..60e43fd
+--- /dev/null
++++ b/include/configs/ecube.h
+@@ -0,0 +1,160 @@
++/*
++ * include/configs/v3hsk.h
++ *     This file is V3HSK board configuration.
++ *     CPU r8a7798.
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ *
++ * SPDX-License-Identifier: GPL-2.0+
++ */
++
++#ifndef __ECUBE_H
++#define __ECUBE_H
++
++#undef DEBUG
++#define CONFIG_RCAR_BOARD_STRING "eCube"
++#define CONFIG_RCAR_TARGET_STRING "r8a7798"
++
++#include "rcar-gen3-common.h"
++
++//#define CONFIG_SYS_DCACHE_OFF
++//#define CONFIG_SYS_ICACHE_OFF
++
++/* SCIF */
++#define CONFIG_SCIF_CONSOLE
++#define CONFIG_CONS_SCIF0
++#define CONFIG_SH_SCIF_CLK_FREQ	CONFIG_S3D4_CLK_FREQ
++
++/* [A] Hyper Flash */
++/* use to RPC(SPI Multi I/O Bus Controller) */
++
++	/* underconstruction */
++
++#define CONFIG_SYS_NO_FLASH
++#if defined(CONFIG_SYS_NO_FLASH)
++#define CONFIG_SPI
++#define CONFIG_RCAR_GEN3_QSPI
++#define CONFIG_SH_QSPI_BASE	0xEE200000
++#define CONFIG_CMD_SF
++#define CONFIG_CMD_SPI
++#define CONFIG_SPI_FLASH
++#define CONFIG_SPI_FLASH_SPANSION
++#else
++#undef CONFIG_CMD_SF
++#undef CONFIG_CMD_SPI
++#undef CONFIG_SPI_FLASH
++#undef CONFIG_SPI_FLASH_SPANSION
++#endif
++
++#if 0
++/* Ethernet RAVB */
++#define CONFIG_RAVB
++#define CONFIG_RAVB_PHY_ADDR	0x0
++#define CONFIG_RAVB_PHY_MODE	PHY_INTERFACE_MODE_RGMII_ID
++#define CONFIG_NET_MULTI
++#define CONFIG_PHYLIB
++#define CONFIG_PHY_MICREL
++#define CONFIG_BITBANGMII
++#define CONFIG_BITBANGMII_MULTI
++#define CONFIG_SH_ETHER_BITBANG
++#else
++/* GETHER */
++#define CONFIG_NET_MULTI
++#define CONFIG_SH_ETHER
++#define CONFIG_SH_ETHER_USE_PORT	0
++#define CONFIG_SH_ETHER_PHY_ADDR	0x0
++#define CONFIG_SH_ETHER_PHY_MODE	PHY_INTERFACE_MODE_RGMII_ID
++#define CONFIG_SH_ETHER_ALIGNE_SIZE	64
++#define CONFIG_SH_ETHER_CACHE_WRITEBACK
++#define CONFIG_SH_ETHER_CACHE_INVALIDATE
++#define CONFIG_PHYLIB
++#define CONFIG_PHY_MICREL
++#define CONFIG_BITBANGMII
++#define CONFIG_BITBANGMII_MULTI
++#endif
++
++/* Board Clock */
++/* XTAL_CLK : 33.33MHz */
++#define RCAR_XTAL_CLK		33333333u
++#define CONFIG_SYS_CLK_FREQ	RCAR_XTAL_CLK
++/* ch0to2 CPclk, ch3to11 S3D2_PEREclk, ch12to14 S3D2_RTclk */
++/* CPclk 16.66MHz, S3D2 133.33MHz , S3D4 66.66MHz          */
++#define CONFIG_CP_CLK_FREQ	(CONFIG_SYS_CLK_FREQ / 2)
++#define CONFIG_PLL1_CLK_FREQ	(CONFIG_SYS_CLK_FREQ * 192 / 2)
++#define CONFIG_S3D2_CLK_FREQ	(266666666u/2)
++#define CONFIG_S3D4_CLK_FREQ	(266666666u/4)
++#define CONFIG_S2D2_CLK_FREQ	(133333333u)
++
++/* Generic Timer Definitions (use in assembler source) */
++#define COUNTER_FREQUENCY	0xFE502A /* 16.66MHz from CPclk */
++
++/* Generic Interrupt Controller Definitions */
++#define GICD_BASE	(0xF1010000)
++#define GICC_BASE	(0xF1020000)
++#define CONFIG_GICV2
++
++/* i2c */
++#define CONFIG_SYS_I2C
++#define CONFIG_SYS_I2C_RCAR
++#define CONFIG_SYS_RCAR_I2C0_SPEED		400000
++#define CONFIG_SYS_RCAR_I2C1_SPEED		400000
++#define CONFIG_SYS_RCAR_I2C2_SPEED		400000
++#define CONFIG_SYS_RCAR_I2C3_SPEED		400000
++#define CONFIF_SYS_RCAR_I2C_NUM_CONTROLLERS	1
++#define CONFIG_SYS_I2C_CPLD_ADDR		0x70
++#define CONFIG_HP_CLK_FREQ			CONFIG_S2D2_CLK_FREQ
++
++/* USB */
++#undef CONFIG_CMD_USB
++
++/* SDHI */
++#define CONFIG_MMC
++#define CONFIG_CMD_MMC
++#define CONFIG_GENERIC_MMC
++#define CONFIG_SH_SDHI_FREQ	200000000
++#define CONFIG_SH_SDHI_MMC
++
++/* ENV setting */
++#define CONFIG_ENV_OVERWRITE
++#define CONFIG_ENV_SECT_SIZE	(256 * 1024)
++#define CONFIG_ENV_SIZE		(CONFIG_ENV_SECT_SIZE)
++#define CONFIG_ENV_SIZE_REDUND	(CONFIG_ENV_SIZE)
++
++//#define CONFIG_ENV_IS_IN_MMC
++#define CONFIG_ENV_IS_IN_SPI_FLASH
++
++#if defined(CONFIG_ENV_IS_IN_MMC)
++/* Environment in eMMC, at the end of 2nd "boot sector" */
++#define CONFIG_ENV_OFFSET	(-CONFIG_ENV_SIZE)
++#define CONFIG_SYS_MMC_ENV_DEV	0
++#define CONFIG_SYS_MMC_ENV_PART	2
++#elif defined(CONFIG_ENV_IS_IN_SPI_FLASH)
++/* Environment in QSPI */
++#define CONFIG_ENV_ADDR		0x700000
++#define CONFIG_ENV_OFFSET	(CONFIG_ENV_ADDR)
++#else
++#define CONFIG_ENV_IS_NOWHERE
++#endif
++
++/* Module clock supply/stop status bits */
++/* MFIS */
++#define CONFIG_SMSTP2_ENA	0x00002000
++/* serial(SCIF0) */
++#define CONFIG_SMSTP3_ENA	0x00000400
++/* INTC-AP, INTC-EX */
++#define CONFIG_SMSTP4_ENA	0x00000180
++
++#define CONFIG_EXTRA_ENV_SETTINGS \
++	"fdt_high=0xffffffffffffffff\0" \
++	"initrd_high=0xffffffffffffffff\0" \
++	"ethaddr=2E:11:22:33:44:55\0"
++
++#define CONFIG_BOOTARGS \
++	"root=/dev/nfs rw ip=dhcp"
++
++#define CONFIG_BOOTCOMMAND \
++	"bootp 0x48080000 Image; tftp 0x48000000 r8a7798-ecube.dtb; " \
++	"booti 0x48080000 - 0x48000000"
++
++#endif /* __V3HSK_H */
+-- 
+2.7.4
+
