@@ -1,7 +1,7 @@
 diff --git a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
 old mode 100644
 new mode 100755
-index 8b45c49..1fc9073
+index 8b45c49..2daa4e8
 --- a/drivers/hwspinlock/rcar_hwspinlock.c
 +++ b/drivers/hwspinlock/rcar_hwspinlock.c
 @@ -22,7 +22,12 @@
@@ -18,7 +18,7 @@ index 8b45c49..1fc9073
  #include "hwspinlock_internal.h"
  
  #define MFISLCKR0_OFFSET	0x000000C0
-@@ -30,6 +35,156 @@
+@@ -30,6 +35,142 @@
  #define MFISLCKR_NUM_8		8	/* r8a7795 ES1.*, r8a7796 ES1.* */
  #define MFISLCKR_NUM_64		64
  
@@ -58,17 +58,11 @@ index 8b45c49..1fc9073
 +    iowrite32(1, (void __iomem *)addr);
 +}
 +
-+static int mfis_read_val(int32_t* val)
++static void mfis_read_val(int32_t* val)
 +{
 +    int i;
 +	void *addr;
-+	
-+	/* Cannot handle new message, previous one not consumed by user space */
-+	if(message_received)
-+	{
-+	    return -1;
-+	}
-+	
++
 +	/* Get 8 message registers */
 +    for(i=0; i<MFIS_MSG_SIZE; i++)
 +    {
@@ -81,11 +75,9 @@ index 8b45c49..1fc9073
 +    iowrite32(0, (void __iomem *)addr);
 +    
 +    message_received = 1;
-+    
-+    return 0;
 +}
 +
-+static int mfis_check_if_busy(void)
++static int mfis_check_R7_irq_state(void)
 +{
 +	void *addr;
 +    int ret=0;
@@ -97,15 +89,9 @@ index 8b45c49..1fc9073
 +
 +static irqreturn_t mfis_irq_handler(int irq, void * ident)
 +{
-+        
-+        if(mfis_read_val(val_read) == 0)
-+        {
-+            return IRQ_HANDLED;
-+        }
-+        
-+        return IRQ_NONE;
++    mfis_read_val(val_read);
++    return IRQ_HANDLED;
 +}
-+
 +
 +static int mfis_open(struct inode *i, struct file *f)
 +{
@@ -125,7 +111,7 @@ index 8b45c49..1fc9073
 +        case WR_VALUE:
 +            
 +            /* Cannot write new message, previous one still pending */
-+            if(mfis_check_if_busy())
++            if(mfis_check_R7_irq_state())
 +            {
 +                return -EBUSY;
 +            }
@@ -175,7 +161,7 @@ index 8b45c49..1fc9073
  static int rcar_hwspinlock_trylock(struct hwspinlock *lock)
  {
  	void *addr = lock->priv;
-@@ -69,7 +224,9 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+@@ -69,7 +210,9 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  	u32 __iomem			*addr;
  	struct resource			*res;
  	struct hwspinlock_device	*bank;
@@ -186,7 +172,7 @@ index 8b45c49..1fc9073
  	/* allocate hwspinlock control info */
  	bank = devm_kzalloc(&pdev->dev, sizeof(*bank)
  			    + sizeof(struct hwspinlock) * MFISLCKR_NUM_64,
-@@ -86,12 +243,16 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+@@ -86,12 +229,16 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  	addr = (u32 __iomem *)devm_ioremap_nocache(&pdev->dev,
  						   res->start,
  						   resource_size(res));
@@ -203,7 +189,7 @@ index 8b45c49..1fc9073
  	/* create lock for MFISLCKR0-7 */
  	for (ch = 0; ch < 8; ch++)
  		bank->lock[ch].priv = (void __force *)addr + MFISLCKR0_OFFSET
-@@ -118,7 +279,49 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+@@ -118,7 +265,49 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  				   0, num_locks);
  	if (ret)
  		pm_runtime_disable(&pdev->dev);
