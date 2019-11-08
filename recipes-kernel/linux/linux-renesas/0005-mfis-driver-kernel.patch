@@ -43,119 +43,119 @@ index 8b45c49..2daa4e8
 +
 +static void mfis_write_val(int32_t* val)
 +{
-+    int i;
++	int i;
 +	void *addr;
 +
 +	/* Fill 8 message registers */
-+    for(i=0; i<MFIS_MSG_SIZE; i++)
-+    {
-+        addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) * i * 2;
-+        iowrite32(val[i], (void __iomem *)addr);
-+    }
-+    
-+    /* Send IRQ to R7 */
-+    addr = (void __force *)base_addr + MFISARIICR0_OFFSET;
-+    iowrite32(1, (void __iomem *)addr);
++	for(i=0; i<MFIS_MSG_SIZE; i++)
++	{
++		addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) * i * 2;
++		iowrite32(val[i], (void __iomem *)addr);
++	}
++
++	/* Send IRQ to R7 */
++	addr = (void __force *)base_addr + MFISARIICR0_OFFSET;
++	iowrite32(1, (void __iomem *)addr);
 +}
 +
 +static void mfis_read_val(int32_t* val)
 +{
-+    int i;
++	int i;
 +	void *addr;
 +
 +	/* Get 8 message registers */
-+    for(i=0; i<MFIS_MSG_SIZE; i++)
-+    {
-+        addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) + sizeof(u32) * i * 2;
-+        val[i] = (uint32_t) ioread32((void __iomem *)addr);
-+    }
-+    
-+    /* Clear IRQ from R7 */
-+    addr = (void __force *)base_addr + MFISARIICR0_OFFSET + sizeof(u32);
-+    iowrite32(0, (void __iomem *)addr);
-+    
-+    message_received = 1;
++	for(i=0; i<MFIS_MSG_SIZE; i++)
++	{
++		addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) + sizeof(u32) * i * 2;
++		val[i] = (uint32_t) ioread32((void __iomem *)addr);
++	}
++
++	/* Clear IRQ from R7 */
++	addr = (void __force *)base_addr + MFISARIICR0_OFFSET + sizeof(u32);
++	iowrite32(0, (void __iomem *)addr);
++
++	message_received = 1;
 +}
 +
 +static int mfis_check_R7_irq_state(void)
 +{
 +	void *addr;
-+    int ret=0;
-+    
-+    /* Return IRQ state on R7 side (if 1 it means IRQ has not been handled by R7) */
-+    addr = (void __force *)base_addr + MFISARIICR0_OFFSET;
-+    return (int) ioread32((void __iomem *)addr);
++	int ret=0;
++
++	/* Return IRQ state on R7 side (if 1 it means IRQ has not been handled by R7) */
++	addr = (void __force *)base_addr + MFISARIICR0_OFFSET;
++	return (int) ioread32((void __iomem *)addr);
 +}
 +
 +static irqreturn_t mfis_irq_handler(int irq, void * ident)
 +{
-+    mfis_read_val(val_read);
-+    return IRQ_HANDLED;
++	mfis_read_val(val_read);
++	return IRQ_HANDLED;
 +}
 +
 +static int mfis_open(struct inode *i, struct file *f)
 +{
-+    return 0;
++	return 0;
 +}
 +static int mfis_close(struct inode *i, struct file *f)
 +{
-+    return 0;
++	return 0;
 +}
 +
 +static long mfis_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 +{
-+    int32_t val_write[MFIS_MSG_SIZE];
-+    
-+    switch (cmd)
-+    {
-+        case WR_VALUE:
-+            
-+            /* Cannot write new message, previous one still pending */
-+            if(mfis_check_R7_irq_state())
-+            {
-+                return -EBUSY;
-+            }
-+            
-+            /* Get message from user space */
-+            if (copy_from_user(val_write, (int32_t *)arg, sizeof(val_write)))
-+            {
-+                return -EACCES;
-+            }
-+            
-+            /* Send message to R7 */
-+            mfis_write_val(val_write);
-+            
-+            break;
-+        case RD_VALUE:
-+            
-+            /* Check if new message received */
-+            if(message_received == 0)
-+            {
-+                return -EAGAIN;
-+            }
-+            
-+            /* Send message to user space */
-+            if (copy_to_user((int32_t *)arg, val_read, sizeof(val_read)))
-+            {
-+                return -EACCES;
-+            }
-+            
-+            message_received = 0;
-+            
-+            break;
-+        default:
-+            return -EINVAL;
-+    }
++	int32_t val_write[MFIS_MSG_SIZE];
++	
++	switch (cmd)
++	{
++		case WR_VALUE:
++			
++			/* Cannot write new message, previous one still pending */
++			if(mfis_check_R7_irq_state())
++			{
++				return -EBUSY;
++			}
++			
++			/* Get message from user space */
++			if (copy_from_user(val_write, (int32_t *)arg, sizeof(val_write)))
++			{
++				return -EACCES;
++			}
++			
++			/* Send message to R7 */
++			mfis_write_val(val_write);
++			
++			break;
++		case RD_VALUE:
++			
++			/* Check if new message received */
++			if(message_received == 0)
++			{
++				return -EAGAIN;
++			}
++			
++			/* Send message to user space */
++			if (copy_to_user((int32_t *)arg, val_read, sizeof(val_read)))
++			{
++				return -EACCES;
++			}
++			
++			message_received = 0;
++			
++			break;
++		default:
++			return -EINVAL;
++	}
 + 
-+    return 0;
++	return 0;
 +}
 +
 +static struct file_operations mfis_fops =
 +{
-+    .owner = THIS_MODULE,
-+    .open = mfis_open,
-+    .release = mfis_close,
-+    .unlocked_ioctl = mfis_ioctl
++	.owner = THIS_MODULE,
++	.open = mfis_open,
++	.release = mfis_close,
++	.unlocked_ioctl = mfis_ioctl
 +};
 +
  static int rcar_hwspinlock_trylock(struct hwspinlock *lock)
@@ -166,12 +166,12 @@ index 8b45c49..2daa4e8
  	struct resource			*res;
  	struct hwspinlock_device	*bank;
 -
-+    struct device *dev_ret;
-+    int irq_mfis;
-+    
++	struct device *dev_ret;
++	int irq_mfis;
++	
  	/* allocate hwspinlock control info */
  	bank = devm_kzalloc(&pdev->dev, sizeof(*bank)
- 			    + sizeof(struct hwspinlock) * MFISLCKR_NUM_64,
+ 				+ sizeof(struct hwspinlock) * MFISLCKR_NUM_64,
 @@ -86,12 +229,16 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  	addr = (u32 __iomem *)devm_ioremap_nocache(&pdev->dev,
  						   res->start,
@@ -183,9 +183,9 @@ index 8b45c49..2daa4e8
  		goto out;
  	}
  
-+    /* Store base address */
-+    base_addr = addr;
-+    
++	/* Store base address */
++	base_addr = addr;
++	
  	/* create lock for MFISLCKR0-7 */
  	for (ch = 0; ch < 8; ch++)
  		bank->lock[ch].priv = (void __force *)addr + MFISLCKR0_OFFSET
@@ -196,46 +196,46 @@ index 8b45c49..2daa4e8
 +		
 +	/* Register IOCTL to system */
 +	
-+    if ((ret = alloc_chrdev_region(&dev, 0, 1, "mfis_ioctl")) < 0)
-+    {
-+        dev_err(&pdev->dev, "cannot allocate major number \n");
-+        return ret;
-+    }
++	if ((ret = alloc_chrdev_region(&dev, 0, 1, "mfis_ioctl")) < 0)
++	{
++		dev_err(&pdev->dev, "cannot allocate major number \n");
++		return ret;
++	}
 + 
-+    cdev_init(&c_dev, &mfis_fops);
++	cdev_init(&c_dev, &mfis_fops);
 + 
-+    if ((ret = cdev_add(&c_dev, dev, 1)) < 0)
-+    {
-+        dev_err(&pdev->dev, "cannot add device to system \n");
-+        return ret;
-+    }
-+     
-+    if (IS_ERR(cl = class_create(THIS_MODULE, "mfis_class")))
-+    {
-+        cdev_del(&c_dev);
-+        unregister_chrdev_region(dev, 1);
-+        return PTR_ERR(cl);
-+    }
-+    if (IS_ERR(dev_ret = device_create(cl, NULL, dev, NULL, "mfis_device")))
-+    {
-+        class_destroy(cl);
-+        cdev_del(&c_dev);
-+        unregister_chrdev_region(dev, 1);
-+        return PTR_ERR(dev_ret);
-+    }
-+    
-+    /* Register IRQ */
-+    irq_mfis = platform_get_irq(pdev, 0);
++	if ((ret = cdev_add(&c_dev, dev, 1)) < 0)
++	{
++		dev_err(&pdev->dev, "cannot add device to system \n");
++		return ret;
++	}
++	 
++	if (IS_ERR(cl = class_create(THIS_MODULE, "mfis_class")))
++	{
++		cdev_del(&c_dev);
++		unregister_chrdev_region(dev, 1);
++		return PTR_ERR(cl);
++	}
++	if (IS_ERR(dev_ret = device_create(cl, NULL, dev, NULL, "mfis_device")))
++	{
++		class_destroy(cl);
++		cdev_del(&c_dev);
++		unregister_chrdev_region(dev, 1);
++		return PTR_ERR(dev_ret);
++	}
++	
++	/* Register IRQ */
++	irq_mfis = platform_get_irq(pdev, 0);
  
-+    if((ret = request_irq(irq_mfis, mfis_irq_handler, IRQF_SHARED, "mfis_irq", THIS_MODULE->name)) != 0)
-+    {
-+        dev_err(&pdev->dev, "cannot register irq %d \n", irq_mfis);
-+        return ret;
-+    }
-+    
-+    /* Reset FLAGs */
-+    message_received = 0;
-+    
++	if((ret = request_irq(irq_mfis, mfis_irq_handler, IRQF_SHARED, "mfis_irq", THIS_MODULE->name)) != 0)
++	{
++		dev_err(&pdev->dev, "cannot register irq %d \n", irq_mfis);
++		return ret;
++	}
++	
++	/* Reset FLAGs */
++	message_received = 0;
++	
  out:
  	return ret;
  }
