@@ -1,0 +1,241 @@
+diff --git a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
+old mode 100644
+new mode 100755
+index 8b45c49..2daa4e8
+--- a/drivers/hwspinlock/rcar_hwspinlock.c
++++ b/drivers/hwspinlock/rcar_hwspinlock.c
+@@ -22,7 +22,12 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/sys_soc.h>
+-
++#include <linux/ioctl.h>
++#include <linux/cdev.h>
++#include <linux/device.h>
++#include <linux/uaccess.h>
++#include <linux/irqreturn.h>
++#include <linux/interrupt.h>
+ #include "hwspinlock_internal.h"
+ 
+ #define MFISLCKR0_OFFSET	0x000000C0
+@@ -30,6 +35,142 @@
+ #define MFISLCKR_NUM_8		8	/* r8a7795 ES1.*, r8a7796 ES1.* */
+ #define MFISLCKR_NUM_64		64
+ 
++#define MFISARIICR0_OFFSET	0x00000400 /* communication registers CONTROL */
++#define MFISARIMBR0_OFFSET	0x00000440 /* communication registers MESSAGE */
++
++#define MFIS_MSG_SIZE   8
++
++/* IOCTL definitions */
++#define WR_VALUE _IOW ('a', 1, int32_t*)
++#define RD_VALUE _IOR ('a', 2, int32_t*)
++
++/* IOCTL global variables */
++static dev_t dev;
++static struct cdev c_dev;
++static struct class *cl;
++
++/* MFIS communication variables */
++static u32 __iomem *base_addr; /* Base address of peripheral */
++static int32_t val_read[MFIS_MSG_SIZE];
++static int message_received = 0;
++
++static void mfis_write_val(int32_t* val)
++{
++	int i;
++	void *addr;
++
++	/* Fill 8 message registers */
++	for(i=0; i<MFIS_MSG_SIZE; i++)
++	{
++		addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) * i * 2;
++		iowrite32(val[i], (void __iomem *)addr);
++	}
++
++	/* Send IRQ to R7 */
++	addr = (void __force *)base_addr + MFISARIICR0_OFFSET;
++	iowrite32(1, (void __iomem *)addr);
++}
++
++static void mfis_read_val(int32_t* val)
++{
++	int i;
++	void *addr;
++
++	/* Get 8 message registers */
++	for(i=0; i<MFIS_MSG_SIZE; i++)
++	{
++		addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) + sizeof(u32) * i * 2;
++		val[i] = (uint32_t) ioread32((void __iomem *)addr);
++	}
++
++	/* Clear IRQ from R7 */
++	addr = (void __force *)base_addr + MFISARIICR0_OFFSET + sizeof(u32);
++	iowrite32(0, (void __iomem *)addr);
++
++	message_received = 1;
++}
++
++static int mfis_check_R7_irq_state(void)
++{
++	void *addr;
++	int ret=0;
++
++	/* Return IRQ state on R7 side (if 1 it means IRQ has not been handled by R7) */
++	addr = (void __force *)base_addr + MFISARIICR0_OFFSET;
++	return (int) ioread32((void __iomem *)addr);
++}
++
++static irqreturn_t mfis_irq_handler(int irq, void * ident)
++{
++	mfis_read_val(val_read);
++	return IRQ_HANDLED;
++}
++
++static int mfis_open(struct inode *i, struct file *f)
++{
++	return 0;
++}
++static int mfis_close(struct inode *i, struct file *f)
++{
++	return 0;
++}
++
++static long mfis_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
++{
++	int32_t val_write[MFIS_MSG_SIZE];
++	
++	switch (cmd)
++	{
++		case WR_VALUE:
++			
++			/* Cannot write new message, previous one still pending */
++			if(mfis_check_R7_irq_state())
++			{
++				return -EBUSY;
++			}
++			
++			/* Get message from user space */
++			if (copy_from_user(val_write, (int32_t *)arg, sizeof(val_write)))
++			{
++				return -EACCES;
++			}
++			
++			/* Send message to R7 */
++			mfis_write_val(val_write);
++			
++			break;
++		case RD_VALUE:
++			
++			/* Check if new message received */
++			if(message_received == 0)
++			{
++				return -EAGAIN;
++			}
++			
++			/* Send message to user space */
++			if (copy_to_user((int32_t *)arg, val_read, sizeof(val_read)))
++			{
++				return -EACCES;
++			}
++			
++			message_received = 0;
++			
++			break;
++		default:
++			return -EINVAL;
++	}
++ 
++	return 0;
++}
++
++static struct file_operations mfis_fops =
++{
++	.owner = THIS_MODULE,
++	.open = mfis_open,
++	.release = mfis_close,
++	.unlocked_ioctl = mfis_ioctl
++};
++
+ static int rcar_hwspinlock_trylock(struct hwspinlock *lock)
+ {
+ 	void *addr = lock->priv;
+@@ -69,7 +210,9 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+ 	u32 __iomem			*addr;
+ 	struct resource			*res;
+ 	struct hwspinlock_device	*bank;
+-
++	struct device *dev_ret;
++	int irq_mfis;
++	
+ 	/* allocate hwspinlock control info */
+ 	bank = devm_kzalloc(&pdev->dev, sizeof(*bank)
+ 				+ sizeof(struct hwspinlock) * MFISLCKR_NUM_64,
+@@ -86,12 +229,16 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+ 	addr = (u32 __iomem *)devm_ioremap_nocache(&pdev->dev,
+ 						   res->start,
+ 						   resource_size(res));
++						   
+ 	if (!addr) {
+ 		dev_err(&pdev->dev, "Failed to remap register.\n");
+ 		ret = PTR_ERR(addr);
+ 		goto out;
+ 	}
+ 
++	/* Store base address */
++	base_addr = addr;
++	
+ 	/* create lock for MFISLCKR0-7 */
+ 	for (ch = 0; ch < 8; ch++)
+ 		bank->lock[ch].priv = (void __force *)addr + MFISLCKR0_OFFSET
+@@ -118,7 +265,49 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+ 				   0, num_locks);
+ 	if (ret)
+ 		pm_runtime_disable(&pdev->dev);
++		
++	/* Register IOCTL to system */
++	
++	if ((ret = alloc_chrdev_region(&dev, 0, 1, "mfis_ioctl")) < 0)
++	{
++		dev_err(&pdev->dev, "cannot allocate major number \n");
++		return ret;
++	}
++ 
++	cdev_init(&c_dev, &mfis_fops);
++ 
++	if ((ret = cdev_add(&c_dev, dev, 1)) < 0)
++	{
++		dev_err(&pdev->dev, "cannot add device to system \n");
++		return ret;
++	}
++	 
++	if (IS_ERR(cl = class_create(THIS_MODULE, "mfis_class")))
++	{
++		cdev_del(&c_dev);
++		unregister_chrdev_region(dev, 1);
++		return PTR_ERR(cl);
++	}
++	if (IS_ERR(dev_ret = device_create(cl, NULL, dev, NULL, "mfis_device")))
++	{
++		class_destroy(cl);
++		cdev_del(&c_dev);
++		unregister_chrdev_region(dev, 1);
++		return PTR_ERR(dev_ret);
++	}
++	
++	/* Register IRQ */
++	irq_mfis = platform_get_irq(pdev, 0);
+ 
++	if((ret = request_irq(irq_mfis, mfis_irq_handler, IRQF_SHARED, "mfis_irq", THIS_MODULE->name)) != 0)
++	{
++		dev_err(&pdev->dev, "cannot register irq %d \n", irq_mfis);
++		return ret;
++	}
++	
++	/* Reset FLAGs */
++	message_received = 0;
++	
+ out:
+ 	return ret;
+ }
