@@ -1,7 +1,7 @@
 diff --git a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
 old mode 100644
 new mode 100755
-index 8b45c49..121a4bb
+index 8b45c49..b24db45
 --- a/drivers/hwspinlock/rcar_hwspinlock.c
 +++ b/drivers/hwspinlock/rcar_hwspinlock.c
 @@ -12,6 +12,10 @@
@@ -46,8 +46,8 @@ index 8b45c49..121a4bb
 +#define MFISAREICR0_OFFSET  0x00000404
 +#define MFISAREICR1_OFFSET  0x0000040C
 +/* communication registers MESSAGE */
-+#define MFISARIMBR0_OFFSET	0x00000440 
-+
++#define MFISARIMBR0_OFFSET	0x00000440 /* A53 to R7 */
++#define MFISAREMBR0_OFFSET	0x00000460 /* R7 to A53 */
 +/* MFIS number of message register */
 +#define MFIS_MSG_SIZE   8
 +
@@ -143,7 +143,7 @@ index 8b45c49..121a4bb
 +	/* Get 8 message registers */
 +    for(i=0; i<MFIS_MSG_SIZE; i++)
 +    {
-+        addr = (void __force *)base_addr + MFISARIMBR0_OFFSET + sizeof(u32) + sizeof(u32) * i * 2;
++        addr = (void __force *)base_addr + MFISAREMBR0_OFFSET + sizeof(u32) * i * 2;
 +        val_read[i] = (uint32_t) ioread32((void __iomem *)addr);
 +    }
 +    
