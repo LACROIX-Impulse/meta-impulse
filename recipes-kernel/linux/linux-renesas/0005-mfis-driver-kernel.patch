@@ -1,7 +1,7 @@
 diff --git a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
 old mode 100644
 new mode 100755
-index 8b45c49..225fcbc
+index 8b45c49..3dbfb32
 --- a/drivers/hwspinlock/rcar_hwspinlock.c
 +++ b/drivers/hwspinlock/rcar_hwspinlock.c
 @@ -12,6 +12,10 @@
@@ -15,7 +15,7 @@ index 8b45c49..225fcbc
  #include <linux/hwspinlock.h>
  #include <linux/kernel.h>
  #include <linux/module.h>
-@@ -22,14 +26,483 @@
+@@ -22,14 +26,484 @@
  #include <linux/platform_device.h>
  #include <linux/io.h>
  #include <linux/sys_soc.h>
@@ -221,7 +221,8 @@ index 8b45c49..225fcbc
 +	void *addr;
 +	uint32_t irq_reg;
 +	
-+    /* Read IRQ register */
++    /* Read IRQ register.
++    IRQ registers of R7 and A53 are interlaced (so we multiply by 2). */
 +    addr = (void __force *)base_addr + MFISAREICR0_OFFSET + (sizeof(u32) * irq_id * 2);
 +	irq_reg = (uint32_t) ioread32((void __iomem *)addr);
 +	
@@ -250,7 +251,7 @@ index 8b45c49..225fcbc
 + *
 + * Function Name: mfis_check_R7_irq_state
 + *
-+ * Purpose:
++ * Purpose: Return state of IRQ1 on R7 side.
 + *
 + * Input Parameters:     N/A
 + *
@@ -500,7 +501,7 @@ index 8b45c49..225fcbc
  static int rcar_hwspinlock_trylock(struct hwspinlock *lock)
  {
  	void *addr = lock->priv;
-@@ -61,6 +534,19 @@ static const struct of_device_id rcar_hwspinlock_of_match[] = {
+@@ -61,6 +535,19 @@ static const struct of_device_id rcar_hwspinlock_of_match[] = {
  };
  MODULE_DEVICE_TABLE(of, rcar_hwspinlock_of_match);
  
@@ -520,7 +521,7 @@ index 8b45c49..225fcbc
  static int rcar_hwspinlock_probe(struct platform_device *pdev)
  {
  	int				ch;
-@@ -69,7 +555,10 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+@@ -69,7 +556,10 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  	u32 __iomem			*addr;
  	struct resource			*res;
  	struct hwspinlock_device	*bank;
@@ -532,7 +533,7 @@ index 8b45c49..225fcbc
  	/* allocate hwspinlock control info */
  	bank = devm_kzalloc(&pdev->dev, sizeof(*bank)
  			    + sizeof(struct hwspinlock) * MFISLCKR_NUM_64,
-@@ -86,12 +575,16 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+@@ -86,12 +576,16 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  	addr = (u32 __iomem *)devm_ioremap_nocache(&pdev->dev,
  						   res->start,
  						   resource_size(res));
@@ -549,7 +550,7 @@ index 8b45c49..225fcbc
  	/* create lock for MFISLCKR0-7 */
  	for (ch = 0; ch < 8; ch++)
  		bank->lock[ch].priv = (void __force *)addr + MFISLCKR0_OFFSET
-@@ -118,11 +611,168 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
+@@ -118,11 +612,168 @@ static int rcar_hwspinlock_probe(struct platform_device *pdev)
  				   0, num_locks);
  	if (ret)
  		pm_runtime_disable(&pdev->dev);
@@ -719,7 +720,7 @@ index 8b45c49..225fcbc
  static int rcar_hwspinlock_remove(struct platform_device *pdev)
  {
  	int		ret;
-@@ -138,6 +788,9 @@ static int rcar_hwspinlock_remove(struct platform_device *pdev)
+@@ -138,6 +789,9 @@ static int rcar_hwspinlock_remove(struct platform_device *pdev)
  	return 0;
  }
  
@@ -729,7 +730,7 @@ index 8b45c49..225fcbc
  static struct platform_driver rcar_hwspinlock_driver = {
  	.probe		= rcar_hwspinlock_probe,
  	.remove		= rcar_hwspinlock_remove,
-@@ -147,6 +800,9 @@ static struct platform_driver rcar_hwspinlock_driver = {
+@@ -147,6 +801,9 @@ static struct platform_driver rcar_hwspinlock_driver = {
  	},
  };
  
@@ -739,7 +740,7 @@ index 8b45c49..225fcbc
  static int __init rcar_hwspinlock_init(void)
  {
  	return platform_driver_register(&rcar_hwspinlock_driver);
-@@ -159,4 +815,7 @@ static void __exit rcar_hwspinlock_exit(void)
+@@ -159,4 +816,7 @@ static void __exit rcar_hwspinlock_exit(void)
  }
  module_exit(rcar_hwspinlock_exit);
  
