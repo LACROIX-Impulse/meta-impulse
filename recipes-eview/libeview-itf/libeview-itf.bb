@@ -3,12 +3,12 @@ SECTION = "libs"
 LICENSE = "eSoftThings"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=c6afb05c83ee3f78ca6877faf927aede"
 
-# 0.2
-SRCREV = "abe5dd6be5e94237e04750035c6305426a92636d"
-BRANCH = "feature/EMIRROR-139-clone-eviewitf-adapt-eview-itf-to-integrate-mfis-api-in-meta-esoftthings"
+SRCTAG = "0.1"
+#SRCREV = "1e8f1f468186b043a7ba0d1f1debdc382ebc0238"
+#SRCBRANCH = "master"
 
-#SRC_URI = "ssh://git@10.224.240.124:7999/em/eview_itf.git"
-SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${BRANCH}"
+SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;tag=${SRCTAG}"
+#SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git/"
 
@@ -24,5 +24,7 @@ do_compile() {
 
 do_install() {
     install -d ${D}/usr/lib
-    cp libmfis.a ${D}/usr/lib
+    cp build/libmfis.a ${D}/usr/lib
+    install -d ${D}/usr/include
+    cp include/libmfis.h ${D}/usr/include
 }
