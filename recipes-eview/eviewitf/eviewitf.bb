@@ -1,13 +1,13 @@
-SUMMARY = "libeviewitf"
+SUMMARY = "eviewitf"
 SECTION = "libs"
 LICENSE = "eSoftThings"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=c6afb05c83ee3f78ca6877faf927aede"
 
 PACKAGE_ARCH = "all"
 
-SRCTAG = "0.1"
-#SRCREV = "1e8f1f468186b043a7ba0d1f1debdc382ebc0238"
-#SRCBRANCH = "master"
+SRCTAG = "0.2"
+#SRCREV = "fcb5440590733584e6439f8e7b6657af80f20f48"
+#SRCBRANCH = "release/0.2"
 
 SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;tag=${SRCTAG}"
 #SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
@@ -22,15 +22,22 @@ do_compile() {
 }
 
 do_install() {
+    install -d ${D}${bindir}
+    install ${S}build/eviewitf ${D}${bindir}
     install -d ${D}${libdir}
-    install ${S}build/libmfis.a ${D}${libdir}
+    install ${S}build/libeviewitf.a ${D}${libdir}
     install -d ${D}${includedir}
-    install ${S}include/libmfis.h ${D}${includedir}
+    install ${S}include/eviewitf.h ${D}${includedir}
 }
 
+# Bypass error No GNU_HASH in the elf binary
+INSANE_SKIP_${PN} = "ldflags"
+
+RDEPENDS_${PN} = ""
 RDEPENDS_${PN}-dev = ""
 RDEPENDS_${PN}-staticdev = "${PN}-dev"
 
+FILES_${PN} += "${bindir}"
 FILES_${PN}-dev += "${includedir}"
 FILES_${PN}-staticdev += "${libdir}"
 
