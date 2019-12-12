@@ -30,6 +30,9 @@ do_install() {
     install ${S}include/eviewitf.h ${D}${includedir}
 }
 
+# Bypass error No GNU_HASH in the elf binary
+INSANE_SKIP_${PN} = "ldflags"
+
 RDEPENDS_${PN} = ""
 RDEPENDS_${PN}-dev = ""
 RDEPENDS_${PN}-staticdev = "${PN}-dev"
