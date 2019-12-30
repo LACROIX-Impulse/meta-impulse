@@ -22,12 +22,7 @@ do_compile() {
 }
 
 do_install() {
-    install -d ${D}${bindir}
-    install ${S}build/eviewitf ${D}${bindir}
-    install -d ${D}${libdir}
-    install ${S}build/libeviewitf.a ${D}${libdir}
-    install -d ${D}${includedir}
-    install ${S}include/eviewitf.h ${D}${includedir}
+    oe_runmake install DESTDIR=${D}
 }
 
 # Bypass error No GNU_HASH in the elf binary
