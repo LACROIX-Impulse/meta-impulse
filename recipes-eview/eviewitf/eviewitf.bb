@@ -5,7 +5,7 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=c6afb05c83ee3f78ca6877faf9
 
 PACKAGE_ARCH = "all"
 
-SRCTAG = "0.3"
+SRCTAG = "0.4"
 #SRCREV = "fcb5440590733584e6439f8e7b6657af80f20f48"
 #SRCBRANCH = "release/0.3"
 
