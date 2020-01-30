@@ -5,9 +5,9 @@ LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=c6afb05c83ee3f78ca6877faf9
 
 PACKAGE_ARCH = "all"
 
-SRCTAG = "0.4"
-#SRCREV = "fcb5440590733584e6439f8e7b6657af80f20f48"
-#SRCBRANCH = "release/0.3"
+SRCTAG = "0.5"
+#SRCREV = "6fa73ce54f6485bc5ea8ad1cae609e15b3718bc4"
+#SRCBRANCH = "release/0.5"
 
 SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;tag=${SRCTAG}"
 #SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
