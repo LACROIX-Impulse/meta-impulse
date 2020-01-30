@@ -8,6 +8,7 @@ SRC_URI_append_ecube = " \
     file://0003-do_not_stop_the_cortex_r7.patch \
     file://0004-mfis-driver-dtree.patch \
     file://0005-mfis-driver-kernel.patch \
+    file://0006-mfis-driver-update.patch \
 "
 
 SRC_URI_append_ecube = " file://ecube.cfg"
