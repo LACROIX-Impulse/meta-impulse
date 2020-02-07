@@ -1,77 +1,109 @@
-diff --git a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
-index bed21c2..4930bc5 100755
---- a/drivers/hwspinlock/rcar_hwspinlock.c
-+++ b/drivers/hwspinlock/rcar_hwspinlock.c
-@@ -42,6 +42,7 @@
- #include <linux/string.h>
- #include <linux/fs.h> 
- #include <linux/io-mapping.h>
-+#include <linux/poll.h>
- #include "hwspinlock_internal.h"
+From 96927f072b83a48a12709bcc52b3bb7d102f954b Mon Sep 17 00:00:00 2001
+From: Mathis Duret <mduret@esoftthings.com>
+Date: Thu, 6 Feb 2020 10:43:55 +0100
+Subject: [PATCH] MFIS add poll for non blocking read
+
+---
+ .../linux-renesas/0007-mfis-add-poll.patch    | 77 +++++++++++++++++++
+ .../linux/linux-renesas_4.14.bbappend         |  1 +
+ 2 files changed, 78 insertions(+)
+ create mode 100644 recipes-kernel/linux/linux-renesas/0007-mfis-add-poll.patch
+
+diff --git a/recipes-kernel/linux/linux-renesas/0007-mfis-add-poll.patch b/recipes-kernel/linux/linux-renesas/0007-mfis-add-poll.patch
+new file mode 100644
+index 0000000..eeed6be
+--- a/recipes-kernel/linux/linux-renesas/0007-mfis-add-poll.patch
++++ b/recipes-kernel/linux/linux-renesas/0007-mfis-add-poll.patch
+@@ -0,0 +1,77 @@
++diff --git a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
++index bed21c2..4930bc5 100755
++--- a/drivers/hwspinlock/rcar_hwspinlock.c
+++++ b/drivers/hwspinlock/rcar_hwspinlock.c
++@@ -42,6 +42,7 @@
++ #include <linux/string.h>
++ #include <linux/fs.h> 
++ #include <linux/io-mapping.h>
+++#include <linux/poll.h>
++ #include "hwspinlock_internal.h"
++ 
++ /******************************************************************************************
++@@ -125,6 +126,7 @@ static void rcar_hwspinlock_unlock(struct hwspinlock *lock);
++ static int rcar_hwspinlock_probe(struct platform_device *pdev);
++ static int rcar_hwspinlock_remove(struct platform_device *pdev);
++ static int __init rcar_hwspinlock_init(void);
+++static unsigned int mfis_cam_poll(struct file *filp, struct poll_table_struct *wait);
++ static void __exit rcar_hwspinlock_exit(void);
++ /******************************************************************************************
++  *
++@@ -575,7 +577,6 @@ static ssize_t mfis_cam_read(struct file *filep, char *buffer, size_t len, loff_
++     int cam_read_id = iminor(filep->f_inode);
++     char tx_buff[len];
++     int last_frame; 
++-    wait_event_interruptible(wait_queue_cam_it[cam_read_id], wait_queue_cam_flag[cam_read_id]);
++     wait_queue_cam_flag[cam_read_id] = 0;
++     /* Prepare TX buffer with last cam ID and number of IRQ since last read */
++ 
++@@ -618,6 +619,38 @@ static ssize_t mfis_cam_read(struct file *filep, char *buffer, size_t len, loff_
++     }
++     return 1;
++ }
+++
+++/***********************************************************************************************************************
+++ *
+++ * Function Name: mfis_cam_poll
+++ *
+++ * Purpose:
+++ *
+++ * Input Parameters:     N/A
+++ *
+++ * Output Parameters:    N/A
+++ *
+++ * Comment: None
+++***********************************************************************************************************************/
+++static unsigned int mfis_cam_poll(struct file *filp, struct poll_table_struct *wait)
+++{
+++    int cam_read_id = iminor(filp->f_inode);
+++    unsigned int mask = 0;
+++    poll_wait (filp, &wait_queue_cam_it[cam_read_id], wait);
+++
+++
+++    if(wait_queue_cam_flag[cam_read_id]) /* check if data has been read */
+++    {
+++    	  mask|= POLLIN | POLLRDNORM;
+++    }
+++    else
+++    {
+++    	return 0;
+++    }
+++
+++    return mask;
+++}
+++
++ /***********************************************************************************************************************
++ * File operations structure
++ ***********************************************************************************************************************/
++@@ -634,7 +667,8 @@ static struct file_operations mfis_cam_fops =
++     .owner = THIS_MODULE,
++     .open = mfis_cam_open,
++     .release = mfis_cam_close,
++-    .read = mfis_cam_read
+++    .read = mfis_cam_read,
+++    .poll = mfis_cam_poll
++ };
++ 
++ /******************************************************************************************
+diff --git a/recipes-kernel/linux/linux-renesas_4.14.bbappend b/recipes-kernel/linux/linux-renesas_4.14.bbappend
+index d55ff3c..b0cf7a3 100755
+--- a/recipes-kernel/linux/linux-renesas_4.14.bbappend
++++ b/recipes-kernel/linux/linux-renesas_4.14.bbappend
+@@ -9,6 +9,7 @@ SRC_URI_append_ecube = " \
+     file://0004-mfis-driver-dtree.patch \
+     file://0005-mfis-driver-kernel.patch \
+     file://0006-mfis-driver-update.patch \
++    file://0007-mfis-add-poll.patch \
+ "
  
- /******************************************************************************************
-@@ -125,6 +126,7 @@ static void rcar_hwspinlock_unlock(struct hwspinlock *lock);
- static int rcar_hwspinlock_probe(struct platform_device *pdev);
- static int rcar_hwspinlock_remove(struct platform_device *pdev);
- static int __init rcar_hwspinlock_init(void);
-+static unsigned int mfis_cam_poll(struct file *filp, struct poll_table_struct *wait);
- static void __exit rcar_hwspinlock_exit(void);
- /******************************************************************************************
-  *
-@@ -575,7 +577,6 @@ static ssize_t mfis_cam_read(struct file *filep, char *buffer, size_t len, loff_
-     int cam_read_id = iminor(filep->f_inode);
-     char tx_buff[len];
-     int last_frame; 
--    wait_event_interruptible(wait_queue_cam_it[cam_read_id], wait_queue_cam_flag[cam_read_id]);
-     wait_queue_cam_flag[cam_read_id] = 0;
-     /* Prepare TX buffer with last cam ID and number of IRQ since last read */
- 
-@@ -618,6 +619,38 @@ static ssize_t mfis_cam_read(struct file *filep, char *buffer, size_t len, loff_
-     }
-     return 1;
- }
-+
-+/***********************************************************************************************************************
-+ *
-+ * Function Name: mfis_cam_poll
-+ *
-+ * Purpose:
-+ *
-+ * Input Parameters:     N/A
-+ *
-+ * Output Parameters:    N/A
-+ *
-+ * Comment: None
-+***********************************************************************************************************************/
-+static unsigned int mfis_cam_poll(struct file *filp, struct poll_table_struct *wait)
-+{
-+    int cam_read_id = iminor(filp->f_inode);
-+    unsigned int mask = 0;
-+    poll_wait (filp, &wait_queue_cam_it[cam_read_id], wait);
-+
-+
-+    if(wait_queue_cam_flag[cam_read_id]) /* check if data has been read */
-+    {
-+    	  mask|= POLLIN | POLLRDNORM;
-+    }
-+    else
-+    {
-+    	return 0;
-+    }
-+
-+    return mask;
-+}
-+
- /***********************************************************************************************************************
- * File operations structure
- ***********************************************************************************************************************/
-@@ -634,7 +667,8 @@ static struct file_operations mfis_cam_fops =
-     .owner = THIS_MODULE,
-     .open = mfis_cam_open,
-     .release = mfis_cam_close,
--    .read = mfis_cam_read
-+    .read = mfis_cam_read,
-+    .poll = mfis_cam_poll
- };
- 
- /******************************************************************************************
+ SRC_URI_append_ecube = " file://ecube.cfg"
+-- 
+2.17.1
+
