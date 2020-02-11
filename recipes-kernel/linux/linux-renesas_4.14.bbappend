@@ -9,6 +9,7 @@ SRC_URI_append_ecube = " \
     file://0004-mfis-driver-dtree.patch \
     file://0005-mfis-driver-kernel.patch \
     file://0006-mfis-driver-update.patch \
+    file://0007-mfis-add-poll.patch \
 "
 
 SRC_URI_append_ecube = " file://ecube.cfg"
