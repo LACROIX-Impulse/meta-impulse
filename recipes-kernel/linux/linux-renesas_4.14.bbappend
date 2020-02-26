@@ -10,6 +10,7 @@ SRC_URI_append_ecube = " \
     file://0005-mfis-driver-kernel.patch \
     file://0006-mfis-driver-update.patch \
     file://0007-mfis-add-poll.patch \
+    file://0008-mfis-add-virtual_cameras.patch \
 "
 
 SRC_URI_append_ecube = " file://ecube.cfg"
