@@ -1,6 +1,6 @@
 diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
 --- a/drivers/hwspinlock/rcar_hwspinlock.c	2020-02-25 12:04:59.309918000 +0100
-+++ b/drivers/hwspinlock/rcar_hwspinlock.c	2020-02-26 16:03:45.755709500 +0100
++++ b/drivers/hwspinlock/rcar_hwspinlock.c	2020-02-27 17:03:49.124869600 +0100
 @@ -69,7 +69,8 @@
  
  /* Device file definitions */
@@ -76,8 +76,8 @@ diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hws
 +    {
 +       memcpy(&vin_size[OFFSET_VIRT_CAM], val_read, sizeof(val_read));
 +       message_received = 0;
-+    }
-+
+ }
+ 
 +    lock_ioctl_read = 0;
 +    for(i = OFFSET_VIRT_CAM; i < OFFSET_VIRT_CAM + MFIS_MSG_SIZE; i ++)
 +    {
@@ -98,14 +98,14 @@ diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hws
 +        printk(KERN_DEBUG "Vin %d, physical address %llx %llx %llx, virtual address %llx %llx %llx of size %d \n",
 +            i, address_vin_1[i], address_vin_2[i], address_vin_3[i], address_vin_virt1[i], address_vin_virt2[i],
 +            address_vin_virt3[i], vin_size[i]);
- }
- 
++    }
++
 +return 1;
 +}
  
  /******************************************************************************************
   *
-@@ -620,6 +678,69 @@
+@@ -620,6 +678,100 @@
      return 1;
  }
  
@@ -137,7 +137,7 @@ diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hws
 +{
 +    int cam_read_id;
 +    char tx_buff[len];
-+    int buffer_id;
++    static int buffer_id = 0;
 +    int32_t val_write[MFIS_MSG_SIZE];
 +
 +    /* File iminor is used to determine wich cam file is called */
@@ -149,17 +149,42 @@ diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hws
 +        return -EACCES;
 +    }
 +
-+    /* ToDo: Handle multi buffers */
-+    buffer_id = 0;
-+
-+    /* Check if the buffer exists */
-+    if (address_vin_virt1[cam_read_id] == 0)
++    /* Handle the 3 buffers */
++    if (0 == buffer_id)
 +    {
-+        return -EACCES;
++        /* Check if the buffer exists */
++        if (address_vin_virt1[cam_read_id] == 0)
++        {
++            return -EACCES;
++        }
++        if (copy_from_user(address_vin_virt1[cam_read_id], (void*) buffer, len))
++        {
++            return -EACCES;
++        }
 +    }
-+    if (copy_from_user(address_vin_virt1[cam_read_id], (void*) buffer, len))
++    if (1 == buffer_id)
 +    {
-+        return -EACCES;
++        /* Check if the buffer exists */
++        if (address_vin_virt2[cam_read_id] == 0)
++        {
++            return -EACCES;
++        }
++        if (copy_from_user(address_vin_virt2[cam_read_id], (void*) buffer, len))
++        {
++            return -EACCES;
++        }
++    }
++    if (2 == buffer_id)
++    {
++        /* Check if the buffer exists */
++        if (address_vin_virt3[cam_read_id] == 0)
++        {
++            return -EACCES;
++        }
++        if (copy_from_user(address_vin_virt3[cam_read_id], (void*) buffer, len))
++        {
++            return -EACCES;
++        }
 +    }
 +
 +    /* Send a MFIS message to indicate eView that a new frame as been written (with cam ID and buffer ID) */
@@ -168,6 +193,12 @@ diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hws
 +    val_write[2] = buffer_id;
 +    mfis_send_msg_config(val_write);
 +
++    /* Update the buffer id */
++    buffer_id++;
++    if (3 == buffer_id) {
++        buffer_id = 0;
++    }
++
 +    /* Return the number of bytes written */
 +    return len;
 +}
@@ -175,7 +206,7 @@ diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hws
  /***********************************************************************************************************************
   *
   * Function Name: mfis_cam_poll
-@@ -668,6 +789,7 @@
+@@ -668,6 +820,7 @@
      .open = mfis_cam_open,
      .release = mfis_cam_close,
      .read = mfis_cam_read,
