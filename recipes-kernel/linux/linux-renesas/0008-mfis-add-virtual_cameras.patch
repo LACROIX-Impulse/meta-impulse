@@ -1,0 +1,225 @@
+diff -Naurw a/drivers/hwspinlock/rcar_hwspinlock.c b/drivers/hwspinlock/rcar_hwspinlock.c
+--- a/drivers/hwspinlock/rcar_hwspinlock.c	2020-02-25 12:04:59.309918000 +0100
++++ b/drivers/hwspinlock/rcar_hwspinlock.c	2020-03-02 17:53:28.384545400 +0100
+@@ -69,7 +69,8 @@
+ 
+ /* Device file definitions */
+ #define NB_IOCTL_FILE   1
+-#define NB_CAM_FILE     8
++#define NB_CAM_FILE     16
++#define OFFSET_VIRT_CAM 8
+ #define NB_DEVICE_FILE   (NB_IOCTL_FILE + NB_CAM_FILE)
+ 
+ /* IRQ parsing definitions */
+@@ -80,6 +81,8 @@
+ #define MFIS_IRQ_CONFIG             0x0
+ #define MFIS_IRQ_CAM_FRAME          0x1
+ 
++#define FCT_VIRTUAL_CAM_UPDATE      254
++
+ /* Others */
+ #define ASCII_OFFSET        48
+ 
+@@ -121,6 +124,7 @@
+ static int mfis_check_R7_irq_state(void);
+ static long mfis_config_ioctl(struct file *f, unsigned int cmd, unsigned long arg);
+ static ssize_t mfis_cam_read(struct file *filep, char *buffer, size_t len, loff_t *offset);
++static ssize_t mfis_cam_write(struct file *filep, const char *buffer, size_t len, loff_t *offset);
+ static int rcar_hwspinlock_trylock(struct hwspinlock *lock);
+ static void rcar_hwspinlock_unlock(struct hwspinlock *lock);
+ static int rcar_hwspinlock_probe(struct platform_device *pdev);
+@@ -155,7 +159,7 @@
+     /* Send message to R7 */
+     mfis_send_msg_config(val_write);
+ 
+-
++    /* Real cameras */
+     wait_event_interruptible(wait_queue_config_it, wait_queue_config_flag);
+     wait_queue_config_flag = 0;
+     if (message_received == 1)
+@@ -185,7 +189,6 @@
+        message_received = 0;
+     }
+     
+-    lock_ioctl_read = 0;
+     for(i = 0; i < MFIS_MSG_SIZE; i ++)
+     {		
+ 	if (address_vin_1 [i] != 0) /* if we try to met a null address everything will crash*/
+@@ -201,11 +204,66 @@
+ 	   address_vin_virt3[i] =memremap(address_vin_3[i], vin_size[i], MEMREMAP_WB);
+ 	}
+                
+-	printk(KERN_DEBUG "Vin %d, physical address %llx %llx %llx, virtual address %llx %llx %llx of size %d \n", i, address_vin_1[i], address_vin_2[i], address_vin_3[i], address_vin_virt1[i], address_vin_virt2[i], address_vin_virt3[i], vin_size[i]);
++        printk(KERN_DEBUG "Vin %d, physical address %llx %llx %llx, virtual address %llx %llx %llx of size %d \n",
++            i, address_vin_1[i], address_vin_2[i], address_vin_3[i], address_vin_virt1[i], address_vin_virt2[i],
++            address_vin_virt3[i], vin_size[i]);
+     }
+-return 1;
++
++    /* Virtual cameras */
++    wait_event_interruptible(wait_queue_config_it, wait_queue_config_flag);
++    wait_queue_config_flag = 0;
++    if (message_received == 1)
++    {
++       memcpy(&address_vin_1[OFFSET_VIRT_CAM], val_read, sizeof(val_read));
++       message_received =0;
++    }
++    wait_event_interruptible(wait_queue_config_it, wait_queue_config_flag);
++    wait_queue_config_flag = 0;
++    if (message_received == 1)
++    {
++       memcpy(&address_vin_2[OFFSET_VIRT_CAM], val_read, sizeof(val_read));
++       message_received =0;
++    }
++    wait_event_interruptible(wait_queue_config_it, wait_queue_config_flag);
++    wait_queue_config_flag = 0;
++    if (message_received == 1)
++    {
++       memcpy(&address_vin_3[OFFSET_VIRT_CAM], val_read, sizeof(val_read));
++       message_received =0;
++    }
++    wait_event_interruptible(wait_queue_config_it, wait_queue_config_flag);
++    wait_queue_config_flag = 0;
++    if (message_received == 1)
++    {
++       memcpy(&vin_size[OFFSET_VIRT_CAM], val_read, sizeof(val_read));
++       message_received = 0;
++    }
++
++    for(i = OFFSET_VIRT_CAM; i < OFFSET_VIRT_CAM + MFIS_MSG_SIZE; i ++)
++    {
++        /* Check that the pointer exists */
++        if (address_vin_1[i] != 0)
++        {
++            address_vin_virt1[i] = memremap(address_vin_1[i], vin_size[i], MEMREMAP_WB);
++        }
++        if (address_vin_2[i] != 0)
++        {
++            address_vin_virt2[i] = memremap(address_vin_2[i], vin_size[i], MEMREMAP_WB);
++        }
++        if(address_vin_3[i] != 0)
++        {
++            address_vin_virt3[i] = memremap(address_vin_3[i], vin_size[i], MEMREMAP_WB);
+ }
+ 
++        printk(KERN_DEBUG "Vin %d, physical address %llx %llx %llx, virtual address %llx %llx %llx of size %d \n",
++            i, address_vin_1[i], address_vin_2[i], address_vin_3[i], address_vin_virt1[i], address_vin_virt2[i],
++            address_vin_virt3[i], vin_size[i]);
++    }
++
++    lock_ioctl_read = 0;
++
++return 1;
++}
+ 
+ /******************************************************************************************
+  *
+@@ -620,6 +678,100 @@
+     return 1;
+ }
+ 
++/**************************************************************************************************************************************************************************************/
++
++/******************************************************************************************
++ *
++ * Function Name: mfis_cam_write
++ *
++ * Purpose:
++ *
++ * Input Parameters:     filep
++ *                         Char device file
++ *                       buffer
++ *                         Buffer of data from the user
++ *                       len
++ *                         Length to write
++ *                       offset
++ *                         Offset to start the write (unused here)
++ *
++ * Output Parameters:    N/A
++ *
++ * Return:               Length wrote (in bytes)
++ *
++ * Comment: None
++ *
++ *******************************************************************************************/
++static ssize_t mfis_cam_write(struct file *filep, const char *buffer, size_t len, loff_t *offset)
++{
++    int cam_read_id;
++    char tx_buff[len];
++    static int buffer_id[NB_CAM_FILE - OFFSET_VIRT_CAM] = {0};
++    int32_t val_write[MFIS_MSG_SIZE];
++
++    /* File iminor is used to determine wich cam file is called */
++    cam_read_id = iminor(filep->f_inode);
++
++    /* Only the virtual cameras should be writable (between OFFSET_VIRT_CAM and NB_CAM_FILE */
++    if ((OFFSET_VIRT_CAM > cam_read_id) || (NB_CAM_FILE <= cam_read_id))
++    {
++        return -EACCES;
++    }
++
++    /* Handle the 3 buffers */
++    if (0 == buffer_id[cam_read_id - OFFSET_VIRT_CAM])
++    {
++        /* Check if the buffer exists */
++        if (address_vin_virt1[cam_read_id] == 0)
++        {
++            return -EACCES;
++        }
++        if (copy_from_user(address_vin_virt1[cam_read_id], (void*) buffer, len))
++        {
++            return -EACCES;
++        }
++    }
++    if (1 == buffer_id[cam_read_id - OFFSET_VIRT_CAM])
++    {
++        /* Check if the buffer exists */
++        if (address_vin_virt2[cam_read_id] == 0)
++        {
++            return -EACCES;
++        }
++        if (copy_from_user(address_vin_virt2[cam_read_id], (void*) buffer, len))
++        {
++            return -EACCES;
++        }
++    }
++    if (2 == buffer_id[cam_read_id - OFFSET_VIRT_CAM])
++    {
++        /* Check if the buffer exists */
++        if (address_vin_virt3[cam_read_id] == 0)
++        {
++            return -EACCES;
++        }
++        if (copy_from_user(address_vin_virt3[cam_read_id], (void*) buffer, len))
++        {
++            return -EACCES;
++        }
++    }
++
++    /* Send a MFIS message to indicate eView that a new frame as been written (with cam ID and buffer ID) */
++    val_write[0] = FCT_VIRTUAL_CAM_UPDATE;
++    val_write[1] = cam_read_id;
++    val_write[2] = buffer_id[cam_read_id - OFFSET_VIRT_CAM];
++    mfis_send_msg_config(val_write);
++
++    /* Update the buffer id */
++    buffer_id[cam_read_id - OFFSET_VIRT_CAM]++;
++    if (3 == buffer_id[cam_read_id - OFFSET_VIRT_CAM]) {
++        buffer_id[cam_read_id - OFFSET_VIRT_CAM] = 0;
++    }
++
++    /* Return the number of bytes written */
++    return len;
++}
++
+ /***********************************************************************************************************************
+  *
+  * Function Name: mfis_cam_poll
+@@ -668,6 +820,7 @@
+     .open = mfis_cam_open,
+     .release = mfis_cam_close,
+     .read = mfis_cam_read,
++    .write = mfis_cam_write,
+     .poll = mfis_cam_poll
+ };
+ 
