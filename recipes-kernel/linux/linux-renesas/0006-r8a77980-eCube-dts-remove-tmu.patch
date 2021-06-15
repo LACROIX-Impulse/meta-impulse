@@ -1,0 +1,43 @@
+From f490bd6b38a3d678af61c66191d93dcdd032f250 Mon Sep 17 00:00:00 2001
+From: OpenEmbedded <oe.patch@oe>
+Date: Mon, 7 Sep 2020 10:08:58 +0000
+Subject: [PATCH] r8a77980 eCube dts: remove tmu
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dts | 20 --------------------
+ 1 file changed, 20 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
+index 205e9eb..929a3ac 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
+@@ -263,26 +263,6 @@
+ 	status = "okay";
+ };
+ 
+-&tmu0 {
+-	status = "okay";
+-};
+-
+-&tmu1 {
+-	status = "okay";
+-};
+-
+-&tmu2 {
+-	status = "okay";
+-};
+-
+-&tmu3 {
+-	status = "okay";
+-};
+-
+-&tmu4 {
+-	status = "okay";
+-};
+-
+ &cmt0 {
+ 	status = "okay";
+ };
+-- 
+2.7.4
+

@@ -1,0 +1,146 @@
+#!/bin/sh
+
+filepath="/etc/systemd/network/eth0.network"
+ip=""
+mask=""
+gateway=""
+mode=""
+
+validate_ip()
+{
+    # Set up local variables
+    local iptest=${1:-1.2.3.4}
+    local IFS=.; local -a a=($iptest)
+    # Start with a regex format test
+    [[ $iptest =~ ^[0-9]+(\.[0-9]+){3}$ ]] || return 1
+    # Test values of quads
+    local quad
+    for quad in {0..3}; do
+        [[ "10#${a[$quad]}" -gt 255 ]] && return 1
+    done 
+    return 0
+}
+
+remove_leading_0()
+{
+    echo $1 | sed -r 's/^0*([0-9]+)\.0*([0-9]+)\.0*([0-9]+)\.0*([0-9]+)$/\1.\2.\3.\4/'
+}
+
+netmask_to_ipprefix()
+{
+    prefix=0 x=0$( printf '%o' ${1//./ } )
+    while [ $x -gt 0 ]; do 
+        let prefix+=$((x%2)) 'x>>=1'
+    done
+}
+
+get_config()
+{
+    local static=""
+    local g_yn=""
+    while [[ $static != y ]] && [[ $static != n ]]
+    do
+        read -p "Do you want to configure your eCube with static IP? (y/n)" static
+    done
+    if [ $static = n ]
+    then
+        echo "Setting eCube in DHCP mode"
+        mode="DHCP"
+    elif [ $static = y ]
+    then
+        echo "Setting eCube in static mode"
+        mode="STATIC"
+        while true
+        do
+            read -p "eCube new IP address? (XXX.XXX.XXX.XXX) " ip
+            if validate_ip $ip
+            then
+                ip=$(remove_leading_0 $ip)
+                break
+            else
+                echo "The IP address is not valid, please try again"
+            fi
+        done
+        while true
+        do
+            read -p "eCube new IP mask? (XXX.XXX.XXX.XXX) " mask
+            if validate_ip $mask
+            then
+                mask=$(remove_leading_0 $mask)
+                break
+            else
+                echo "The mask is not valid, please try again"
+            fi
+        done
+        while [[ $g_yn != y ]] && [[ $g_yn != n ]]
+        do
+            read -p "Do you want to configure a Gateway? (y/n)" g_yn
+        done
+        if [ $g_yn = y ]
+        then
+            while true
+            do 
+                read -p "eCube Gateway address? (XXX.XXX.XXX.XXX) " gateway
+                if validate_ip $gateway 
+                then
+                    gateway=$(remove_leading_0 $gateway)
+                    break
+                else
+                    echo "The Gateway address is not valid, please try again"
+                fi
+            done 
+        fi
+    fi
+}
+
+write_config()
+{
+if [[ $mode = "STATIC" ]]
+then
+netmask_to_ipprefix $mask
+cat << EOF > $1
+[Match]
+Name=eth0
+
+[Network]
+Address=$ip/$prefix
+Gateway=$gateway
+EOF
+
+elif [[ $mode = "DHCP" ]]
+then
+cat << EOF > $1
+[Match]
+Name=eth0
+
+[Network]
+DHCP=ipv4
+EOF
+fi
+}
+file="/home/root/test"
+
+while [[ $correct != "y" ]]
+do
+    get_config
+    if [[ -n $mode ]]
+    then
+        echo "Your configured the IP mode as '$mode'"
+    fi
+    if [[ -n $ip ]]
+    then
+        echo "You configured the IP as '$ip'"
+    fi
+    if [[ -n $mask ]]
+    then
+        echo "You configured the Mask as '$mask'"
+    fi
+    if [[ -n $gateway ]]
+    then
+        echo "You configured the Gateway as '$gateway'"
+    fi
+    read -p "Does this configuration seems correct ? (y/n) " correct
+done
+
+write_config $filepath
+systemctl restart systemd-networkd

@@ -1,28 +1,25 @@
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-old mode 100644
-new mode 100755
-index c5859629..4ba0b98
+index 991f8a5..1fcfc9e 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -150,6 +150,21 @@
- 		#address-cells = <2>;
+@@ -149,6 +149,20 @@
  		#size-cells = <2>;
  		ranges;
-+		
-+	    mfis: mfis@e6260000 {
-+			compatible = "renesas,mfis-lock-r8a77990",
-+				     "renesas,mfis-lock";
+ 
++		eviewitf-mfis@e6260000 {
++			compatible = "eviewitf-mfis";
 +			reg = <0 0xe6260000 0 0x1000>;
 +			#hwlock-cells = <1>;
-+			interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH 
-+                         GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH 
-+                         GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH 
-+                         GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH 
-+                         GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH 
-+                         GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH 
-+                         GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH
-+                         GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 228 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 230 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>;
 +		};
- 
++
  		rwdt: watchdog@e6020000 {
  			compatible = "renesas,r8a77980-wdt",
+ 				     "renesas,rcar-gen3-wdt";
