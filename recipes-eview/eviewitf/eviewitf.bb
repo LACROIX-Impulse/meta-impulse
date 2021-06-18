@@ -1,15 +1,17 @@
 SUMMARY = "eviewitf"
 SECTION = "libs"
-LICENSE = "eSoftThings"
-LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=c6afb05c83ee3f78ca6877faf927aede"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=a63d66b53961a05540c4e46bd15d33da"
 
 PACKAGE_ARCH = "all"
 
-SRCTAG = "0.7"
-#SRCREV = "6fa73ce54f6485bc5ea8ad1cae609e15b3718bc4"
-#SRCBRANCH = "release/0.5"
+DEPENDS = "kernel-module-eviewitf-mfis"
 
-SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;tag=${SRCTAG}"
+SRCTAG = "1.0.0"
+#SRCREV = "efb9e33b1d8fa990df7778c5aae5027cb97a4ed2"
+#SRCBRANCH = "feature/EMIRROR-836-eviewitf-update-license-file"
+
+SRC_URI = "git://github.com/LACROIX-Impulse/eview_itf.git;protocol=https;tag=${SRCTAG}"
 #SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git/"
