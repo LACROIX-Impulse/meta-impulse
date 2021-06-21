@@ -1,7 +1,7 @@
-From 8d2f857ecc6487e9b3344d20a44e9941756cea99 Mon Sep 17 00:00:00 2001
+From c72f8a20aa3e3d9db8512a954e4d8854f3902261 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 22:05:08 +0000
-Subject: [PATCH 4/7] arm64: dts: renesas: eViewItf mfis driver
+Subject: [PATCH 4/8] arm64: dts: renesas: eViewItf mfis driver
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 14 ++++++++++++++

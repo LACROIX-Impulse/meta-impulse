@@ -1,7 +1,7 @@
-From b8fd99228c7592eb204b078919b56de5b4560403 Mon Sep 17 00:00:00 2001
+From 8345ebad42b744074d0bbc7356e1790d50bea403 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 21:56:07 +0000
-Subject: [PATCH 2/7] arm64: dts: renesas: activate pcie on eCube board
+Subject: [PATCH 2/8] arm64: dts: renesas: activate pcie on eCube board
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dts | 12 ++++++++++++

@@ -1,7 +1,7 @@
-From 42a0cefb94983d113131758f9caf9ce0581a2e2d Mon Sep 17 00:00:00 2001
+From f3d39abb0c224be4c6b20d479368850ac37e3059 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 22:11:44 +0000
-Subject: [PATCH 7/7] Do not stop cortex R7
+Subject: [PATCH 7/8] Do not stop cortex R7
 
 ---
  drivers/soc/renesas/r8a77980-sysc.c | 3 ++-

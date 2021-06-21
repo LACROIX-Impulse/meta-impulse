@@ -1,7 +1,7 @@
-From aef1daa98f404d7f9c3dc76c58aaa9c464a78d06 Mon Sep 17 00:00:00 2001
+From 035952c8bb25ae4c96724a9b26702fea364850ee Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 21:54:20 +0000
-Subject: [PATCH 1/7] arm64: dts: renesas: add eCube board
+Subject: [PATCH 1/8] arm64: dts: renesas: add eCube board
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dts  |  399 +++

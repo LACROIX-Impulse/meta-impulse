@@ -1,7 +1,7 @@
-From a768a1db5d2077168c15658c9674d6a1fafc78e4 Mon Sep 17 00:00:00 2001
+From 096cac79ad50e4de46b536a366328d794b336bad Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 22:02:51 +0000
-Subject: [PATCH 3/7] arm64: dts: renesas: eView coexecution patch
+Subject: [PATCH 3/8] arm64: dts: renesas: eView coexecution patch
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dts  | 16 ++++++++--------

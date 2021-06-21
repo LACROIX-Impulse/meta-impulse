@@ -1,7 +1,7 @@
-From f5972d345d3627ad9af988aad2f6b5765487d0f8 Mon Sep 17 00:00:00 2001
+From 396306107afb9b4836833e6f146abb45e8810bef Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 22:10:11 +0000
-Subject: [PATCH 6/7] r8a77980 eCube dts: decrease MMC max frequency
+Subject: [PATCH 6/8] r8a77980 eCube dts: decrease MMC max frequency
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dts | 1 +

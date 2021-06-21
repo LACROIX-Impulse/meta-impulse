@@ -1,7 +1,7 @@
-From 4d2255cefbaa6fb40c4d1f1f543945e335877b3f Mon Sep 17 00:00:00 2001
+From 288101b87c68ca6c94575299a26828cf327e6234 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 12 May 2021 22:08:09 +0000
-Subject: [PATCH 5/7] Add SPI/MFIS device nodes and compatibility with spidev
+Subject: [PATCH 5/8] Add SPI/MFIS device nodes and compatibility with spidev
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 30 +++++++++++++++++++++++++

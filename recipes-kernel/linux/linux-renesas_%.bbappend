@@ -10,6 +10,7 @@ SRC_URI_append_ecube = " \
     file://0005-Add-SPI-MFIS-device-nodes-and-compatibility-with-spi.patch \
     file://0006-r8a77980-eCube-dts-decrease-MMC-max-frequency.patch \
     file://0007-Do-not-stop-cortex-R7.patch \
+    file://0008-arm64-dts-renesas-remove-iccom-devices-from-eCube-dt.patch \
 "
 
 KERNEL_DEVICETREE_append_ecube= " \
