@@ -25,3 +25,8 @@ SRC_URI = " \
 S = "${WORKDIR}"
 
 COMPATIBLE_MACHINE = "(ecube)"
+
+do_compile_prepend() {
+   export BASE_MODULE_PATH="${STAGING_INCDIR}"
+}
+

@@ -1,6 +1,6 @@
 obj-m := spi-mfis.o
 # $src is a Kbuild variable. Using $SRC (defined above of course) doesn't work.
-ccflags-y := -I$(src)/recipe-sysroot/usr/include/
+ccflags-y += -I$(BASE_MODULE_PATH)
 #ccflags-y += -DDEBUG
 
 SRC := $(shell pwd)

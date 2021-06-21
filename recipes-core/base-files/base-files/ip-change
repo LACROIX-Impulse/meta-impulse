@@ -1,6 +1,6 @@
 #!/bin/sh
 
-filepath="/etc/systemd/network/eth0.network"
+filepath="/etc/systemd/network/70-eth0.network"
 ip=""
 mask=""
 gateway=""

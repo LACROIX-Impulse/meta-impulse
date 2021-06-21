@@ -1,0 +1,65 @@
+From 918e03f1fe168f71a3ad449603f0fb43029bae97 Mon Sep 17 00:00:00 2001
+From: OpenEmbedded <oe.patch@oe>
+Date: Fri, 9 Apr 2021 12:40:58 +0000
+Subject: [PATCH 5/7] Add SPI/MFIS device nodes and compatibility with spidev
+ driver
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 30 +++++++++++++++++++++++++
+ drivers/spi/spidev.c                            |  1 +
+ 2 files changed, 31 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
+index 7b078b3..f30436d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
+@@ -1647,4 +1647,34 @@
+ 				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
+ 				       IRQ_TYPE_LEVEL_LOW)>;
+ 	};
++
++	spi-mfis {
++		compatible = "spi-mfis";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		spidev@0 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <1000000>;
++			reg = <0>;
++		};
++
++		spidev@1 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <1000000>;
++			reg = <1>;
++		};
++
++		spidev@2 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <1000000>;
++			reg = <2>;
++		};
++
++		spidev@3 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <1000000>;
++			reg = <3>;
++		};
++	};
+ };
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index 255786f..bcdc8ab 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -665,6 +665,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+ 	{ .compatible = "lwn,bk4" },
+ 	{ .compatible = "dh,dhcom-board" },
+ 	{ .compatible = "menlo,m53cpld" },
++	{ .compatible = "spi-mfis" },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, spidev_dt_ids);
+-- 
+2.7.4
+

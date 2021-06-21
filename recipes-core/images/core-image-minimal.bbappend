@@ -1,4 +1,10 @@
+COMPATIBLE_MACHINE_ecube = "ecube"
+
 require recipes-eview/images/core-image-esoftthings-base.inc
 
-IMAGE_INSTALL_append = "initscript"
-IMAGE_INSTALL_remove = "packagegroup-opencv-sdk packagegroup-surroundview-drm packagegroup-bsp-utest"
+IMAGE_INSTALL_append = " \
+    kernel-module-spi-mfis \
+    kernel-module-eviewitf-mfis \
+    initscript \
+"
+
