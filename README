@@ -5,11 +5,10 @@ Dependencies
 
 This layer shall be added to Yocto v4.1.0 (https://elinux.org/R-Car/Boards/Yocto-Gen3-ADAS#Build_SDK)
 
- * poky - git://git.yoctoproject.org/poky - 5e1f52edb7a9f790fb6cb5d96502f3690267c1b1
- * meta-openembedded - git://git.openembedded.org/meta-openembedded - 9e60d30669a2ad0598e9abf0cd15ee06b523986b
- * meta-renesas - git://github.com/renesas-rcar/meta-renesas - f6ccae7cfb669937aac221ff5cb6a13b36eff951
- * meta-rcar - git://github.com/CogentEmbedded/meta-rcar.git - 970d70a5ba745adabbd3c3201a7ebea0b13fa2e2
- * meta-mingw - git://git.yoctoproject.org/meta-mingw - 756963cc28ebc163df7d7f4b4ee004c18d3d3260
+ * poky - git://git.yoctoproject.org/poky - 012ad10a89a889c21e67c27dc37d22520212548f
+ * meta-openembedded - git://git.openembedded.org/meta-openembedded - 2a5c534d2b9f01e9c0f39701fccd7fc874945b1c
+ * meta-renesas - git://github.com/renesas-rcar/meta-renesas - a2b4973d1be6d27a431d9218e9c3fa1313746682
+ * meta-mingw - git://git.yoctoproject.org/meta-mingw - 524de686205b5d6736661d4532f5f98fee8589b7
 
 Patches
 =======
@@ -24,5 +23,5 @@ Buid eCube BSP image using core-image-minimal
 ```
 $ source poky/oe-init-build-env
 $ cp ../meta-impulse/docs/sample/conf/ecube/poky-gcc/bsp/*.conf ./conf/
-$ bitbake --postread=/home/esoftthings/extra.conf core-image-minimal
+$ bitbake rcar-image-adas
 ```
