@@ -3,7 +3,7 @@ SECTION = "libs"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=a63d66b53961a05540c4e46bd15d33da"
 
-PACKAGE_ARCH = "all"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "kernel-module-eviewitf-mfis"
 
