@@ -1,0 +1,24 @@
+From 531dace82afdc741f7f6bb5665fd013c1ceff89b Mon Sep 17 00:00:00 2001
+From: OpenEmbedded <oe.patch@oe>
+Date: Fri, 9 Apr 2021 12:44:41 +0000
+Subject: [PATCH 6/7] r8a77980 eCube dts: decrease MMC max frequecy
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
+index f50dc8a..97697b9 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
+@@ -230,6 +230,7 @@
+ };
+ 
+ &mmc0 {
++	max-frequency = <100000000>;
+ 	/* used for on-board eMMC */
+ 	pinctrl-0 = <&mmc_pins>;
+ 	pinctrl-1 = <&mmc_pins_uhs>;
+-- 
+2.7.4
+

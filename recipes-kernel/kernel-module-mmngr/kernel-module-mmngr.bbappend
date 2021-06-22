@@ -1,1 +1,3 @@
+COMPATIBLE_MACHINE_ecube = "ecube"
+
 MMNGR_CFG_ecube = "MMNGR_V3MSK"

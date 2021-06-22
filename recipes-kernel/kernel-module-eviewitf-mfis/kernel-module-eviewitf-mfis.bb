@@ -31,9 +31,11 @@ do_install_append() {
     install -Dm0644 ${S}/include/linux/eviewitf-mfis.h ${D}/${includedir}/linux/eviewitf-mfis.h
     install -Dm0644 ${S}/include/linux/eviewitf-mfis-driver.h ${D}/${includedir}/linux/eviewitf-mfis-driver.h
     rm -rf ${D}/${includedir}/kernel-module-eviewitf-mfis
+    install -Dm0644 "${B}/${MODULES_MODULE_SYMVERS_LOCATION}"/Module.symvers ${D}${includedir}/${BPN}/Module.symvers
 }
 
 FILES_${PN}-${KERNEL_VERSION} += "${includedir}/linux/eviewitf-mfis.h"
-FILES_${PN}-dev = "${includedir}/linux/eviewitf-mfis-driver.h"
+FILES_${PN}-dev += "${includedir}/linux/eviewitf-mfis-driver.h"
+FILES_${PN}-dev += "${includedir}/${BPN}/Module.symvers"
 
 COMPATIBLE_MACHINE = "(ecube)"

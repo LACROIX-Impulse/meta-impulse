@@ -3,14 +3,13 @@ Yocto BSP layer for eCube board based on V3H SoC
 Dependencies
 ============
 
-This layer shall be added to Yocto v3.9.0 (https://elinux.org/R-Car/Boards/Yocto-Gen3-ADAS#Build_SDK)
+This layer shall be added to Yocto v4.1.0 (https://elinux.org/R-Car/Boards/Yocto-Gen3-ADAS#Build_SDK)
 
- * poky - git://git.yoctoproject.org/poky - 342fbd6a3e57021c8e28b124b3adb241936f3d9d
- * meta-openembedded - git://git.openembedded.org/meta-openembedded - dacfa2b1920e285531bec55cd2f08743390aaf57
- * meta-linaro - git://git.linaro.org/openembedded/meta-linaro.git - 75dfb67bbb14a70cd47afda9726e2e1c76731885
- * meta-renesas - git://github.com/renesas-rcar/meta-renesas - fd078b6ece537d986852cb827bd21e022a797b2f
- * meta-rcar - git://github.com/CogentEmbedded/meta-rcar.git - e3eefda3ef47bccb18e00ffcbcedbd7f93573914
- * meta-mingw - git://git.yoctoproject.org/meta-mingw - 1cc620b38f6f30a0bdd181783297998fe073387f
+ * poky - git://git.yoctoproject.org/poky - 5e1f52edb7a9f790fb6cb5d96502f3690267c1b1
+ * meta-openembedded - git://git.openembedded.org/meta-openembedded - 9e60d30669a2ad0598e9abf0cd15ee06b523986b
+ * meta-renesas - git://github.com/renesas-rcar/meta-renesas - f6ccae7cfb669937aac221ff5cb6a13b36eff951
+ * meta-rcar - git://github.com/CogentEmbedded/meta-rcar.git - 970d70a5ba745adabbd3c3201a7ebea0b13fa2e2
+ * meta-mingw - git://git.yoctoproject.org/meta-mingw - 756963cc28ebc163df7d7f4b4ee004c18d3d3260
 
 Patches
 =======

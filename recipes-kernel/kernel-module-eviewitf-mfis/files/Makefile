@@ -1,5 +1,5 @@
 obj-m := eviewitf-mfis.o
-ccflags-y := -DDEBUG
+#ccflags-y := -DDEBUG
 
 SRC := $(PWD)
 

@@ -1,0 +1,93 @@
+From 40eb3ec60441cb7b8a22e99a366f76de04ed8a7a Mon Sep 17 00:00:00 2001
+From: OpenEmbedded <oe.patch@oe>
+Date: Fri, 9 Apr 2021 10:08:19 +0000
+Subject: [PATCH 3/7] arm64: dts: renesas: eView coexecution patch
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dts  | 16 ++++++++--------
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi |  2 ++
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
+index 99a1593..f50dc8a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
+@@ -131,7 +131,7 @@
+ 	clocks = <&cpg CPG_MOD 724>,
+ 		 <&osc1_clk>;
+ 	clock-names = "du.0", "dclkin.0";
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &extal_clk {
+@@ -175,7 +175,7 @@
+ 	pinctrl-0 = <&i2c0_pins>;
+ 	pinctrl-names = "default";
+ 
+-	status = "okay";
++	status = "disabled";
+ 	clock-frequency = <400000>;
+ 
+ 	hdmi@39 {
+@@ -218,7 +218,7 @@
+ };
+ 
+ &lvds0 {
+-	status = "okay";
++	status = "disabled";
+ 
+ 	ports {
+ 		port@1 {
+@@ -367,23 +367,23 @@
+ };
+ 
+ &tmu0 {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &tmu1 {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &tmu2 {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &tmu3 {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &tmu4 {
+-	status = "okay";
++	status = "disabled";
+ };
+ 
+ &cmt0 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
+index 6f22995..5d764a2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
+@@ -1427,6 +1427,7 @@
+ 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 623>;
+ 			renesas,fcp = <&fcpvd0>;
++			status = "disabled";
+ 		};
+ 
+ 		fcpvd0: fcp@fea27000 {
+@@ -1435,6 +1436,7 @@
+ 			clocks = <&cpg CPG_MOD 603>;
+ 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
+ 			resets = <&cpg 603>;
++			status = "disabled";
+ 		};
+ 
+ 		csi40: csi2@feaa0000 {
+-- 
+2.7.4
+
