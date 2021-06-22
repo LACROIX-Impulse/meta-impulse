@@ -1,17 +1,17 @@
-From 9f39e93c72ed3f1ecfc5537a3a9185d9e91e563b Mon Sep 17 00:00:00 2001
+From f3d39abb0c224be4c6b20d479368850ac37e3059 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Mon, 12 Apr 2021 13:18:21 +0000
-Subject: [PATCH 7/7] Do not stop cortex R7
+Date: Wed, 12 May 2021 22:11:44 +0000
+Subject: [PATCH 7/8] Do not stop cortex R7
 
 ---
  drivers/soc/renesas/r8a77980-sysc.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/soc/renesas/r8a77980-sysc.c b/drivers/soc/renesas/r8a77980-sysc.c
-index a8dbe55..8eca5af 100644
+index f75143f..663aea0 100644
 --- a/drivers/soc/renesas/r8a77980-sysc.c
 +++ b/drivers/soc/renesas/r8a77980-sysc.c
-@@ -25,7 +25,8 @@ static const struct rcar_sysc_area r8a77980_areas[] __initconst = {
+@@ -33,7 +33,8 @@ static struct rcar_sysc_area r8a77980_areas[] __initdata = {
  	  PD_CPU_NOCR },
  	{ "ca53-cpu3",	0x200, 3, R8A77980_PD_CA53_CPU3, R8A77980_PD_CA53_SCU,
  	  PD_CPU_NOCR },

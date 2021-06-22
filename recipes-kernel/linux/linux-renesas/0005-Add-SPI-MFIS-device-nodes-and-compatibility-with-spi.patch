@@ -1,8 +1,7 @@
-From 918e03f1fe168f71a3ad449603f0fb43029bae97 Mon Sep 17 00:00:00 2001
+From 288101b87c68ca6c94575299a26828cf327e6234 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Fri, 9 Apr 2021 12:40:58 +0000
-Subject: [PATCH 5/7] Add SPI/MFIS device nodes and compatibility with spidev
- driver
+Date: Wed, 12 May 2021 22:08:09 +0000
+Subject: [PATCH 5/8] Add SPI/MFIS device nodes and compatibility with spidev
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 30 +++++++++++++++++++++++++
@@ -10,10 +9,10 @@ Subject: [PATCH 5/7] Add SPI/MFIS device nodes and compatibility with spidev
  2 files changed, 31 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-index 7b078b3..f30436d 100644
+index 96151ca..dbcc56a 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-@@ -1647,4 +1647,34 @@
+@@ -3094,4 +3094,34 @@
  				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
  				       IRQ_TYPE_LEVEL_LOW)>;
  	};
@@ -49,10 +48,10 @@ index 7b078b3..f30436d 100644
 +	};
  };
 diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 255786f..bcdc8ab 100644
+index be503a0..c6f37ff 100644
 --- a/drivers/spi/spidev.c
 +++ b/drivers/spi/spidev.c
-@@ -665,6 +665,7 @@ static const struct of_device_id spidev_dt_ids[] = {
+@@ -678,6 +678,7 @@ static const struct of_device_id spidev_dt_ids[] = {
  	{ .compatible = "lwn,bk4" },
  	{ .compatible = "dh,dhcom-board" },
  	{ .compatible = "menlo,m53cpld" },
