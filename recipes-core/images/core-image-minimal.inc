@@ -1,4 +1,3 @@
-COMPATIBLE_MACHINE_ecube = "ecube"
 
 require recipes-eview/images/core-image-esoftthings-base.inc
 

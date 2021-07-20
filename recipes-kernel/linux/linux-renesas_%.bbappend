@@ -1,7 +1,5 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-COMPATIBLE_MACHINE_ecube = "ecube"
-
 SRC_URI_append_ecube = " \
     file://0001-arm64-dts-renesas-add-eCube-board.patch \
     file://0002-arm64-dts-renesas-activate-pcie-on-eCube-board.patch \
