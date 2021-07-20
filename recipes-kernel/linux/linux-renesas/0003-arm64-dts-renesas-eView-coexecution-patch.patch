@@ -1,7 +1,7 @@
-From 096cac79ad50e4de46b536a366328d794b336bad Mon Sep 17 00:00:00 2001
+From b38eaddbf30149bcb7398dd8c8bf540fb01d320a Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Wed, 12 May 2021 22:02:51 +0000
-Subject: [PATCH 3/8] arm64: dts: renesas: eView coexecution patch
+Date: Tue, 20 Jul 2021 15:31:21 +0000
+Subject: [PATCH] arm64: dts: renesas: eView coexecution patch
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dts  | 16 ++++++++--------
@@ -9,10 +9,10 @@ Subject: [PATCH 3/8] arm64: dts: renesas: eView coexecution patch
  2 files changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
-index b086c62..9bcfa15 100644
+index ccce37e..f03fe57 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
-@@ -139,7 +139,7 @@
+@@ -133,7 +133,7 @@
  	clocks = <&cpg CPG_MOD 724>,
  		 <&osc1_clk>;
  	clock-names = "du.0", "dclkin.0";
@@ -21,7 +21,7 @@ index b086c62..9bcfa15 100644
  };
  
  &extal_clk {
-@@ -183,7 +183,7 @@
+@@ -177,7 +177,7 @@
  	pinctrl-0 = <&i2c0_pins>;
  	pinctrl-names = "default";
  
@@ -30,7 +30,7 @@ index b086c62..9bcfa15 100644
  	clock-frequency = <400000>;
  
  	hdmi@39 {
-@@ -226,7 +226,7 @@
+@@ -220,7 +220,7 @@
  };
  
  &lvds0 {
@@ -39,7 +39,7 @@ index b086c62..9bcfa15 100644
  
  	ports {
  		port@1 {
-@@ -375,23 +375,23 @@
+@@ -369,23 +369,23 @@
  };
  
  &tmu0 {
@@ -69,10 +69,10 @@ index b086c62..9bcfa15 100644
  
  &cmt0 {
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-index 4ef1e9f..bcbb36e 100644
+index ec208a2..331f755 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-@@ -2130,6 +2130,7 @@
+@@ -2146,6 +2146,7 @@
  			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
  			resets = <&cpg 623>;
  			renesas,fcp = <&fcpvd0>;
@@ -80,7 +80,7 @@ index 4ef1e9f..bcbb36e 100644
  		};
  
  		fcpvd0: fcp@fea27000 {
-@@ -2138,6 +2139,7 @@
+@@ -2154,6 +2155,7 @@
  			clocks = <&cpg CPG_MOD 603>;
  			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
  			resets = <&cpg 603>;
@@ -88,7 +88,7 @@ index 4ef1e9f..bcbb36e 100644
  		};
  
  		csi40: csi_00@feaa0000 {
-@@ -2147,7 +2149,7 @@
+@@ -2163,7 +2165,7 @@
  			clocks = <&cpg CPG_MOD 716>;
  			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
  			resets = <&cpg 716>;
@@ -97,7 +97,7 @@ index 4ef1e9f..bcbb36e 100644
  
  			ports {
  				#address-cells = <1>;
-@@ -2186,7 +2188,7 @@
+@@ -2202,7 +2204,7 @@
  			clocks = <&cpg CPG_MOD 715>;
  			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
  			resets = <&cpg 715>;
@@ -106,6 +106,3 @@ index 4ef1e9f..bcbb36e 100644
  
  			ports {
  				#address-cells = <1>;
--- 
-2.7.4
-

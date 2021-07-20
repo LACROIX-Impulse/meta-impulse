@@ -1,28 +1,28 @@
-From 035952c8bb25ae4c96724a9b26702fea364850ee Mon Sep 17 00:00:00 2001
+From fe26406e6b4baa4819926e047649e58c024844ef Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Wed, 12 May 2021 21:54:20 +0000
-Subject: [PATCH 1/8] arm64: dts: renesas: add eCube board
+Date: Tue, 20 Jul 2021 15:29:14 +0000
+Subject: [PATCH] arm64: dts: renesas: add eCube board
 
 ---
- arch/arm64/boot/dts/renesas/r8a77980-ecube.dts  |  399 +++
- arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 3081 +++++++++++++++++++++++
- 2 files changed, 3480 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dts  |  393 +++
+ arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 3097 +++++++++++++++++++++++
+ 2 files changed, 3490 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
 new file mode 100644
-index 0000000..c89a824
+index 0000000..6801ebb
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
-@@ -0,0 +1,399 @@
+@@ -0,0 +1,393 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for the V3H Starter Kit board
 + *
 + * Copyright (C) 2018 Renesas Electronics Corp.
 + * Copyright (C) 2018 Cogent Embedded, Inc.
-+ * Copyright (C) 2021 LACROIX - Impulse, Inc.
++ * Copyright (C) 2021 LACROIX - Impulse
 + */
 +
 +/dts-v1/;
@@ -88,22 +88,16 @@ index 0000000..c89a824
 +		#size-cells = <2>;
 +		ranges;
 +
-+		/* device specific region for Lossy Decompression */
-+		lossy_decompress: linux,lossy_decompress {
-+			no-map;
-+			reg = <0x00000000 0x7c000000 0x0 0x03000000>;
-+		};
-+
 +		/* global autoconfigured region for contiguous allocations */
-+		linux,cma@57000000 {
++		linux,cma@58000000 {
 +			compatible = "shared-dma-pool";
 +			reusable;
-+			reg = <0x00000000 0x57000000 0x0 0x19000000>;
++			reg = <0x00000000 0x58000000 0x0 0x18000000>;
 +			linux,cma-default;
 +		};
 +
 +		/* device specific region for contiguous allocations */
-+		mmp_reserved: linux,multimedia {
++		mmp_reserved: linux,multimedia@7f000000 {
 +			compatible = "shared-dma-pool";
 +			reusable;
 +			reg = <0x00000000 0x7f000000 0x0 0x01000000>;
@@ -112,7 +106,7 @@ index 0000000..c89a824
 +
 +	mmngr {
 +		compatible = "renesas,mmngr";
-+		memory-region = <&mmp_reserved>, <&lossy_decompress>;
++		memory-region = <&mmp_reserved>;
 +	};
 +
 +	mmngrbuf {
@@ -417,17 +411,17 @@ index 0000000..c89a824
 +};
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
 new file mode 100644
-index 0000000..4ef1e9f
+index 0000000..ec208a2
 --- /dev/null
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-@@ -0,0 +1,3081 @@
+@@ -0,0 +1,3097 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Device Tree Source for the R-Car V3H (R8A77980) SoC
 + *
 + * Copyright (C) 2018 Renesas Electronics Corp.
 + * Copyright (C) 2018 Cogent Embedded, Inc.
-+ * Copyright (C) 2021 Impulse, Inc.
++ * Copyright (C) 2021 LACROIX - Impulse
 + */
 +
 +#include <dt-bindings/clock/r8a77980-cpg-mssr.h>
@@ -1325,7 +1319,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 811>;
 +			renesas,id = <0>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -1352,7 +1346,7 @@ index 0000000..4ef1e9f
 +			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 810>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
-+			status = "disabled";
++			status = "enabled";
 +			renesas,id = <1>;
 +			resets = <&cpg 810>;
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
@@ -1383,7 +1377,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 809>;
 +			renesas,id = <2>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -1412,7 +1406,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 808>;
 +			renesas,id = <3>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -1441,7 +1435,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 807>;
 +			renesas,id = <4>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -1470,7 +1464,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 806>;
 +			renesas,id = <5>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -1499,7 +1493,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 805>;
 +			renesas,id = <6>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -1528,7 +1522,7 @@ index 0000000..4ef1e9f
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			resets = <&cpg 804>;
 +			renesas,id = <7>;
-+			status = "disabled";
++			status = "enabled";
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +
 +			ports {
@@ -2360,6 +2354,8 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 0>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_ir: mmu@ff8b0000 {
@@ -2368,6 +2364,8 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 3>;
 +			power-domains = <&sysc R8A77980_PD_A3IR>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_mm: mmu@e67b0000 {
@@ -2377,6 +2375,8 @@ index 0000000..4ef1e9f
 +				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_rt: mmu@ffc80000 {
@@ -2385,6 +2385,8 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 10>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_vc0: mmu@fe990000 {
@@ -2393,6 +2395,8 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 12>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_vi0: mmu@febd0000 {
@@ -2401,6 +2405,8 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 14>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_vip0: mmu@e7b00000 {
@@ -2409,6 +2415,8 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 4>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
 +		ipmmu_vip1: mmu@e7960000 {
@@ -2417,23 +2425,25 @@ index 0000000..4ef1e9f
 +			renesas,ipmmu-main = <&ipmmu_mm 11>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			#iommu-cells = <1>;
++
++			status = "disabled";
 +		};
 +
-+		ipmmu_ds1 {
++		ipmmu_cache_ds_01 {
 +			compatible = "generic-uio";
 +			reg = <0 0xe7740000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			ipmmu-id = <RCAR_IPMMU_DS1 0>;
 +		};
 +
-+		ipmmu_ir {
++		ipmmu_cache_ir_00 {
 +			compatible = "generic-uio";
 +			reg = <0 0xff8b0000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_A3IR>;
 +			ipmmu-id = <RCAR_IPMMU_IR 0>;
 +		};
 +
-+		ipmmu_mm {
++		ipmmu_mm_00 {
 +			compatible = "generic-uio";
 +			reg = <0 0xe67b0000 0 0x1000>;
 +			interrupts = <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>;
@@ -2441,7 +2451,7 @@ index 0000000..4ef1e9f
 +			ipmmu-id = <RCAR_IPMMU_MM 0>;
 +		};
 +
-+		irq_ipmmu_mm_01 {
++		irq_ipmmu_mm_00_01 {
 +			compatible = "generic-uio";
 +			reg = <0 0xe67b0000 0 0x1000>;
 +			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>;
@@ -2449,35 +2459,35 @@ index 0000000..4ef1e9f
 +			ipmmu-id = <RCAR_IPMMU_MM 0>;
 +		};
 +
-+		ipmmu_rt {
++		ipmmu_cache_rt_00 {
 +			compatible = "generic-uio";
 +			reg = <0 0xffc80000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			ipmmu-id = <RCAR_IPMMU_RT0 0>;
 +		};
 +
-+		ipmmu_vc0 {
++		ipmmu_cache_vc_00 {
 +			compatible = "generic-uio";
 +			reg = <0 0xfe990000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			ipmmu-id = <RCAR_IPMMU_VC0 0>;
 +		};
 +
-+		ipmmu_vi0 {
++		ipmmu_cache_vi_00 {
 +			compatible = "generic-uio";
 +			reg = <0 0xfebd0000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			ipmmu-id = <RCAR_IPMMU_VI0 0>;
 +		};
 +
-+		ipmmu_vip0 {
++		ipmmu_cache_vip_00 {
 +			compatible = "generic-uio";
 +			reg = <0 0xe7b00000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
 +			ipmmu-id = <RCAR_IPMMU_VIP0 0>;
 +		};
 +
-+		ipmmu_vip1 {
++		ipmmu_cache_vip_01 {
 +			compatible = "generic-uio";
 +			reg = <0 0xe7960000 0 0x1000>;
 +			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
@@ -3502,6 +3512,3 @@ index 0000000..4ef1e9f
 +				       IRQ_TYPE_LEVEL_LOW)>;
 +	};
 +};
--- 
-2.7.4
-
