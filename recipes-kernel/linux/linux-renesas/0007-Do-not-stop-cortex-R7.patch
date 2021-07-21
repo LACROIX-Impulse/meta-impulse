@@ -1,4 +1,4 @@
-From 135a2d068e7f73dd5ce983496cfba857141b03d6 Mon Sep 17 00:00:00 2001
+From 0492b506bd06628db10a74799472cf0699a67eed Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:34:29 +0000
 Subject: [PATCH] Do not stop cortex R7

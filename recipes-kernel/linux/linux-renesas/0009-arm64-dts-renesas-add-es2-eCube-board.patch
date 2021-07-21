@@ -1,0 +1,34 @@
+From f25ca2de581a7b85d354df1ebe38dec5440c10f7 Mon Sep 17 00:00:00 2001
+From: OpenEmbedded <oe.patch@oe>
+Date: Wed, 21 Jul 2021 16:39:45 +0000
+Subject: [PATCH] arm64: dts: renesas: add es2-eCube board
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980-es2-ecube.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77980-es2-ecube.dts
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-es2-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-es2-ecube.dts
+new file mode 100644
+index 0000000..827c6eb
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77980-es2-ecube.dts
+@@ -0,0 +1,18 @@
++/*
++ * Device Tree Source for the V3H Starter Kit board on r8a7798 ES2.0
++ *
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
++ * Copyright (c) 2021 LACROIX - Impulse
++ *
++ * This file is licensed under the terms of the GNU General Public License
++ * version 2.  This program is licensed "as is" without any warranty of any
++ * kind, whether express or implied.
++ */
++
++#include "r8a77980-ecube.dts"
++#include "r8a77980-es2.dtsi"
++
++/ {
++	model = "Renesas V3H Starter Kit board based on r8a7798 ES2.0";
++};

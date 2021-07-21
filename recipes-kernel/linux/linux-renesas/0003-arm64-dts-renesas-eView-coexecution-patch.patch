@@ -1,4 +1,4 @@
-From b38eaddbf30149bcb7398dd8c8bf540fb01d320a Mon Sep 17 00:00:00 2001
+From eda28c1c20d201525fdddb3fde3863b73d835493 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:31:21 +0000
 Subject: [PATCH] arm64: dts: renesas: eView coexecution patch
