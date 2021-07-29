@@ -1,4 +1,4 @@
-From cef908e58616961965756f6030114f10984087ed Mon Sep 17 00:00:00 2001
+From a51ed6b5a7d5290a8705a51d7049c84fdc29e6f8 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:35:07 +0000
 Subject: [PATCH] arm64: dts: renesas: remove iccom devices from eCube dtb

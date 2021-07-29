@@ -1,4 +1,4 @@
-From b31269ec7cea31d3ed2413670fabc2b89876696b Mon Sep 17 00:00:00 2001
+From b6703d306ba0d7f14ba7515353bc35de74333a5d Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:33:51 +0000
 Subject: [PATCH] r8a77980 eCube dts: decrease MMC max frequency

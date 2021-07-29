@@ -1,4 +1,4 @@
-From 290bed3179dfff4323b84d9580fe8199ccfa305e Mon Sep 17 00:00:00 2001
+From 9dbe1142463b681ba753ec8019a7e70987a3932f Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:33:04 +0000
 Subject: [PATCH] Add SPI/MFIS device nodes and compatibility with spidev
