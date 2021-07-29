@@ -1,7 +1,7 @@
-From f3d39abb0c224be4c6b20d479368850ac37e3059 Mon Sep 17 00:00:00 2001
+From 135a2d068e7f73dd5ce983496cfba857141b03d6 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Wed, 12 May 2021 22:11:44 +0000
-Subject: [PATCH 7/8] Do not stop cortex R7
+Date: Tue, 20 Jul 2021 15:34:29 +0000
+Subject: [PATCH] Do not stop cortex R7
 
 ---
  drivers/soc/renesas/r8a77980-sysc.c | 3 ++-
@@ -21,6 +21,3 @@ index f75143f..663aea0 100644
  	{ "a3ir",	0x180, 0, R8A77980_PD_A3IR,	R8A77980_PD_ALWAYS_ON },
  	{ "a2ir0",	0x400, 0, R8A77980_PD_A2IR0,	R8A77980_PD_A3IR },
  	{ "a2ir1",	0x400, 1, R8A77980_PD_A2IR1,	R8A77980_PD_A3IR },
--- 
-2.7.4
-

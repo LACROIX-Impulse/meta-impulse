@@ -1,7 +1,7 @@
-From 288101b87c68ca6c94575299a26828cf327e6234 Mon Sep 17 00:00:00 2001
+From 290bed3179dfff4323b84d9580fe8199ccfa305e Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Wed, 12 May 2021 22:08:09 +0000
-Subject: [PATCH 5/8] Add SPI/MFIS device nodes and compatibility with spidev
+Date: Tue, 20 Jul 2021 15:33:04 +0000
+Subject: [PATCH] Add SPI/MFIS device nodes and compatibility with spidev
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 30 +++++++++++++++++++++++++
@@ -9,10 +9,10 @@ Subject: [PATCH 5/8] Add SPI/MFIS device nodes and compatibility with spidev
  2 files changed, 31 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-index 96151ca..dbcc56a 100644
+index 616e01d..4eaa668 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-@@ -3094,4 +3094,34 @@
+@@ -3110,4 +3110,34 @@
  				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
  				       IRQ_TYPE_LEVEL_LOW)>;
  	};
@@ -59,6 +59,3 @@ index be503a0..c6f37ff 100644
  	{},
  };
  MODULE_DEVICE_TABLE(of, spidev_dt_ids);
--- 
-2.7.4
-

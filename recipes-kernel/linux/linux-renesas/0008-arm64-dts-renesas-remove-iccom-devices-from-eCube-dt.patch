@@ -1,17 +1,17 @@
-From 1c2e805f606b0195aedd0eb7a5833d5a160df542 Mon Sep 17 00:00:00 2001
+From cef908e58616961965756f6030114f10984087ed Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Thu, 20 May 2021 06:25:57 +0000
-Subject: [PATCH 8/8] arm64: dts: renesas: remove iccom devices from eCube dtb
+Date: Tue, 20 Jul 2021 15:35:07 +0000
+Subject: [PATCH] arm64: dts: renesas: remove iccom devices from eCube dtb
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi | 178 ------------------------
  1 file changed, 178 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-index dbcc56a..b29bcf1 100644
+index 4eaa668..44a54b8 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dtsi
-@@ -2298,184 +2298,6 @@
+@@ -2314,184 +2314,6 @@
  			reg = <0 0xfff00044 0 4>;
  		};
  
@@ -196,6 +196,3 @@ index dbcc56a..b29bcf1 100644
  		qos@e67e0000 {
  			compatible = "renesas,qos";
  			reg = <0 0xe67e0000 0 0x10090>;
--- 
-2.7.4
-

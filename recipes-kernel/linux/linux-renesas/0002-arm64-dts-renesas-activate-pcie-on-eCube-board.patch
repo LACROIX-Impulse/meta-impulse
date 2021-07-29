@@ -1,17 +1,17 @@
-From 8345ebad42b744074d0bbc7356e1790d50bea403 Mon Sep 17 00:00:00 2001
+From e93fe6136f48fce4615bc1e4fc23791f0dc34523 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
-Date: Wed, 12 May 2021 21:56:07 +0000
-Subject: [PATCH 2/8] arm64: dts: renesas: activate pcie on eCube board
+Date: Tue, 20 Jul 2021 15:30:35 +0000
+Subject: [PATCH] arm64: dts: renesas: activate pcie on eCube board
 
 ---
  arch/arm64/boot/dts/renesas/r8a77980-ecube.dts | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
-index c89a824..b086c62 100644
+index 6801ebb..ccce37e 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
 +++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube.dts
-@@ -167,6 +167,18 @@
+@@ -161,6 +161,18 @@
  	};
  };
  
@@ -30,6 +30,3 @@ index c89a824..b086c62 100644
  &i2c0 {
  	pinctrl-0 = <&i2c0_pins>;
  	pinctrl-names = "default";
--- 
-2.7.4
-
