@@ -1047,6 +1047,7 @@ static struct file_operations mfis_fops = {
 
 static const struct file_operations mfis_cam_fops = {
 	.owner   = THIS_MODULE,
+	.llseek  = default_llseek,
 	.open    = eviewitf_mfis_cam_open,
 	.release = eviewitf_mfis_cam_close,
 	.read    = eviewitf_mfis_cam_read,
@@ -1056,6 +1057,7 @@ static const struct file_operations mfis_cam_fops = {
 
 static const struct file_operations mfis_blend_fops = {
 	.owner   = THIS_MODULE,
+	.llseek  = default_llseek,
 	.open    = eviewitf_mfis_blend_open,
 	.release = eviewitf_mfis_blend_close,
 	.write   = eviewitf_mfis_blend_write,
