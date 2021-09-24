@@ -764,14 +764,14 @@ static ssize_t eviewitf_mfis_cam_read(struct file *filep, char *buffer, size_t l
 	/* file iminor is used to determine wich cam file is called.
 	   The cam file numbers start at 0. It is defined in the probe fct */
 	int cam_read_id = iminor(filep->f_inode);
-	int last_frame;
+	int last_frame = cam_last_frame[cam_read_id];
 	int uncopyed_bytes = 0;
+	size_t checked_len = 0;
 	wait_queue_cam_flag[cam_read_id] = 0;
 	/* Prepare TX buffer with last cam ID and number of IRQ since last read */
 	if (len == 0) {
 		return -EINVAL;
 	}
-	last_frame = cam_last_frame[cam_read_id];
 
 	if ((last_frame < 0) || (last_frame >= NB_CAM_BUFFER)) {
 		pr_err("Virtual camera buffer does not exist\n");
@@ -782,7 +782,22 @@ static ssize_t eviewitf_mfis_cam_read(struct file *filep, char *buffer, size_t l
 		return -EACCES;
 	}
 
-	uncopyed_bytes = copy_to_user(buffer, (void *)cameras[cam_read_id].buffer_address[last_frame], len);
+	/* Do not copy data outside buffer */
+	if (len > (cameras[cam_read_id].buffer_size - *offset)) {
+		checked_len = cameras[cam_read_id].buffer_size - *offset;
+	} else  {
+		checked_len = len;
+	}
+
+	/* Copy usig current offset */
+	uncopyed_bytes = copy_to_user(buffer, (void *)(cameras[cam_read_id].buffer_address[last_frame] + *offset), checked_len);
+
+	/* Change offset */
+	*offset = *offset + checked_len - uncopyed_bytes;
+
+	/* Compute real uncopyed_bytes */
+	uncopyed_bytes += len - checked_len;
+
 	return (ssize_t)(len - uncopyed_bytes);
 }
 
@@ -815,6 +830,7 @@ static ssize_t eviewitf_mfis_cam_write(struct file *filep, const char *buffer, s
 	int buffer_id;
 	uint32_t val_write[EVIEWITF_MFIS_MSG_SIZE];
 	int uncopyed_bytes = 0;
+	size_t checked_len = 0;
 
 	if (len == 0) {
 		return -EINVAL;
@@ -829,12 +845,6 @@ static ssize_t eviewitf_mfis_cam_write(struct file *filep, const char *buffer, s
 		return -EACCES;
 	}
 
-	/* Check the buffer size */
-	if (cameras[cam_read_id].buffer_size < len) {
-		pr_err("Inconsistent buffer size\n");
-		return  -EINVAL;
-	}
-
 	/* Check buffer ID */
 	buffer_id = buffer_ids[cam_read_id - NB_REAL_CAM_FILE];
 	if ((buffer_id < 0) || (buffer_id >= NB_CAM_BUFFER)) {
@@ -847,7 +857,18 @@ static ssize_t eviewitf_mfis_cam_write(struct file *filep, const char *buffer, s
 		pr_err("Virtual camera buffer does not exist\n");
 		return -EACCES;
 	}
-	uncopyed_bytes = copy_from_user(cameras[cam_read_id].buffer_address[buffer_id], (void *)buffer, len);
+
+	/* Do not write data outside buffer */
+	if (len > (cameras[cam_read_id].buffer_size - *offset)) {
+		checked_len = cameras[cam_read_id].buffer_size - *offset;
+	} else  {
+		checked_len = len;
+	}
+
+	uncopyed_bytes = copy_from_user(cameras[cam_read_id].buffer_address[buffer_id] + *offset, (void *)buffer, checked_len);
+
+	/* Compute real uncopyed_bytes */
+	uncopyed_bytes += len - checked_len;
 
 	/* Send a MFIS message to indicate eView that a new frame as been written (with cam ID and buffer ID) */
 	val_write[0] = FCT_UPDATE_STREAMER;
@@ -931,6 +952,7 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 	static int blend_buffer_id[NB_BLEND_FILE] = {0};
 	uint32_t val_rw[EVIEWITF_MFIS_MSG_SIZE];
 	int uncopyed_bytes = 0;
+	size_t checked_len = 0;
 
 	blend_device_id = iminor(filep->f_inode) - NB_CAM_FILE;
 	if (len == 0) {
@@ -940,11 +962,6 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 	/* Check the device id */
 	if ((blend_device_id  < 0) || (blend_device_id >= NB_BLEND_FILE)) {
 		pr_err("Inconsistent device id for blending\n");
-		return -EINVAL;
-	}
-	/* Check the buffer size */
-	if ( blendings[blend_device_id].buffer_size  < len ) {
-		pr_err("Inconsistent buffer size\n");
 		return -EINVAL;
 	}
 
@@ -959,7 +976,19 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 		pr_err("Blending buffer does not exist\n");
 		return -EACCES;
 	}
-	uncopyed_bytes = copy_from_user(blendings[blend_device_id].buffer_address[blend_buffer_id[blend_device_id]], (void *)buffer, len);
+
+	/* Do not write data outside buffer */
+	if (len > (blendings[blend_device_id].buffer_size - *offset)) {
+		checked_len = blendings[blend_device_id].buffer_size - *offset;
+	} else  {
+		checked_len = len;
+	}
+
+	uncopyed_bytes = copy_from_user(blendings[blend_device_id].buffer_address[blend_buffer_id[blend_device_id]], (void *)buffer, checked_len);
+
+	/* Compute real uncopyed_bytes */
+	uncopyed_bytes += len - checked_len;
+
 
 	/* Send a MFIS message to indicate eView that a new frame as been written (with cam ID and buffer ID) */
 	val_rw[0] = FCT_UPDATE_BLENDING;
