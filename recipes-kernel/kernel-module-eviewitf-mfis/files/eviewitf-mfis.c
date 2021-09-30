@@ -876,6 +876,9 @@ static ssize_t eviewitf_mfis_cam_write(struct file *filep, const char *buffer, s
 	val_write[2] = buffer_id;
 	eviewitf_mfis_send_msg_internal(val_write);
 
+	/* Set offset back to 0 as we flip the current buffer */
+	*offset = 0;
+
 	/* Update the buffer id */
 	buffer_ids[cam_read_id - NB_REAL_CAM_FILE]++;
 	if (NB_CAM_BUFFER == buffer_ids[cam_read_id - NB_REAL_CAM_FILE]) {
@@ -996,6 +999,9 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 	val_rw[2] = blend_buffer_id[blend_device_id];
 	eviewitf_mfis_send_msg_internal(val_rw);
 
+	/* Set offset back to 0 as we flip the current buffer */
+	*offset = 0;
+
 	/* Update the buffer id */
 	blend_buffer_id[blend_device_id]++;
 	if (NB_BLENDING_BUFFER == blend_buffer_id[blend_device_id]) {
@@ -1028,6 +1034,8 @@ static unsigned int eviewitf_mfis_cam_poll(struct file *filp, struct poll_table_
 	/* check if data has been read */
 	if (wait_queue_cam_flag[cam_read_id]) {
 		mask |= POLLIN | POLLRDNORM;
+		/* Force file position update */
+		filp->f_pos = 0;
 	} else {
 		return 0;
 	}
