@@ -1,13 +1,13 @@
 SUMMARY = "eviewitf"
 SECTION = "libs"
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=a63d66b53961a05540c4e46bd15d33da"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/git/LICENSE;md5=fd1b89b0d4476c14237aaf827567f133"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "kernel-module-eviewitf-mfis"
 
-SRCTAG = "1.0.0"
+SRCTAG = "1.1.0"
 #SRCREV = "efb9e33b1d8fa990df7778c5aae5027cb97a4ed2"
 #SRCBRANCH = "feature/EMIRROR-836-eviewitf-update-license-file"
 
