@@ -785,6 +785,10 @@ static ssize_t eviewitf_mfis_cam_read(struct file *filep, char *buffer, size_t l
 	/* Do not copy data outside buffer */
 	if (len > (cameras[cam_read_id].buffer_size - *offset)) {
 		checked_len = cameras[cam_read_id].buffer_size - *offset;
+		/* Ensure we have a non negative vaue here */
+		if (checked_len < 0) {
+			checked_len = 0;
+		}
 	} else  {
 		checked_len = len;
 	}
@@ -795,10 +799,7 @@ static ssize_t eviewitf_mfis_cam_read(struct file *filep, char *buffer, size_t l
 	/* Change offset */
 	*offset = *offset + checked_len - uncopyed_bytes;
 
-	/* Compute real uncopyed_bytes */
-	uncopyed_bytes += len - checked_len;
-
-	return (ssize_t)(len - uncopyed_bytes);
+	return (ssize_t)(checked_len - uncopyed_bytes);
 }
 
 /*******************************************************************************
@@ -867,9 +868,6 @@ static ssize_t eviewitf_mfis_cam_write(struct file *filep, const char *buffer, s
 
 	uncopyed_bytes = copy_from_user(cameras[cam_read_id].buffer_address[buffer_id] + *offset, (void *)buffer, checked_len);
 
-	/* Compute real uncopyed_bytes */
-	uncopyed_bytes += len - checked_len;
-
 	/* Send a MFIS message to indicate eView that a new frame as been written (with cam ID and buffer ID) */
 	val_write[0] = FCT_UPDATE_STREAMER;
 	val_write[1] = cam_read_id;
@@ -886,7 +884,7 @@ static ssize_t eviewitf_mfis_cam_write(struct file *filep, const char *buffer, s
 	}
 
 	/* Return the number of bytes written */
-	return (len - uncopyed_bytes);
+	return (ssize_t)(checked_len - uncopyed_bytes);
 }
 
 /*******************************************************************************
@@ -989,10 +987,6 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 
 	uncopyed_bytes = copy_from_user(blendings[blend_device_id].buffer_address[blend_buffer_id[blend_device_id]], (void *)buffer, checked_len);
 
-	/* Compute real uncopyed_bytes */
-	uncopyed_bytes += len - checked_len;
-
-
 	/* Send a MFIS message to indicate eView that a new frame as been written (with cam ID and buffer ID) */
 	val_rw[0] = FCT_UPDATE_BLENDING;
 	val_rw[1] = blend_device_id;
@@ -1009,7 +1003,7 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 	}
 
 	/* Return the number of bytes written */
-	return (len - uncopyed_bytes);
+	return (ssize_t)(checked_len - uncopyed_bytes);
 }
 
 /*******************************************************************************
