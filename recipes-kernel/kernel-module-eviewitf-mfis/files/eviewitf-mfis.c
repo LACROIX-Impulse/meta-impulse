@@ -266,6 +266,7 @@ static int mfis_retrieve_mapping(void)
 					for ( i = 0; i < NB_CAM_BUFFER; i++) {
 						/* If we try to met a null address everything will crash */
 						if (val_read[4+i] != 0) {
+							/* Check type using eviewitf-mfis to mfis convertion (no None value) */
 							if (cameras[cam_id].cam_type == EVIEWITF_MFIS_CAM_TYPE_VIRTUAL - 1) {
 								cameras[cam_id].buffer_address[i] = memremap(val_read[4+i], cameras[cam_id].buffer_size, MEMREMAP_WT);
 							} else {
