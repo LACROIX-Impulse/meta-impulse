@@ -266,7 +266,12 @@ static int mfis_retrieve_mapping(void)
 					for ( i = 0; i < NB_CAM_BUFFER; i++) {
 						/* If we try to met a null address everything will crash */
 						if (val_read[4+i] != 0) {
-							cameras[cam_id].buffer_address[i] = memremap(val_read[4+i], cameras[cam_id].buffer_size, MEMREMAP_WB);
+							/* Check type using eviewitf-mfis to mfis convertion (no None value) */
+							if (cameras[cam_id].cam_type == EVIEWITF_MFIS_CAM_TYPE_VIRTUAL - 1) {
+								cameras[cam_id].buffer_address[i] = memremap(val_read[4+i], cameras[cam_id].buffer_size, MEMREMAP_WT);
+							} else {
+								cameras[cam_id].buffer_address[i] = memremap(val_read[4+i], cameras[cam_id].buffer_size, MEMREMAP_WB);
+							}
 						}
 						pr_debug("Camera %d, physical address %x, virtual address %p of size %d\n",
 							cam_id, val_read[4+i], cameras[cam_id].buffer_address[i], cameras[cam_id].buffer_size);
@@ -285,7 +290,7 @@ static int mfis_retrieve_mapping(void)
 					for ( i = 0; i < NB_BLENDING_BUFFER; i++) {
 						/* If we try to met a null address everything will crash */
 						if (val_read[4+i] != 0) {
-							blendings[blending_id].buffer_address[i] = memremap(val_read[4+i], blendings[blending_id].buffer_size, MEMREMAP_WB);
+							blendings[blending_id].buffer_address[i] = memremap(val_read[4+i], blendings[blending_id].buffer_size, MEMREMAP_WT);
 						}
 						pr_debug("Blending %d, physical address %x, virtual address %p of size %d\n",
 							blending_id, val_read[4+i], blendings[blending_id].buffer_address[i], blendings[blending_id].buffer_size);
