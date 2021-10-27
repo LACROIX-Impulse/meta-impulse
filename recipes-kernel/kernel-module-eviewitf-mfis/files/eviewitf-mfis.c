@@ -1040,7 +1040,7 @@ static unsigned int eviewitf_mfis_cam_poll(struct file *filp, struct poll_table_
 		filp->f_pos = 0;
 		/* Sync cache */
 		virtual_addr = (unsigned long)cameras[cam_read_id].buffer_address[buffer_id];
-		if (virtual_addr != 0) {
+		if (virtual_addr) {
 			flush_icache_range(virtual_addr, virtual_addr + cameras[cam_read_id].buffer_size);
 		}
 	} else {
