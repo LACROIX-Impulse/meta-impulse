@@ -17,6 +17,7 @@
 #include <linux/interrupt.h>
 #include <linux/poll.h>
 #include <linux/spinlock.h>
+#include <asm/cacheflush.h>
 
 #include "include/linux/eviewitf-mfis.h"
 #include "mfis-shared.h"
@@ -1026,7 +1027,9 @@ static ssize_t eviewitf_mfis_blend_write(struct file *filep, const char *buffer,
 static unsigned int eviewitf_mfis_cam_poll(struct file *filp, struct poll_table_struct *wait)
 {
 	int cam_read_id = iminor(filp->f_inode);
+	int buffer_id = cam_last_frame[cam_read_id];
 	unsigned int mask = 0;
+	unsigned long virtual_addr = 0;
 
 	poll_wait(filp, &wait_queue_cam_it[cam_read_id], wait);
 
@@ -1035,6 +1038,11 @@ static unsigned int eviewitf_mfis_cam_poll(struct file *filp, struct poll_table_
 		mask |= POLLIN | POLLRDNORM;
 		/* Force file position update */
 		filp->f_pos = 0;
+		/* Sync cache */
+		virtual_addr = (unsigned long)cameras[cam_read_id].buffer_address[buffer_id];
+		if (virtual_addr) {
+			__flush_icache_range(virtual_addr, virtual_addr + cameras[cam_read_id].buffer_size);
+		}
 	} else {
 		return 0;
 	}
