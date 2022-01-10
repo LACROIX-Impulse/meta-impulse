@@ -10,6 +10,7 @@ SRC_URI_append_ecube = " \
     file://0007-Do-not-stop-cortex-R7.patch \
     file://0008-arm64-dts-renesas-remove-iccom-devices-from-eCube-dt.patch \
     file://0009-arm64-dts-renesas-add-es2-eCube-board.patch \
+    file://0010-arm64-dts-renesas-adapt-dtsi-for-4.19.1.patch \  
 "
 
 KERNEL_DEVICETREE_append_ecube= " \

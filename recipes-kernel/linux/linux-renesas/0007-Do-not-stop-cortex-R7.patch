@@ -1,4 +1,4 @@
-From 0492b506bd06628db10a74799472cf0699a67eed Mon Sep 17 00:00:00 2001
+From 93dd45f9f1bf634c9bb079e552436ba1d8c908b6 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:34:29 +0000
 Subject: [PATCH] Do not stop cortex R7
@@ -8,7 +8,7 @@ Subject: [PATCH] Do not stop cortex R7
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/soc/renesas/r8a77980-sysc.c b/drivers/soc/renesas/r8a77980-sysc.c
-index f75143f..663aea0 100644
+index c36cab8..947854d 100644
 --- a/drivers/soc/renesas/r8a77980-sysc.c
 +++ b/drivers/soc/renesas/r8a77980-sysc.c
 @@ -33,7 +33,8 @@ static struct rcar_sysc_area r8a77980_areas[] __initdata = {

@@ -1,4 +1,4 @@
-From f25ca2de581a7b85d354df1ebe38dec5440c10f7 Mon Sep 17 00:00:00 2001
+From b7bdfc4a5be921060d46902358bd8332175dea06 Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Wed, 21 Jul 2021 16:39:45 +0000
 Subject: [PATCH] arm64: dts: renesas: add es2-eCube board

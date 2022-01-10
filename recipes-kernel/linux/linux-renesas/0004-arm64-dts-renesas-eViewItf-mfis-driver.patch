@@ -1,4 +1,4 @@
-From d5117c7c9889cf92b92cab469d56a99a974f7c89 Mon Sep 17 00:00:00 2001
+From 1bf4392a529944e0b2f0bcf3426bec921262be8e Mon Sep 17 00:00:00 2001
 From: OpenEmbedded <oe.patch@oe>
 Date: Tue, 20 Jul 2021 15:32:21 +0000
 Subject: [PATCH] arm64: dts: renesas: eViewItf mfis driver
