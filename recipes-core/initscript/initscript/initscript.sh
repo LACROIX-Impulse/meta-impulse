@@ -3,5 +3,5 @@
 # resize MMC partition if not already done
 resize2fs /dev/mmcblk0
 
-# Mask itself
+# mask itself
 systemctl mask initscript
