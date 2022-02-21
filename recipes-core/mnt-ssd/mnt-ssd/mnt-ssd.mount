@@ -1,0 +1,14 @@
+[Unit]
+Description=Mount ssd storage partition
+DefaultDependencies=no
+BindsTo=dev-nvme0n1.device
+After=dev-nvme0n1.device
+
+[Mount]
+What=/dev/nvme0n1
+Where=/mnt/ssd
+Type=ext4
+Options=defaults,rw,noatime
+
+[Install]
+WantedBy=multi-user.target
