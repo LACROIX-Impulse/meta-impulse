@@ -1,4 +1,4 @@
-UMMARY = "Initial boot script"
+SUMMARY = "Initial boot script"
 DESCRIPTION = "Script to do any first boot init, started as a systemd service which removes itself once finished"
 LICENSE = "CLOSED"
 PR = "r3"
