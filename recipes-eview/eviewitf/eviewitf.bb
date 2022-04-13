@@ -7,7 +7,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "kernel-module-eviewitf-mfis"
 
-SRCTAG = "1.3.0"
+SRCTAG = "1.4.0"
 #SRCREV = "efb9e33b1d8fa990df7778c5aae5027cb97a4ed2"
 #SRCBRANCH = "feature/EMIRROR-836-eviewitf-update-license-file"
 
