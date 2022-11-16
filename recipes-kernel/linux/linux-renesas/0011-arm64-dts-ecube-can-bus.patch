@@ -1,0 +1,6664 @@
+From 47a4ca70d6d68c1771f9ce899f49c7746015abe6 Wed Nov 16 09:00:00 2022
+From: Thomas Janvier <th.janvier@lacroix.group>
+Date: Wed, 16 Nov 2022 09:01:00 +0000
+Subject: [PATCH] arm64: dts: renesas: add r8a77980-ecube-can.dts and r8a77980-es2-ecube-can.dts
+
+---
+ arch/arm64/boot/dts/renesas/r8a77980-ecube-can.dts     | 3334 ++++++++++++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77980-es2-ecube-can.dts | 3308 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 6642 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-ecube-can.dts b/arch/arm64/boot/dts/renesas/r8a77980-ecube-can.dts
+new file mode 100644
+index 0000000..e8c515e
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77980-ecube-can.dts
+@@ -0,0 +1,3334 @@
++/dts-v1/;
++
++/ {
++	compatible = "renesas,v3hsk\0renesas,r8a77980";
++	#address-cells = <0x02>;
++	#size-cells = <0x02>;
++	model = "Renesas V3H Starter Kit board with can bus support";
++
++	aliases {
++		i2c0 = "/soc/i2c@e6500000";
++		i2c1 = "/soc/i2c@e6508000";
++		i2c2 = "/soc/i2c@e6510000";
++		i2c3 = "/soc/i2c@e66d0000";
++		i2c4 = "/soc/i2c@e66d8000";
++		i2c5 = "/soc/i2c@e66e0000";
++		isp0 = "/soc/isp@fec00000";
++		isp1 = "/soc/isp@fee00000";
++		tisp0 = "/soc/tisp_00";
++		tisp1 = "/soc/tisp_01";
++		cisp0 = "/soc/cisp_00";
++		cisp1 = "/soc/cisp_01";
++		serial0 = "/soc/serial@e6e60000";
++		ethernet0 = "/soc/ethernet@e7400000";
++	};
++
++	can {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x00>;
++		phandle = <0x16>;
++	};
++
++	cpus {
++		#address-cells = <0x01>;
++		#size-cells = <0x00>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x00>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x05>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x06>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x01>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x06>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x07>;
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x02>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x07>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x08>;
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x03>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x08>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x09>;
++		};
++
++		cache-controller {
++			compatible = "cache";
++			power-domains = <0x02 0x15>;
++			cache-unified;
++			cache-level = <0x02>;
++			phandle = <0x03>;
++		};
++	};
++
++	opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++		phandle = <0x04>;
++
++		opp@1000000000 {
++			opp-hz = <0x00 0x3b9aca00>;
++			opp-microvolt = <0xcf850>;
++			clock-latency-ns = <0x493e0>;
++		};
++	};
++
++	extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0xfe502a>;
++		phandle = <0x0b>;
++	};
++
++	extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x8000>;
++		phandle = <0x0c>;
++	};
++
++	pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x5f5e100>;
++		phandle = <0x30>;
++	};
++
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts-extended = <0x05 0x00 0x54 0x04 0x05 0x00 0x55 0x04 0x05 0x00 0x56 0x04 0x05 0x00 0x57 0x04>;
++		interrupt-affinity = <0x06 0x07 0x08 0x09>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0\0arm,psci-0.2";
++		method = "smc";
++	};
++
++	scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0xe10000>;
++		phandle = <0x15>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <0x05>;
++		#address-cells = <0x02>;
++		#size-cells = <0x02>;
++		ranges;
++
++		eviewitf-mfis@e6260000 {
++			compatible = "eviewitf-mfis";
++			reg = <0x00 0xe6260000 0x00 0x1000>;
++			#hwlock-cells = <0x01>;
++			interrupts = <0x00 0xe0 0x04 0x00 0xe1 0x04 0x00 0xe2 0x04 0x00 0xe3 0x04 0x00 0xe4 0x04 0x00 0xe5 0x04 0x00 0xe6 0x04 0x00 0xe7 0x04>;
++		};
++
++		watchdog@e6020000 {
++			compatible = "renesas,r8a77980-wdt\0renesas,rcar-gen3-wdt";
++			reg = <0x00 0xe6020000 0x00 0x0c>;
++			clocks = <0x01 0x01 0x192>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x192>;
++			status = "okay";
++			timeout-sec = <0x3c>;
++			phandle = <0x45>;
++		};
++
++		gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6050000 0x00 0x50>;
++			interrupts = <0x00 0x04 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x00 0x16>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x390>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x390>;
++			phandle = <0x46>;
++		};
++
++		gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6051000 0x00 0x50>;
++			interrupts = <0x00 0x05 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x20 0x1c>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38f>;
++			phandle = <0x10>;
++		};
++
++		gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6052000 0x00 0x50>;
++			interrupts = <0x00 0x06 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x40 0x1e>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38e>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38e>;
++			phandle = <0x47>;
++		};
++
++		gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6053000 0x00 0x50>;
++			interrupts = <0x00 0x07 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x60 0x11>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38d>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38d>;
++			phandle = <0x48>;
++		};
++
++		gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6054000 0x00 0x50>;
++			interrupts = <0x00 0x08 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x80 0x19>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38c>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38c>;
++			phandle = <0x2b>;
++		};
++
++		gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6055000 0x00 0x50>;
++			interrupts = <0x00 0x09 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0xa0 0x0f>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38b>;
++			phandle = <0x49>;
++		};
++
++		pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a77980";
++			reg = <0x00 0xe6060000 0x00 0x50c>;
++			phandle = <0x0a>;
++
++			gether {
++				groups = "gether_mdio_a\0gether_rgmii\0gether_txcrefclk\0gether_txcrefclk_mega";
++				function = "gether";
++				phandle = <0x29>;
++			};
++
++			i2c0 {
++				groups = "i2c0";
++				function = "i2c0";
++				phandle = <0x0f>;
++			};
++
++			mmc {
++				groups = "mmc_data8\0mmc_ctrl\0mmc_ds";
++				function = "mmc";
++				power-source = <0xce4>;
++				phandle = <0x2d>;
++			};
++
++			mmc_uhs {
++				groups = "mmc_data8\0mmc_ctrl\0mmc_ds";
++				function = "mmc";
++				power-source = <0x708>;
++				phandle = <0x2e>;
++			};
++
++			qspi0 {
++				groups = "qspi0_ctrl\0qspi0_data4";
++				function = "qspi0";
++				phandle = <0x1a>;
++			};
++
++			qspi1 {
++				groups = "qspi1_ctrl\0qspi1_data4";
++				function = "qspi1";
++				phandle = <0x1b>;
++			};
++
++			scif0 {
++				groups = "scif0_data";
++				function = "scif0";
++				phandle = <0x18>;
++			};
++
++			scif_clk {
++				groups = "scif_clk_b";
++				function = "scif_clk";
++				phandle = <0x19>;
++			};
++		};
++
++		timer@e60f0000 {
++			compatible = "renesas,r8a77980-cmt0\0renesas,rcar-gen3-cmt0";
++			reg = <0x00 0xe60f0000 0x00 0x1004>;
++			interrupts = <0x00 0x8e 0x04 0x00 0x8f 0x04>;
++			clocks = <0x01 0x01 0x12f>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12f>;
++			status = "okay";
++			phandle = <0x4a>;
++		};
++
++		timer@e6130000 {
++			compatible = "renesas,r8a77980-cmt1\0renesas,rcar-gen3-cmt1";
++			reg = <0x00 0xe6130000 0x00 0x1004>;
++			interrupts = <0x00 0x78 0x04 0x00 0x79 0x04 0x00 0x7a 0x04 0x00 0x7b 0x04 0x00 0x7c 0x04 0x00 0x7d 0x04 0x00 0x7e 0x04 0x00 0x7f 0x04>;
++			clocks = <0x01 0x01 0x12e>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12e>;
++			status = "okay";
++			phandle = <0x4b>;
++		};
++
++		timer@e6140000 {
++			compatible = "renesas,r8a77980-cmt1\0renesas,rcar-gen3-cmt1";
++			reg = <0x00 0xe6140000 0x00 0x1004>;
++			interrupts = <0x00 0x102 0x04 0x00 0x103 0x04 0x00 0x104 0x04 0x00 0x105 0x04 0x00 0x106 0x04 0x00 0x107 0x04 0x00 0x108 0x04 0x00 0x109 0x04>;
++			clocks = <0x01 0x01 0x12d>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12d>;
++			status = "okay";
++			phandle = <0x4c>;
++		};
++
++		timer@e6148000 {
++			compatible = "renesas,r8a77980-cmt1\0renesas,rcar-gen3-cmt1";
++			reg = <0x00 0xe6148000 0x00 0x1004>;
++			interrupts = <0x00 0x111 0x04 0x00 0x112 0x04 0x00 0x113 0x04 0x00 0x114 0x04 0x00 0x115 0x04 0x00 0x116 0x04 0x00 0x117 0x04 0x00 0x118 0x04>;
++			clocks = <0x01 0x01 0x12c>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12c>;
++			status = "okay";
++			phandle = <0x4d>;
++		};
++
++		clock-controller@e6150000 {
++			compatible = "renesas,r8a77980-cpg-mssr";
++			reg = <0x00 0xe6150000 0x00 0x1000>;
++			clocks = <0x0b 0x0c>;
++			clock-names = "extal\0extalr";
++			#clock-cells = <0x02>;
++			#power-domain-cells = <0x00>;
++			#reset-cells = <0x01>;
++			phandle = <0x01>;
++		};
++
++		reset-controller@e6160000 {
++			compatible = "renesas,r8a77980-rst";
++			reg = <0x00 0xe6160000 0x00 0x200>;
++			phandle = <0x4e>;
++		};
++
++		system-controller@e6180000 {
++			compatible = "renesas,r8a77980-sysc";
++			reg = <0x00 0xe6180000 0x00 0x440>;
++			#power-domain-cells = <0x01>;
++			phandle = <0x02>;
++		};
++
++		thermal@e6198000 {
++			compatible = "renesas,r8a77980-thermal";
++			reg = <0x00 0xe6198000 0x00 0x100 0x00 0xe61a0000 0x00 0x100>;
++			interrupts = <0x00 0x43 0x04 0x00 0x44 0x04 0x00 0x45 0x04>;
++			clocks = <0x01 0x01 0x20a>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20a>;
++			#thermal-sensor-cells = <0x01>;
++			phandle = <0x40>;
++		};
++
++		interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a77980\0renesas,irqc";
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			reg = <0x00 0xe61c0000 0x00 0x200>;
++			interrupts = <0x00 0x00 0x04 0x00 0x01 0x04 0x00 0x02 0x04 0x00 0x03 0x04 0x00 0x12 0x04 0x00 0xa1 0x04>;
++			clocks = <0x01 0x01 0x197>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x197>;
++			phandle = <0x4f>;
++		};
++
++		timer@e61e0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe61e0000 0x00 0x30>;
++			interrupts = <0x00 0x88 0x04 0x00 0x89 0x04 0x00 0x8a 0x04>;
++			clocks = <0x01 0x01 0x7d>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7d>;
++			status = "disabled";
++			phandle = <0x50>;
++		};
++
++		timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe6fc0000 0x00 0x30>;
++			interrupts = <0x00 0x80 0x04 0x00 0x81 0x04 0x00 0x82 0x04>;
++			clocks = <0x01 0x01 0x7c>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7c>;
++			status = "disabled";
++			phandle = <0x51>;
++		};
++
++		timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe6fd0000 0x00 0x30>;
++			interrupts = <0x00 0x12f 0x04 0x00 0x130 0x04 0x00 0x131 0x04>;
++			clocks = <0x01 0x01 0x7b>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7b>;
++			status = "disabled";
++			phandle = <0x52>;
++		};
++
++		timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe6fe0000 0x00 0x30>;
++			interrupts = <0x00 0x83 0x04 0x00 0x84 0x04 0x00 0x85 0x04>;
++			clocks = <0x01 0x01 0x7a>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7a>;
++			status = "disabled";
++			phandle = <0x53>;
++		};
++
++		timer@ffc00000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xffc00000 0x00 0x30>;
++			interrupts = <0x00 0x74 0x04 0x00 0x75 0x04 0x00 0x76 0x04>;
++			clocks = <0x01 0x01 0x79>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x79>;
++			status = "disabled";
++			phandle = <0x54>;
++		};
++
++		i2c@e6500000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe6500000 0x00 0x40>;
++			interrupts = <0x00 0x11f 0x04>;
++			clocks = <0x01 0x01 0x3a3>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a3>;
++			dmas = <0x0d 0x91 0x0d 0x90 0x0e 0x91 0x0e 0x90>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			pinctrl-0 = <0x0f>;
++			pinctrl-names = "default";
++			clock-frequency = <0x61a80>;
++			phandle = <0x55>;
++
++			hdmi@39 {
++				compatible = "adi,adv7511w";
++				#sound-dai-cells = <0x00>;
++				reg = <0x39>;
++				interrupt-parent = <0x10>;
++				interrupts = <0x14 0x08>;
++				avdd-supply = <0x11>;
++				dvdd-supply = <0x11>;
++				pvdd-supply = <0x11>;
++				bgvdd-supply = <0x11>;
++				dvdd-3v-supply = <0x12>;
++				adi,input-depth = <0x08>;
++				adi,input-colorspace = "rgb";
++				adi,input-clock = "1x";
++				adi,input-style = <0x01>;
++				adi,input-justification = "evenly";
++
++				ports {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++
++					port@0 {
++						reg = <0x00>;
++
++						endpoint {
++							remote-endpoint = <0x13>;
++							phandle = <0x43>;
++						};
++					};
++
++					port@1 {
++						reg = <0x01>;
++
++						endpoint {
++							remote-endpoint = <0x14>;
++							phandle = <0x41>;
++						};
++					};
++				};
++			};
++		};
++
++		i2c@e6508000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe6508000 0x00 0x40>;
++			interrupts = <0x00 0x120 0x04>;
++			clocks = <0x01 0x01 0x3a2>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a2>;
++			dmas = <0x0d 0x93 0x0d 0x92 0x0e 0x93 0x0e 0x92>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x56>;
++		};
++
++		i2c@e6510000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe6510000 0x00 0x40>;
++			interrupts = <0x00 0x11e 0x04>;
++			clocks = <0x01 0x01 0x3a1>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a1>;
++			dmas = <0x0d 0x95 0x0d 0x94 0x0e 0x95 0x0e 0x94>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x57>;
++		};
++
++		i2c@e66d0000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe66d0000 0x00 0x40>;
++			interrupts = <0x00 0x122 0x04>;
++			clocks = <0x01 0x01 0x3a0>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a0>;
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x58>;
++		};
++
++		i2c@e66d8000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe66d8000 0x00 0x40>;
++			interrupts = <0x00 0x13 0x04>;
++			clocks = <0x01 0x01 0x39f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x39f>;
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x59>;
++		};
++
++		i2c@e66e0000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe66e0000 0x00 0x40>;
++			interrupts = <0x00 0x14 0x04>;
++			clocks = <0x01 0x01 0x397>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x397>;
++			dmas = <0x0d 0x9b 0x0d 0x9a 0x0e 0x9b 0x0e 0x9a>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x5a>;
++		};
++
++		serial@e6540000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe6540000 0x00 0x60>;
++			interrupts = <0x00 0x9a 0x04>;
++			clocks = <0x01 0x01 0x208 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x31 0x0d 0x30 0x0e 0x31 0x0e 0x30>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x208>;
++			status = "disabled";
++			phandle = <0x5b>;
++		};
++
++		serial@e6550000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe6550000 0x00 0x60>;
++			interrupts = <0x00 0x9b 0x04>;
++			clocks = <0x01 0x01 0x207 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x33 0x0d 0x32 0x0e 0x33 0x0e 0x32>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x207>;
++			status = "disabled";
++			phandle = <0x5c>;
++		};
++
++		serial@e6560000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe6560000 0x00 0x60>;
++			interrupts = <0x00 0x90 0x04>;
++			clocks = <0x01 0x01 0x206 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x35 0x0d 0x34 0x0e 0x35 0x0e 0x34>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x206>;
++			status = "disabled";
++			phandle = <0x5d>;
++		};
++
++		serial@e66a0000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe66a0000 0x00 0x60>;
++			interrupts = <0x00 0x91 0x04>;
++			clocks = <0x01 0x01 0x205 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x37 0x0d 0x36 0x0e 0x37 0x0e 0x36>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x205>;
++			status = "disabled";
++			phandle = <0x5e>;
++		};
++
++		pcie-phy@e65d0000 {
++			compatible = "renesas,r8a77980-pcie-phy";
++			reg = <0x00 0xe65d0000 0x00 0x8000>;
++			#phy-cells = <0x00>;
++			clocks = <0x01 0x01 0x13f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x13f>;
++			status = "okay";
++			phandle = <0x31>;
++		};
++
++		can@e66c0000 {
++			compatible = "renesas,r8a77980-canfd\0renesas,rcar-gen3-canfd";
++			reg = <0x00 0xe66c0000 0x00 0x8000>;
++			interrupts = <0x00 0x1d 0x04 0x00 0x1e 0x04>;
++			clocks = <0x01 0x01 0x392 0x01 0x00 0x20 0x16>;
++			clock-names = "fck\0canfd\0can_clk";
++			assigned-clocks = <0x01 0x00 0x20>;
++			assigned-clock-rates = <0x2625a00>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x392>;
++			status = "okay";
++			phandle = <0x5f>;
++
++			channel0 {
++				status = "okay";
++			};
++
++			channel1 {
++				status = "okay";
++			};
++		};
++
++		ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77980\0renesas,etheravb-rcar-gen3";
++			reg = <0x00 0xe6800000 0x00 0x800>;
++			interrupts = <0x00 0x27 0x04 0x00 0x28 0x04 0x00 0x29 0x04 0x00 0x2a 0x04 0x00 0x2b 0x04 0x00 0x2c 0x04 0x00 0x2d 0x04 0x00 0x2e 0x04 0x00 0x2f 0x04 0x00 0x30 0x04 0x00 0x31 0x04 0x00 0x32 0x04 0x00 0x33 0x04 0x00 0x34 0x04 0x00 0x35 0x04 0x00 0x36 0x04 0x00 0x37 0x04 0x00 0x38 0x04 0x00 0x39 0x04 0x00 0x3a 0x04 0x00 0x3b 0x04 0x00 0x3c 0x04 0x00 0x3d 0x04 0x00 0x3e 0x04 0x00 0x3f 0x04>;
++			interrupt-names = "ch0\0ch1\0ch2\0ch3\0ch4\0ch5\0ch6\0ch7\0ch8\0ch9\0ch10\0ch11\0ch12\0ch13\0ch14\0ch15\0ch16\0ch17\0ch18\0ch19\0ch20\0ch21\0ch22\0ch23\0ch24";
++			clocks = <0x01 0x01 0x32c>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x32c>;
++			phy-mode = "rgmii";
++			iommus = <0x17 0x21>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x60>;
++		};
++
++		pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e30000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x61>;
++		};
++
++		pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e31000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x62>;
++		};
++
++		pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e32000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x63>;
++		};
++
++		pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e33000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x64>;
++		};
++
++		pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e34000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x65>;
++		};
++
++		serial@e6e60000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6e60000 0x00 0x40>;
++			interrupts = <0x00 0x98 0x04>;
++			clocks = <0x01 0x01 0xcf 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x51 0x0d 0x50 0x0e 0x51 0x0e 0x50>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xcf>;
++			status = "okay";
++			pinctrl-0 = <0x18 0x19>;
++			pinctrl-names = "default";
++			phandle = <0x66>;
++		};
++
++		serial@e6e68000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6e68000 0x00 0x40>;
++			interrupts = <0x00 0x99 0x04>;
++			clocks = <0x01 0x01 0xce 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x53 0x0d 0x52 0x0e 0x53 0x0e 0x52>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xce>;
++			status = "disabled";
++			phandle = <0x67>;
++		};
++
++		serial@e6c50000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6c50000 0x00 0x40>;
++			interrupts = <0x00 0x17 0x04>;
++			clocks = <0x01 0x01 0xcc 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x57 0x0d 0x56 0x0e 0x57 0x0e 0x56>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xcc>;
++			status = "disabled";
++			phandle = <0x68>;
++		};
++
++		serial@e6c40000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6c40000 0x00 0x40>;
++			interrupts = <0x00 0x10 0x04>;
++			clocks = <0x01 0x01 0xcb 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x59 0x0d 0x58 0x0e 0x59 0x0e 0x58>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xcb>;
++			status = "disabled";
++			phandle = <0x69>;
++		};
++
++		pwm@e6e80000 {
++			compatible = "renesas,tpu-r8a77980\0renesas,tpu";
++			reg = <0x00 0xe6e80000 0x00 0x148>;
++			interrupts = <0x00 0x87 0x04>;
++			clocks = <0x01 0x01 0x130>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x130>;
++			#pwm-cells = <0x03>;
++			status = "disabled";
++			phandle = <0x6a>;
++		};
++
++		spi@ee200000 {
++			compatible = "renesas,rpc-r8a77980\0renesas,rpc";
++			reg = <0x00 0xee200000 0x00 0x1f0 0x00 0x8000000 0x00 0x4000000 0x00 0xee208000 0x00 0x100>;
++			interrupts = <0x00 0x26 0x04>;
++			clocks = <0x01 0x01 0x395>;
++			power-domains = <0x02 0x20>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "okay";
++			pinctrl-0 = <0x1a 0x1b>;
++			pinctrl-names = "default";
++			phandle = <0x6b>;
++
++			flash@0 {
++				compatible = "spansion,s25fs512s\0jedec,spi-nor";
++				reg = <0x00>;
++				spi-max-frequency = <0x2faf080>;
++				spi-rx-bus-width = <0x04>;
++
++				partitions {
++					compatible = "fixed-partitions";
++					#address-cells = <0x01>;
++					#size-cells = <0x01>;
++
++					bootparam@0 {
++						reg = <0x00 0x40000>;
++						read-only;
++					};
++
++					cr7@00040000 {
++						reg = <0x40000 0x80000>;
++						read-only;
++					};
++
++					cert_header_sa3@000C0000 {
++						reg = <0xc0000 0x80000>;
++						read-only;
++					};
++
++					bl2@00140000 {
++						reg = <0x140000 0x40000>;
++						read-only;
++					};
++
++					cert_header_sa6@00180000 {
++						reg = <0x180000 0x40000>;
++						read-only;
++					};
++
++					bl31@001C0000 {
++						reg = <0x1c0000 0x480000>;
++						read-only;
++					};
++
++					uboot@00640000 {
++						reg = <0x640000 0xc0000>;
++						read-only;
++					};
++
++					uboot-env@00700000 {
++						reg = <0x700000 0x40000>;
++						read-only;
++					};
++
++					dtb@00740000 {
++						reg = <0x740000 0x80000>;
++					};
++
++					kernel@007C0000 {
++						reg = <0x7c0000 0x1400000>;
++					};
++
++					user@01BC0000 {
++						reg = <0x1bc0000 0x2440000>;
++					};
++				};
++			};
++		};
++
++		spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6e90000 0x00 0x64>;
++			interrupts = <0x00 0x9c 0x04>;
++			clocks = <0x01 0x01 0xd3>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd3>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6c>;
++		};
++
++		spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6ea0000 0x00 0x64>;
++			interrupts = <0x00 0x9d 0x04>;
++			clocks = <0x01 0x01 0xd2>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd2>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6d>;
++		};
++
++		spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6c00000 0x00 0x64>;
++			interrupts = <0x00 0x9e 0x04>;
++			clocks = <0x01 0x01 0xd1>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd1>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6e>;
++		};
++
++		spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6c10000 0x00 0x64>;
++			interrupts = <0x00 0x9f 0x04>;
++			clocks = <0x01 0x01 0xd0>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd0>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6f>;
++		};
++
++		vin_00@e6ef0000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef0000 0x00 0x1000>;
++			interrupts = <0x00 0xbc 0x04>;
++			clocks = <0x01 0x01 0x32b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x32b>;
++			renesas,id = <0x00>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x70>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1c>;
++						phandle = <0x33>;
++					};
++				};
++			};
++		};
++
++		vin_01@e6ef1000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef1000 0x00 0x1000>;
++			interrupts = <0x00 0xbd 0x04>;
++			clocks = <0x01 0x01 0x32a>;
++			power-domains = <0x02 0x20>;
++			status = "enabled";
++			renesas,id = <0x01>;
++			resets = <0x01 0x32a>;
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x71>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1d>;
++						phandle = <0x34>;
++					};
++				};
++			};
++		};
++
++		vin_02@e6ef2000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef2000 0x00 0x1000>;
++			interrupts = <0x00 0xbe 0x04>;
++			clocks = <0x01 0x01 0x329>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x329>;
++			renesas,id = <0x02>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x72>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1e>;
++						phandle = <0x35>;
++					};
++				};
++			};
++		};
++
++		vin_03@e6ef3000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef3000 0x00 0x1000>;
++			interrupts = <0x00 0xbf 0x04>;
++			clocks = <0x01 0x01 0x328>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x328>;
++			renesas,id = <0x03>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x73>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1f>;
++						phandle = <0x36>;
++					};
++				};
++			};
++		};
++
++		vin_04@e6ef4000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef4000 0x00 0x1000>;
++			interrupts = <0x00 0xae 0x04>;
++			clocks = <0x01 0x01 0x327>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x327>;
++			renesas,id = <0x04>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x74>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x20>;
++						phandle = <0x37>;
++					};
++				};
++			};
++		};
++
++		vin_05@e6ef5000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef5000 0x00 0x1000>;
++			interrupts = <0x00 0xaf 0x04>;
++			clocks = <0x01 0x01 0x326>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x326>;
++			renesas,id = <0x05>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x75>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x21>;
++						phandle = <0x38>;
++					};
++				};
++			};
++		};
++
++		vin_06@e6ef6000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef6000 0x00 0x1000>;
++			interrupts = <0x00 0xb0 0x04>;
++			clocks = <0x01 0x01 0x325>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x325>;
++			renesas,id = <0x06>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x76>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x22>;
++						phandle = <0x39>;
++					};
++				};
++			};
++		};
++
++		vin_07@e6ef7000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef7000 0x00 0x1000>;
++			interrupts = <0x00 0xab 0x04>;
++			clocks = <0x01 0x01 0x324>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x324>;
++			renesas,id = <0x07>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x77>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x23>;
++						phandle = <0x3a>;
++					};
++				};
++			};
++		};
++
++		vin_08@e6ef8000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef8000 0x00 0x1000>;
++			interrupts = <0x00 0x10c 0x04>;
++			clocks = <0x01 0x01 0x274>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x274>;
++			renesas,id = <0x08>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x78>;
++		};
++
++		vin_09@e6ef9000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef9000 0x00 0x1000>;
++			interrupts = <0x00 0x10d 0x04>;
++			clocks = <0x01 0x01 0x273>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x273>;
++			renesas,id = <0x09>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x79>;
++		};
++
++		vin_10@e6efa000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efa000 0x00 0x1000>;
++			interrupts = <0x00 0x121 0x04>;
++			clocks = <0x01 0x01 0x271>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x271>;
++			renesas,id = <0x0a>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7a>;
++		};
++
++		vin_11@e6efb000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efb000 0x00 0x1000>;
++			interrupts = <0x00 0x128 0x04>;
++			clocks = <0x01 0x01 0x26a>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x26a>;
++			renesas,id = <0x0b>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7b>;
++		};
++
++		vin_12@e6efc000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efc000 0x00 0x1000>;
++			interrupts = <0x00 0x12a 0x04>;
++			clocks = <0x01 0x01 0x264>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x264>;
++			renesas,id = <0x0c>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7c>;
++		};
++
++		vin_13@e6efd000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efd000 0x00 0x1000>;
++			interrupts = <0x00 0x12b 0x04>;
++			clocks = <0x01 0x01 0x260>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x260>;
++			renesas,id = <0x0d>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7d>;
++		};
++
++		vin_14@e6efe000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efe000 0x00 0x1000>;
++			interrupts = <0x00 0x12d 0x04>;
++			clocks = <0x01 0x01 0x25d>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x25d>;
++			renesas,id = <0x0e>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7e>;
++		};
++
++		vin_15@e6eff000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6eff000 0x00 0x1000>;
++			interrupts = <0x00 0x12e 0x04>;
++			clocks = <0x01 0x01 0x25c>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x25c>;
++			renesas,id = <0x0f>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7f>;
++		};
++
++		imp_top_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x119 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++			resets = <0x01 0x33e>;
++			interrupt-controller;
++			#interrupt-cells = <0x01>;
++			ipmmu-id = <0x0c 0x00>;
++			iommus = <0x24 0x00 0x24 0x01>;
++			phandle = <0x80>;
++		};
++
++		irq_imp_top_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11a 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		irq_imp_top_00_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11b 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		irq_imp_top_00_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11c 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		irq_imp_top_00_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11d 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		imp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff900000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x33b>;
++			power-domains = <0x02 0x17>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33b>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff920000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x33a>;
++			power-domains = <0x02 0x1b>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33a>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff940000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x339>;
++			power-domains = <0x02 0x1c>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x339>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff960000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x338>;
++			power-domains = <0x02 0x1d>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x338>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa80000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x209>;
++			power-domains = <0x02 0x0f>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x209>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_slim_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9c0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x1f4>;
++			power-domains = <0x02 0x0c>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x1f4>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff980000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x33d>;
++			power-domains = <0x02 0x1e>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33d>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff990000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x33c>;
++			power-domains = <0x02 0x1f>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33c>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9a0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x213>;
++			power-domains = <0x02 0x00>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x213>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9b0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x211>;
++			power-domains = <0x02 0x01>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x211>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa40000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x210>;
++			power-domains = <0x02 0x02>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x210>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_dma_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa10000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20f>;
++			power-domains = <0x02 0x03>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20f>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_dma_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa14000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20e>;
++			power-domains = <0x02 0x04>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20e>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_psc_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa20000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20d>;
++			power-domains = <0x02 0x03>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20d>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_psc_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa24000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20c>;
++			power-domains = <0x02 0x04>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20c>;
++		};
++
++		imp_cnn_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9e0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x33f>;
++			power-domains = <0x02 0x0a>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33f>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_spmi_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xed000000 0x00 0x200000>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++			ipmmu-id = <0x0c 0x00>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imr_alloc {
++			dma-coherent;
++			phandle = <0x25>;
++		};
++
++		ims_00@fe860000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe860000 0x00 0x2000>;
++			interrupts = <0x00 0xc0 0x04>;
++			clocks = <0x01 0x01 0x337>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x337>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x04>;
++			phandle = <0x81>;
++		};
++
++		ims_01@fe870000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe870000 0x00 0x2000>;
++			interrupts = <0x00 0xc1 0x04>;
++			clocks = <0x01 0x01 0x336>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x336>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x05>;
++			phandle = <0x82>;
++		};
++
++		ims_02@fe880000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe880000 0x00 0x2000>;
++			interrupts = <0x00 0xc2 0x04>;
++			clocks = <0x01 0x01 0x335>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x335>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x06>;
++			phandle = <0x83>;
++		};
++
++		ims_03@fe890000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe890000 0x00 0x2000>;
++			interrupts = <0x00 0xc3 0x04>;
++			clocks = <0x01 0x01 0x334>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x334>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			phandle = <0x84>;
++		};
++
++		imr_00@fe8a0000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe8a0000 0x00 0x2000>;
++			interrupts = <0x00 0xfe 0x04>;
++			clocks = <0x01 0x01 0x2c3>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2c3>;
++			rse;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x00 0x26 0x01>;
++			phandle = <0x85>;
++		};
++
++		imr_01@fe8b0000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe8b0000 0x00 0x2000>;
++			interrupts = <0x00 0xff 0x04>;
++			clocks = <0x01 0x01 0x2c2>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2c2>;
++			rse;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x02 0x26 0x03>;
++			phandle = <0x86>;
++		};
++
++		stv_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a00000 0x00 0x10000>;
++			interrupts = <0x00 0xee 0x04>;
++			clocks = <0x01 0x01 0x65>;
++			power-domains = <0x02 0x0b>;
++			ipmmu-id = <0x13 0x00>;
++			resets = <0x01 0x65>;
++		};
++
++		irq_stv_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a00000 0x00 0x10000>;
++			interrupts = <0x00 0xef 0x04>;
++			clocks = <0x01 0x01 0x65>;
++			power-domains = <0x02 0x0b>;
++		};
++
++		dof_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a10000 0x00 0x10000>;
++			interrupts = <0x00 0xf2 0x04>;
++			clocks = <0x01 0x01 0x66>;
++			power-domains = <0x02 0x19>;
++			ipmmu-id = <0x13 0x00>;
++			resets = <0x01 0x66>;
++			iommus = <0x27 0x01>;
++		};
++
++		irq_dof_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a10000 0x00 0x10000>;
++			interrupts = <0x00 0xf3 0x04>;
++			clocks = <0x01 0x01 0x66>;
++			power-domains = <0x02 0x19>;
++		};
++
++		acf_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a50000 0x00 0x10000>;
++			interrupts = <0x00 0x47 0x04>;
++			clocks = <0x01 0x01 0x3ec>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3ec>;
++		};
++
++		irq_acf_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a50000 0x00 0x10000>;
++			interrupts = <0x00 0x61 0x04>;
++			clocks = <0x01 0x01 0x3ec>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a60000 0x00 0x10000>;
++			interrupts = <0x00 0x62 0x04>;
++			clocks = <0x01 0x01 0x3eb>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3eb>;
++		};
++
++		irq_acf_01_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a60000 0x00 0x10000>;
++			interrupts = <0x00 0x63 0x04>;
++			clocks = <0x01 0x01 0x3eb>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a70000 0x00 0x10000>;
++			interrupts = <0x00 0x64 0x04>;
++			clocks = <0x01 0x01 0x3ea>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3ea>;
++		};
++
++		irq_acf_02_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a70000 0x00 0x10000>;
++			interrupts = <0x00 0x65 0x04>;
++			clocks = <0x01 0x01 0x3ea>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a80000 0x00 0x10000>;
++			interrupts = <0x00 0x66 0x04>;
++			clocks = <0x01 0x01 0x3e9>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3e9>;
++		};
++
++		irq_acf_03_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a80000 0x00 0x10000>;
++			interrupts = <0x00 0x67 0x04>;
++			clocks = <0x01 0x01 0x3e9>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a90000 0x00 0x10000>;
++			interrupts = <0x00 0x68 0x04>;
++			clocks = <0x01 0x01 0x3e8>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3e8>;
++		};
++
++		irq_acf_04_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a90000 0x00 0x10000>;
++			interrupts = <0x00 0x6c 0x04>;
++			clocks = <0x01 0x01 0x3e8>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		fcprr_stv_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa0000 0x00 0x1000>;
++		};
++
++		fcprw_dof_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7ab1000 0x00 0x1000>;
++		};
++
++		fcprr_dof_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa1000 0x00 0x1000>;
++		};
++
++		fcprr_acf_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa5000 0x00 0x1000>;
++		};
++
++		fcprr_acf_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa6000 0x00 0x1000>;
++		};
++
++		fcprr_acf_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa7000 0x00 0x1000>;
++		};
++
++		fcprr_acf_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa8000 0x00 0x1000>;
++		};
++
++		fcprr_acf_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa9000 0x00 0x1000>;
++		};
++
++		fcprw_imp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8da000 0x00 0x1000>;
++		};
++
++		fcprr_imp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d8000 0x00 0x1000>;
++		};
++
++		fcprw_imp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8db000 0x00 0x1000>;
++		};
++
++		fcprr_imp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d9000 0x00 0x1000>;
++		};
++
++		fcprr_ims_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c0000 0x00 0x1000>;
++		};
++
++		fcprr_ims_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c1000 0x00 0x1000>;
++		};
++
++		fcprr_ims_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c2000 0x00 0x1000>;
++		};
++
++		fcprw_imr_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c6000 0x00 0x1000>;
++		};
++
++		fcprr_imr_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c4000 0x00 0x1000>;
++		};
++
++		fcprw_imr_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c7000 0x00 0x1000>;
++		};
++
++		fcprr_imr_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c5000 0x00 0x1000>;
++		};
++
++		fcprr_vspd_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea90000 0x00 0x1000>;
++		};
++
++		fcprr_ivcp1e_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea91000 0x00 0x1000>;
++		};
++
++		fcprr_pcie_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea92000 0x00 0x1000>;
++		};
++
++		fcprw_isp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea96000 0x00 0x1000>;
++		};
++
++		fcprw_isp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea98000 0x00 0x1000>;
++		};
++
++		fcprr_ca53_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xf12f0000 0x00 0x1000>;
++		};
++
++		fcpra_vip0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aaa000 0x00 0x1000>;
++		};
++
++		fcpra_vip1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7ab5000 0x00 0x1000>;
++		};
++
++		fcpra_imp {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8dd000 0x00 0x1000>;
++		};
++
++		fcpra_imr {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9cf000 0x00 0x1000>;
++		};
++
++		fcpra_vio {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea9a000 0x00 0x1000>;
++		};
++
++		fcpra_ca53 {
++			compatible = "generic-uio";
++			reg = <0x00 0xf12a0000 0x00 0x1000>;
++		};
++
++		isp@fec00000 {
++			compatible = "renesas,isp-r8a77980";
++			reg = <0x00 0xfec00000 0x00 0x20000 0x00 0xfed00000 0x00 0x10000>;
++			interrupts = <0x00 0x1a 0x04 0x00 0x19 0x04>;
++			clocks = <0x01 0x01 0x331>;
++			power-domains = <0x02 0x20>;
++			phandle = <0x87>;
++		};
++
++		isp@fee00000 {
++			compatible = "renesas,isp-r8a77980";
++			reg = <0x00 0xfee00000 0x00 0x20000 0x00 0xfed20000 0x00 0x10000>;
++			interrupts = <0x00 0x6d 0x04 0x00 0x1b 0x04>;
++			clocks = <0x01 0x01 0x32e>;
++			power-domains = <0x02 0x20>;
++			phandle = <0x88>;
++		};
++
++		tisp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfed00000 0x00 0x10000>;
++			interrupts = <0x00 0x19 0x04>;
++			clocks = <0x01 0x01 0x331>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0a>;
++			phandle = <0x89>;
++		};
++
++		cisp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfec00000 0x00 0x20000>;
++			interrupts = <0x00 0x1a 0x04>;
++			clocks = <0x01 0x01 0x331>;
++			resets = <0x01 0x331>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0b>;
++			phandle = <0x8a>;
++		};
++
++		tisp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfed20000 0x00 0x10000>;
++			interrupts = <0x00 0x1b 0x04>;
++			clocks = <0x01 0x01 0x32e>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0d>;
++			phandle = <0x8b>;
++		};
++
++		cisp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfee00000 0x00 0x20000>;
++			interrupts = <0x00 0x6d 0x04>;
++			clocks = <0x01 0x01 0x32e>;
++			resets = <0x01 0x32e>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0e>;
++			phandle = <0x8c>;
++		};
++
++		dma-controller@e7300000 {
++			compatible = "renesas,dmac-r8a77980\0renesas,rcar-dmac";
++			reg = <0x00 0xe7300000 0x00 0x10000>;
++			interrupts = <0x00 0xdc 0x04 0x00 0xd8 0x04 0x00 0xd9 0x04 0x00 0xda 0x04 0x00 0xdb 0x04 0x00 0x134 0x04 0x00 0x135 0x04 0x00 0x136 0x04 0x00 0x137 0x04 0x00 0x161 0x04 0x00 0x162 0x04 0x00 0x163 0x04 0x00 0x164 0x04 0x00 0x165 0x04 0x00 0x166 0x04 0x00 0x167 0x04 0x00 0x168 0x04>;
++			interrupt-names = "error\0ch0\0ch1\0ch2\0ch3\0ch4\0ch5\0ch6\0ch7\0ch8\0ch9\0ch10\0ch11\0ch12\0ch13\0ch14\0ch15";
++			clocks = <0x01 0x01 0xda>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xda>;
++			#dma-cells = <0x01>;
++			dma-channels = <0x10>;
++			iommus = <0x17 0x00 0x17 0x01 0x17 0x02 0x17 0x03 0x17 0x04 0x17 0x05 0x17 0x06 0x17 0x07 0x17 0x08 0x17 0x09 0x17 0x0a 0x17 0x0b 0x17 0x0c 0x17 0x0d 0x17 0x0e 0x17 0x0f>;
++			phandle = <0x0d>;
++		};
++
++		dma-controller@e7310000 {
++			compatible = "renesas,dmac-r8a77980\0renesas,rcar-dmac";
++			reg = <0x00 0xe7310000 0x00 0x10000>;
++			interrupts = <0x00 0x133 0x04 0x00 0x138 0x04 0x00 0x139 0x04 0x00 0x13a 0x04 0x00 0x13b 0x04 0x00 0x13c 0x04 0x00 0x13d 0x04 0x00 0x13e 0x04 0x00 0x13f 0x04 0x00 0x169 0x04 0x00 0x16a 0x04 0x00 0x16b 0x04 0x00 0x16c 0x04 0x00 0x16d 0x04 0x00 0x16e 0x04 0x00 0x16f 0x04 0x00 0x170 0x04>;
++			interrupt-names = "error\0ch0\0ch1\0ch2\0ch3\0ch4\0ch5\0ch6\0ch7\0ch8\0ch9\0ch10\0ch11\0ch12\0ch13\0ch14\0ch15";
++			clocks = <0x01 0x01 0xd9>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd9>;
++			#dma-cells = <0x01>;
++			dma-channels = <0x10>;
++			iommus = <0x17 0x10 0x17 0x11 0x17 0x12 0x17 0x13 0x17 0x14 0x17 0x15 0x17 0x16 0x17 0x17 0x17 0x18 0x17 0x19 0x17 0x1a 0x17 0x1b 0x17 0x1c 0x17 0x1d 0x17 0x1e 0x17 0x1f>;
++			phandle = <0x0e>;
++		};
++
++		ethernet@e7400000 {
++			compatible = "renesas,gether-r8a77980";
++			reg = <0x00 0xe7400000 0x00 0x1000>;
++			interrupts = <0x00 0x15 0x04>;
++			clocks = <0x01 0x01 0x32d>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x32d>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "okay";
++			pinctrl-0 = <0x29>;
++			pinctrl-names = "default";
++			phy-mode = "rgmii";
++			phy-handle = <0x2a>;
++			renesas,no-ether-link;
++			phandle = <0x8d>;
++
++			ethernet-phy@0 {
++				reg = <0x00>;
++				interrupt-parent = <0x2b>;
++				interrupts = <0x17 0x08>;
++				reset-gpios = <0x2b 0x16 0x01>;
++				phandle = <0x2a>;
++			};
++		};
++
++		mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe7740000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x00>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x17>;
++		};
++
++		mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xff8b0000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x03>;
++			power-domains = <0x02 0x18>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x24>;
++		};
++
++		mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe67b0000 0x00 0x1000>;
++			interrupts = <0x00 0xc4 0x04 0x00 0xc5 0x04>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x2c>;
++		};
++
++		mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xffc80000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0a>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x8e>;
++		};
++
++		mmu@fe990000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xfe990000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0c>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x26>;
++		};
++
++		mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xfebd0000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0e>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x28>;
++		};
++
++		mmu@e7b00000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe7b00000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x04>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x8f>;
++		};
++
++		mmu@e7960000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe7960000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0b>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x27>;
++		};
++
++		ipmmu_cache_ds1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7740000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x12 0x00>;
++		};
++
++		ipmmu_cache_ir {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8b0000 0x00 0x1000>;
++			power-domains = <0x02 0x18>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		ipmmu_mm_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe67b0000 0x00 0x1000>;
++			interrupts = <0x00 0xc4 0x04>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x01 0x00>;
++		};
++
++		ipmmu_cache_rt0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffc80000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x0e 0x00>;
++		};
++
++		ipmmu_cache_vc0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe990000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		ipmmu_cache_vi0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfebd0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++		};
++
++		ipmmu_cache_vip0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7b00000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x13 0x00>;
++		};
++
++		ipmmu_cache_vip1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7960000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x14 0x00>;
++		};
++
++		mmc@ee140000 {
++			compatible = "renesas,sdhi-r8a77980\0renesas,rcar-gen3-sdhi";
++			reg = <0x00 0xee140000 0x00 0x2000>;
++			interrupts = <0x00 0xa5 0x04>;
++			clocks = <0x01 0x01 0x13a>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x13a>;
++			max-frequency = <0x5f5e100>;
++			status = "okay";
++			pinctrl-0 = <0x2d>;
++			pinctrl-1 = <0x2e>;
++			pinctrl-names = "default\0state_uhs";
++			vmmc-supply = <0x12>;
++			vqmmc-supply = <0x2f>;
++			mmc-hs200-1_8v;
++			bus-width = <0x08>;
++			non-removable;
++			phandle = <0x90>;
++		};
++
++		interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <0x03>;
++			#address-cells = <0x00>;
++			interrupt-controller;
++			reg = <0x00 0xf1010000 0x00 0x1000 0x00 0xf1020000 0x00 0x20000 0x00 0xf1040000 0x00 0x20000 0x00 0xf1060000 0x00 0x20000>;
++			interrupts = <0x01 0x09 0xf04>;
++			clocks = <0x01 0x01 0x198>;
++			clock-names = "clk";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x198>;
++			phandle = <0x05>;
++		};
++
++		pcie@fe000000 {
++			compatible = "renesas,pcie-r8a77980\0renesas,pcie-rcar-gen3";
++			reg = <0x00 0xfe000000 0x00 0x80000>;
++			#address-cells = <0x03>;
++			#size-cells = <0x02>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x1000000 0x00 0x00 0x00 0xfe100000 0x00 0x100000 0x2000000 0x00 0xfe200000 0x00 0xfe200000 0x00 0x200000 0x2000000 0x00 0x30000000 0x00 0x30000000 0x00 0x8000000 0x42000000 0x00 0x38000000 0x00 0x38000000 0x00 0x8000000>;
++			dma-ranges = <0x42000000 0x00 0x40000000 0x00 0x40000000 0x00 0x80000000>;
++			interrupts = <0x00 0x94 0x04 0x00 0x95 0x04 0x00 0x96 0x04>;
++			#interrupt-cells = <0x01>;
++			interrupt-map-mask = <0x00 0x00 0x00 0x00>;
++			interrupt-map = <0x00 0x00 0x00 0x00 0x05 0x00 0x94 0x04>;
++			clocks = <0x01 0x01 0x13f 0x30>;
++			clock-names = "pcie\0pcie_bus";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x13f>;
++			phys = <0x31>;
++			phy-names = "pcie";
++			status = "okay";
++			phandle = <0x91>;
++		};
++
++		vsp_00@fea20000 {
++			compatible = "renesas,vsp2\0generic-uio";
++			reg = <0x00 0xfea20000 0x00 0x5000>;
++			interrupts = <0x00 0xa9 0x04>;
++			clocks = <0x01 0x01 0x26f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x26f>;
++			renesas,fcp = <0x32>;
++			status = "disabled";
++			phandle = <0x3c>;
++		};
++
++		fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0x00 0xfea27000 0x00 0x200>;
++			clocks = <0x01 0x01 0x25b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x25b>;
++			status = "disabled";
++			phandle = <0x32>;
++		};
++
++		csi_00@feaa0000 {
++			compatible = "renesas,r8a77980-csi2\0generic-uio";
++			reg = <0x00 0xfeaa0000 0x00 0x10000>;
++			interrupts = <0x00 0xf6 0x04>;
++			clocks = <0x01 0x01 0x2cc>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2cc>;
++			status = "disabled";
++			phandle = <0x92>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@0 {
++						reg = <0x00>;
++						remote-endpoint = <0x33>;
++						phandle = <0x1c>;
++					};
++
++					endpoint@1 {
++						reg = <0x01>;
++						remote-endpoint = <0x34>;
++						phandle = <0x1d>;
++					};
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x35>;
++						phandle = <0x1e>;
++					};
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x36>;
++						phandle = <0x1f>;
++					};
++				};
++			};
++		};
++
++		csi_01@feab0000 {
++			compatible = "renesas,r8a77980-csi2\0generic-uio";
++			reg = <0x00 0xfeab0000 0x00 0x10000>;
++			interrupts = <0x00 0xf1 0x04>;
++			clocks = <0x01 0x01 0x2cb>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2cb>;
++			status = "disabled";
++			phandle = <0x93>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@0 {
++						reg = <0x00>;
++						remote-endpoint = <0x37>;
++						phandle = <0x20>;
++					};
++
++					endpoint@1 {
++						reg = <0x01>;
++						remote-endpoint = <0x38>;
++						phandle = <0x21>;
++					};
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x39>;
++						phandle = <0x22>;
++					};
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x3a>;
++						phandle = <0x23>;
++					};
++				};
++			};
++		};
++
++		du_00@feb00000 {
++			compatible = "renesas,du-r8a77980\0generic-uio\0renesas,du-r8a77970";
++			reg = <0x00 0xfeb00000 0x00 0x80000>;
++			interrupts = <0x00 0x100 0x04>;
++			clocks = <0x01 0x01 0x2d4 0x3b>;
++			clock-names = "du.0\0dclkin.0";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2d4>;
++			vsps = <0x3c>;
++			status = "disabled";
++			phandle = <0x94>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@0 {
++					reg = <0x00>;
++
++					endpoint {
++						phandle = <0x95>;
++					};
++				};
++
++				port@1 {
++					reg = <0x01>;
++
++					endpoint {
++						remote-endpoint = <0x3d>;
++						phandle = <0x3e>;
++					};
++				};
++			};
++		};
++
++		lvds_00@feb90000 {
++			compatible = "renesas,r8a77980-lvds\0generic-uio";
++			reg = <0x00 0xfeb90000 0x00 0x1000>;
++			clocks = <0x01 0x01 0x2d7>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2d7>;
++			status = "disabled";
++			phandle = <0x96>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@0 {
++					reg = <0x00>;
++
++					endpoint {
++						remote-endpoint = <0x3e>;
++						phandle = <0x3d>;
++					};
++				};
++
++				port@1 {
++					reg = <0x01>;
++
++					endpoint {
++						remote-endpoint = <0x3f>;
++						phandle = <0x42>;
++					};
++				};
++			};
++		};
++
++		chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0x00 0xfff00044 0x00 0x04>;
++			phandle = <0x97>;
++		};
++
++		qos@e67e0000 {
++			compatible = "renesas,qos";
++			reg = <0x00 0xe67e0000 0x00 0x10090>;
++		};
++
++		ivcp1e_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea00000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x7f>;
++			power-domains = <0x02 0x20>;
++			interrupts = <0x00 0x12c 0x04>;
++			ipmmu-id = <0x02 0x00>;
++			resets = <0x01 0x7f>;
++			iommus = <0x28 0x04>;
++		};
++
++		irq_ivcp1e_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea00000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x7f>;
++			power-domains = <0x02 0x20>;
++			interrupts = <0x00 0xaa 0x04>;
++		};
++
++		fbc_00 {
++			compatible = "renesas,uio-fbc";
++			reg = <0x00 0xff830000 0x00 0x2000>;
++			clocks = <0x01 0x00 0x26 0x01 0x00 0x27 0x01 0x00 0x28>;
++			clock-names = "fbc_post\0fbc_post2\0fbc_post4";
++			power-domains = <0x02 0x20>;
++			interrupts = <0x00 0x0e 0x04>;
++		};
++
++		wwdt_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffc90000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x145>;
++		};
++
++		wwdt_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffca0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x144>;
++		};
++
++		wwdt_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffcb0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x141>;
++		};
++
++		wwdt_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffcc0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x135>;
++		};
++
++		wwdt_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffcf0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x193>;
++		};
++
++		fba_imr0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff80000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_imr0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff80000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_imr1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff81000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_imr1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff81000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff90000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff90000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff91000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff91000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff92000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff92000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff93000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff93000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_dof0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7930000 0x00 0x1000>;
++			clocks = <0x01 0x01 0x66>;
++			power-domains = <0x02 0x19>;
++			ipmmu-id = <0x13 0x00>;
++		};
++
++		post_fba_dof0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7930000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x19>;
++		};
++
++		fba_stv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7950000 0x00 0x1000>;
++			power-domains = <0x02 0x0b>;
++			ipmmu-id = <0x13 0x00>;
++		};
++
++		post_fba_stv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7950000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x0b>;
++		};
++
++		fba_acf0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7940000 0x00 0x1000>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++		};
++
++		post_fba_acf0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7940000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		fba_acf1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7941000 0x00 0x1000>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++		};
++
++		post_fba_acf1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7941000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		fba_imp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d0000 0x00 0x1000>;
++			power-domains = <0x02 0x17>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d0000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x17>;
++		};
++
++		fba_imp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff50000 0x00 0x1000>;
++			power-domains = <0x02 0x1b>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff50000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1b>;
++		};
++
++		fba_imp2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff60000 0x00 0x1000>;
++			power-domains = <0x02 0x1c>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff60000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1c>;
++		};
++
++		fba_imp3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff70000 0x00 0x1000>;
++			power-domains = <0x02 0x1d>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff70000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1d>;
++		};
++
++		fba_imp4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d1000 0x00 0x1000>;
++			power-domains = <0x02 0x0f>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d1000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x0f>;
++		};
++
++		fba_imp_ocv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffa0000 0x00 0x1000>;
++			power-domains = <0x02 0x1e>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffa0000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1e>;
++		};
++
++		fba_imp_ocv1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffb0000 0x00 0x1000>;
++			power-domains = <0x02 0x1f>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffb0000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1f>;
++		};
++
++		fba_imp_ocv2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d2000 0x00 0x1000>;
++			power-domains = <0x02 0x00>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d2000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x00>;
++		};
++
++		fba_imp_ocv3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d3000 0x00 0x1000>;
++			power-domains = <0x02 0x01>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d3000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x01>;
++		};
++
++		fba_imp_ocv4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d4000 0x00 0x1000>;
++			power-domains = <0x02 0x02>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d4000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x02>;
++		};
++
++		fba_imp_dp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d5000 0x00 0x1000>;
++			power-domains = <0x02 0x03>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_dp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d5000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x03>;
++		};
++
++		fba_imp_dp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d6000 0x00 0x1000>;
++			power-domains = <0x02 0x04>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_dp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d6000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x04>;
++		};
++
++		fba_imp_cnn0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d7000 0x00 0x1000>;
++			power-domains = <0x02 0x0a>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_cnn0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d7000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x0a>;
++		};
++
++		fba_imp_slim0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8dc000 0x00 0x1000>;
++			power-domains = <0x02 0x0c>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_slim0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8dc000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x0c>;
++		};
++
++		rfso@ffe80000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe80000 0x00 0x1000>;
++			interrupts = <0x00 0x20 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_00";
++			phandle = <0x98>;
++		};
++
++		rfso@ffe81000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe81000 0x00 0x1000>;
++			interrupts = <0x00 0x21 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_01";
++			phandle = <0x99>;
++		};
++
++		rfso@ffe82000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe82000 0x00 0x1000>;
++			interrupts = <0x00 0x22 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_02";
++			phandle = <0x9a>;
++		};
++
++		rfso@ffe83000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe83000 0x00 0x1000>;
++			interrupts = <0x00 0x23 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_03";
++			phandle = <0x9b>;
++		};
++
++		rfso@ffe84000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe84000 0x00 0x1000>;
++			interrupts = <0x00 0x24 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_04";
++			phandle = <0x9c>;
++		};
++
++		rfso@ffe85000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe85000 0x00 0x1000>;
++			interrupts = <0x00 0x25 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_05";
++			phandle = <0x9d>;
++		};
++
++		rfso@ffe86000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe86000 0x00 0x1000>;
++			interrupts = <0x00 0xdd 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_06";
++			phandle = <0x9e>;
++		};
++
++		rfso@ffe87000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe87000 0x00 0x1000>;
++			interrupts = <0x00 0xba 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_07";
++			phandle = <0x9f>;
++		};
++
++		rfso@ffe88000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe88000 0x00 0x1000>;
++			interrupts = <0x00 0xbb 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_08";
++			phandle = <0xa0>;
++		};
++
++		rfso@ffe89000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe89000 0x00 0x1000>;
++			interrupts = <0x00 0xb9 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_09";
++			phandle = <0xa1>;
++		};
++
++		rfso@ffe8A000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe8a000 0x00 0x1000>;
++			interrupts = <0x00 0xf7 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_10";
++			phandle = <0xa2>;
++		};
++
++		fba@ff87c000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87c000 0x00 0x1000>;
++			linux,uio-name = "fba_ca53d";
++			phandle = <0xa3>;
++		};
++
++		post_fba_ca53d {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87c000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca53d";
++		};
++
++		fba@ff877000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff877000 0x00 0x1000>;
++			linux,uio-name = "fba_ca530";
++			phandle = <0xa4>;
++		};
++
++		post_fba_ca530 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff877000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca530";
++		};
++
++		fba@ff878000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff878000 0x00 0x1000>;
++			linux,uio-name = "fba_ca531";
++			phandle = <0xa5>;
++		};
++
++		post_fba_ca531 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff878000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca531";
++		};
++
++		fba@ff879000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff879000 0x00 0x1000>;
++			linux,uio-name = "fba_ca532";
++			phandle = <0xa6>;
++		};
++
++		post_fba_ca532 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff879000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca532";
++		};
++
++		fba@ff87a000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87a000 0x00 0x1000>;
++			linux,uio-name = "fba_ca533";
++			phandle = <0xa7>;
++		};
++
++		post_fba_ca533 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87a000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca533";
++		};
++	};
++
++	thermal-zones {
++
++		thermal-sensor-1 {
++			polling-delay-passive = <0xfa>;
++			polling-delay = <0x3e8>;
++			thermal-sensors = <0x40 0x00>;
++
++			trips {
++
++				sensor1-passive {
++					temperature = <0x17318>;
++					hysteresis = <0x3e8>;
++					type = "passive";
++				};
++
++				sensor1-critical {
++					temperature = <0x1d4c0>;
++					hysteresis = <0x3e8>;
++					type = "critical";
++				};
++			};
++		};
++
++		thermal-sensor-2 {
++			polling-delay-passive = <0xfa>;
++			polling-delay = <0x3e8>;
++			thermal-sensors = <0x40 0x01>;
++
++			trips {
++
++				sensor2-passive {
++					temperature = <0x17318>;
++					hysteresis = <0x3e8>;
++					type = "passive";
++				};
++
++				sensor2-critical {
++					temperature = <0x1d4c0>;
++					hysteresis = <0x3e8>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <0x05 0x01 0x0d 0xf08 0x05 0x01 0x0e 0xf08 0x05 0x01 0x0b 0xf08 0x05 0x01 0x0a 0xf08>;
++	};
++
++	spi-mfis {
++		compatible = "spi-mfis";
++		#address-cells = <0x01>;
++		#size-cells = <0x00>;
++
++		spidev@0 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x00>;
++		};
++
++		spidev@1 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x01>;
++		};
++
++		spidev@2 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x02>;
++		};
++
++		spidev@3 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x03>;
++		};
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++
++			endpoint {
++				remote-endpoint = <0x41>;
++				phandle = <0x14>;
++			};
++		};
++	};
++
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <0x12>;
++
++		ports {
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++
++			port@1 {
++				reg = <0x01>;
++
++				endpoint {
++					remote-endpoint = <0x42>;
++					phandle = <0x3f>;
++				};
++			};
++
++			port@2 {
++				reg = <0x02>;
++
++				endpoint {
++					remote-endpoint = <0x43>;
++					phandle = <0x13>;
++				};
++			};
++		};
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		reg = <0x00 0x48000000 0x00 0x78000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <0x02>;
++		#size-cells = <0x02>;
++		ranges;
++
++		linux,cma@58000000 {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00 0x58000000 0x00 0x18000000>;
++			linux,cma-default;
++		};
++
++		linux,multimedia@7f000000 {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00 0x7f000000 0x00 0x1000000>;
++			phandle = <0x44>;
++		};
++	};
++
++	mmngr {
++		compatible = "renesas,mmngr";
++		memory-region = <0x44>;
++	};
++
++	mmngrbuf {
++		compatible = "renesas,mmngrbuf";
++	};
++
++	osc1-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x8d9ee20>;
++		phandle = <0x3b>;
++	};
++
++	regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC1V8_D4";
++		regulator-min-microvolt = <0x1b7740>;
++		regulator-max-microvolt = <0x1b7740>;
++		regulator-boot-on;
++		regulator-always-on;
++		phandle = <0x11>;
++	};
++
++	regulator-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC3V3_D5";
++		regulator-min-microvolt = <0x325aa0>;
++		regulator-max-microvolt = <0x325aa0>;
++		regulator-boot-on;
++		regulator-always-on;
++		phandle = <0x12>;
++	};
++
++	regulator-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDQ_VIN01";
++		regulator-min-microvolt = <0x1b7740>;
++		regulator-max-microvolt = <0x1b7740>;
++		regulator-boot-on;
++		regulator-always-on;
++		phandle = <0x2f>;
++	};
++
++	__symbols__ {
++		can_clk = "/can";
++		a53_0 = "/cpus/cpu@0";
++		a53_1 = "/cpus/cpu@1";
++		a53_2 = "/cpus/cpu@2";
++		a53_3 = "/cpus/cpu@3";
++		L2_CA53 = "/cpus/cache-controller";
++		cluster0_opp_tb0 = "/opp_table0";
++		extal_clk = "/extal";
++		extalr_clk = "/extalr";
++		pcie_bus_clk = "/pcie_bus";
++		scif_clk = "/scif";
++		rwdt = "/soc/watchdog@e6020000";
++		gpio0 = "/soc/gpio@e6050000";
++		gpio1 = "/soc/gpio@e6051000";
++		gpio2 = "/soc/gpio@e6052000";
++		gpio3 = "/soc/gpio@e6053000";
++		gpio4 = "/soc/gpio@e6054000";
++		gpio5 = "/soc/gpio@e6055000";
++		pfc = "/soc/pin-controller@e6060000";
++		gether_pins = "/soc/pin-controller@e6060000/gether";
++		i2c0_pins = "/soc/pin-controller@e6060000/i2c0";
++		mmc_pins = "/soc/pin-controller@e6060000/mmc";
++		mmc_pins_uhs = "/soc/pin-controller@e6060000/mmc_uhs";
++		qspi0_pins = "/soc/pin-controller@e6060000/qspi0";
++		qspi1_pins = "/soc/pin-controller@e6060000/qspi1";
++		scif0_pins = "/soc/pin-controller@e6060000/scif0";
++		scif_clk_pins = "/soc/pin-controller@e6060000/scif_clk";
++		cmt0 = "/soc/timer@e60f0000";
++		cmt1 = "/soc/timer@e6130000";
++		cmt2 = "/soc/timer@e6140000";
++		cmt3 = "/soc/timer@e6148000";
++		cpg = "/soc/clock-controller@e6150000";
++		rst = "/soc/reset-controller@e6160000";
++		sysc = "/soc/system-controller@e6180000";
++		tsc = "/soc/thermal@e6198000";
++		intc_ex = "/soc/interrupt-controller@e61c0000";
++		tmu0 = "/soc/timer@e61e0000";
++		tmu1 = "/soc/timer@e6fc0000";
++		tmu2 = "/soc/timer@e6fd0000";
++		tmu3 = "/soc/timer@e6fe0000";
++		tmu4 = "/soc/timer@ffc00000";
++		i2c0 = "/soc/i2c@e6500000";
++		adv7511_in = "/soc/i2c@e6500000/hdmi@39/ports/port@0/endpoint";
++		adv7511_out = "/soc/i2c@e6500000/hdmi@39/ports/port@1/endpoint";
++		i2c1 = "/soc/i2c@e6508000";
++		i2c2 = "/soc/i2c@e6510000";
++		i2c3 = "/soc/i2c@e66d0000";
++		i2c4 = "/soc/i2c@e66d8000";
++		i2c5 = "/soc/i2c@e66e0000";
++		hscif0 = "/soc/serial@e6540000";
++		hscif1 = "/soc/serial@e6550000";
++		hscif2 = "/soc/serial@e6560000";
++		hscif3 = "/soc/serial@e66a0000";
++		pcie_phy = "/soc/pcie-phy@e65d0000";
++		canfd = "/soc/can@e66c0000";
++		avb = "/soc/ethernet@e6800000";
++		pwm0 = "/soc/pwm@e6e30000";
++		pwm1 = "/soc/pwm@e6e31000";
++		pwm2 = "/soc/pwm@e6e32000";
++		pwm3 = "/soc/pwm@e6e33000";
++		pwm4 = "/soc/pwm@e6e34000";
++		scif0 = "/soc/serial@e6e60000";
++		scif1 = "/soc/serial@e6e68000";
++		scif3 = "/soc/serial@e6c50000";
++		scif4 = "/soc/serial@e6c40000";
++		tpu = "/soc/pwm@e6e80000";
++		rpc0 = "/soc/spi@ee200000";
++		msiof0 = "/soc/spi@e6e90000";
++		msiof1 = "/soc/spi@e6ea0000";
++		msiof2 = "/soc/spi@e6c00000";
++		msiof3 = "/soc/spi@e6c10000";
++		vin0 = "/soc/vin_00@e6ef0000";
++		vin0csi40 = "/soc/vin_00@e6ef0000/ports/port@1/endpoint@2";
++		vin1 = "/soc/vin_01@e6ef1000";
++		vin1csi40 = "/soc/vin_01@e6ef1000/ports/port@1/endpoint@2";
++		vin2 = "/soc/vin_02@e6ef2000";
++		vin2csi40 = "/soc/vin_02@e6ef2000/ports/port@1/endpoint@2";
++		vin3 = "/soc/vin_03@e6ef3000";
++		vin3csi40 = "/soc/vin_03@e6ef3000/ports/port@1/endpoint@2";
++		vin4 = "/soc/vin_04@e6ef4000";
++		vin4csi41 = "/soc/vin_04@e6ef4000/ports/port@1/endpoint@3";
++		vin5 = "/soc/vin_05@e6ef5000";
++		vin5csi41 = "/soc/vin_05@e6ef5000/ports/port@1/endpoint@3";
++		vin6 = "/soc/vin_06@e6ef6000";
++		vin6csi41 = "/soc/vin_06@e6ef6000/ports/port@1/endpoint@3";
++		vin7 = "/soc/vin_07@e6ef7000";
++		vin7csi41 = "/soc/vin_07@e6ef7000/ports/port@1/endpoint@3";
++		vin8 = "/soc/vin_08@e6ef8000";
++		vin9 = "/soc/vin_09@e6ef9000";
++		vin10 = "/soc/vin_10@e6efa000";
++		vin11 = "/soc/vin_11@e6efb000";
++		vin12 = "/soc/vin_12@e6efc000";
++		vin13 = "/soc/vin_13@e6efd000";
++		vin14 = "/soc/vin_14@e6efe000";
++		vin15 = "/soc/vin_15@e6eff000";
++		imp_distributer = "/soc/imp_top_00";
++		imr_v4l2_alloc = "/soc/imr_alloc";
++		imrlx4_ch0 = "/soc/ims_00@fe860000";
++		imrlx4_ch1 = "/soc/ims_01@fe870000";
++		imrlx4_ch2 = "/soc/ims_02@fe880000";
++		imrlx4_ch3 = "/soc/ims_03@fe890000";
++		imrlx4_ch4 = "/soc/imr_00@fe8a0000";
++		imrlx4_ch5 = "/soc/imr_01@fe8b0000";
++		isp0 = "/soc/isp@fec00000";
++		isp1 = "/soc/isp@fee00000";
++		tisp0 = "/soc/tisp_00";
++		cisp0 = "/soc/cisp_00";
++		tisp1 = "/soc/tisp_01";
++		cisp1 = "/soc/cisp_01";
++		dmac1 = "/soc/dma-controller@e7300000";
++		dmac2 = "/soc/dma-controller@e7310000";
++		gether = "/soc/ethernet@e7400000";
++		phy0 = "/soc/ethernet@e7400000/ethernet-phy@0";
++		ipmmu_ds1 = "/soc/mmu@e7740000";
++		ipmmu_ir = "/soc/mmu@ff8b0000";
++		ipmmu_mm = "/soc/mmu@e67b0000";
++		ipmmu_rt = "/soc/mmu@ffc80000";
++		ipmmu_vc0 = "/soc/mmu@fe990000";
++		ipmmu_vi0 = "/soc/mmu@febd0000";
++		ipmmu_vip0 = "/soc/mmu@e7b00000";
++		ipmmu_vip1 = "/soc/mmu@e7960000";
++		mmc0 = "/soc/mmc@ee140000";
++		gic = "/soc/interrupt-controller@f1010000";
++		pciec = "/soc/pcie@fe000000";
++		vspd0 = "/soc/vsp_00@fea20000";
++		fcpvd0 = "/soc/fcp@fea27000";
++		csi40 = "/soc/csi_00@feaa0000";
++		csi40vin0 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@0";
++		csi40vin1 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@1";
++		csi40vin2 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@2";
++		csi40vin3 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@3";
++		csi41 = "/soc/csi_01@feab0000";
++		csi41vin4 = "/soc/csi_01@feab0000/ports/port@1/endpoint@0";
++		csi41vin5 = "/soc/csi_01@feab0000/ports/port@1/endpoint@1";
++		csi41vin6 = "/soc/csi_01@feab0000/ports/port@1/endpoint@2";
++		csi41vin7 = "/soc/csi_01@feab0000/ports/port@1/endpoint@3";
++		du = "/soc/du_00@feb00000";
++		du_out_rgb = "/soc/du_00@feb00000/ports/port@0/endpoint";
++		du_out_lvds0 = "/soc/du_00@feb00000/ports/port@1/endpoint";
++		lvds0 = "/soc/lvds_00@feb90000";
++		lvds0_in = "/soc/lvds_00@feb90000/ports/port@0/endpoint";
++		lvds0_out = "/soc/lvds_00@feb90000/ports/port@1/endpoint";
++		prr = "/soc/chipid@fff00044";
++		rfso0 = "/soc/rfso@ffe80000";
++		rfso1 = "/soc/rfso@ffe81000";
++		rfso2 = "/soc/rfso@ffe82000";
++		rfso3 = "/soc/rfso@ffe83000";
++		rfso4 = "/soc/rfso@ffe84000";
++		rfso5 = "/soc/rfso@ffe85000";
++		rfso6 = "/soc/rfso@ffe86000";
++		rfso7 = "/soc/rfso@ffe87000";
++		rfso8 = "/soc/rfso@ffe88000";
++		rfso9 = "/soc/rfso@ffe89000";
++		rfso10 = "/soc/rfso@ffe8A000";
++		fba_ca53d = "/soc/fba@ff87c000";
++		fba_ca530 = "/soc/fba@ff877000";
++		fba_ca531 = "/soc/fba@ff878000";
++		fba_ca532 = "/soc/fba@ff879000";
++		fba_ca533 = "/soc/fba@ff87a000";
++		hdmi_con = "/hdmi-out/port/endpoint";
++		thc63lvd1024_in = "/lvds-decoder/ports/port@1/endpoint";
++		thc63lvd1024_out = "/lvds-decoder/ports/port@2/endpoint";
++		mmp_reserved = "/reserved-memory/linux,multimedia@7f000000";
++		osc1_clk = "/osc1-clock";
++		vcc1v8_d4 = "/regulator-0";
++		vcc3v3_d5 = "/regulator-1";
++		vddq_vin01 = "/regulator-2";
++	};
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77980-es2-ecube-can.dts b/arch/arm64/boot/dts/renesas/r8a77980-es2-ecube-can.dts
+new file mode 100644
+index 0000000..d2de625
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a77980-es2-ecube-can.dts
+@@ -0,0 +1,3308 @@
++/dts-v1/;
++
++/ {
++	compatible = "renesas,v3hsk\0renesas,r8a77980";
++	#address-cells = <0x02>;
++	#size-cells = <0x02>;
++	model = "Renesas V3H Starter Kit board based on r8a7798 ES2.0 with can bus support";
++
++	aliases {
++		i2c0 = "/soc/i2c@e6500000";
++		i2c1 = "/soc/i2c@e6508000";
++		i2c2 = "/soc/i2c@e6510000";
++		i2c3 = "/soc/i2c@e66d0000";
++		i2c4 = "/soc/i2c@e66d8000";
++		i2c5 = "/soc/i2c@e66e0000";
++		isp0 = "/soc/isp@fec00000";
++		isp1 = "/soc/isp@fee00000";
++		tisp0 = "/soc/tisp_00";
++		tisp1 = "/soc/tisp_01";
++		cisp0 = "/soc/cisp_00";
++		cisp1 = "/soc/cisp_01";
++		serial0 = "/soc/serial@e6e60000";
++		ethernet0 = "/soc/ethernet@e7400000";
++	};
++
++	can {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x00>;
++		phandle = <0x16>;
++	};
++
++	cpus {
++		#address-cells = <0x01>;
++		#size-cells = <0x00>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x00>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x05>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x06>;
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x01>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x06>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x07>;
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x02>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x07>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x08>;
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x03>;
++			clocks = <0x01 0x00 0x00>;
++			power-domains = <0x02 0x08>;
++			next-level-cache = <0x03>;
++			enable-method = "psci";
++			operating-points-v2 = <0x04>;
++			phandle = <0x09>;
++		};
++
++		cache-controller {
++			compatible = "cache";
++			power-domains = <0x02 0x15>;
++			cache-unified;
++			cache-level = <0x02>;
++			phandle = <0x03>;
++		};
++	};
++
++	opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
++		phandle = <0x04>;
++
++		opp@1000000000 {
++			opp-hz = <0x00 0x3b9aca00>;
++			opp-microvolt = <0xcf850>;
++			clock-latency-ns = <0x493e0>;
++		};
++	};
++
++	extal {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0xfe502a>;
++		phandle = <0x0b>;
++	};
++
++	extalr {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x8000>;
++		phandle = <0x0c>;
++	};
++
++	pcie_bus {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x5f5e100>;
++		phandle = <0x30>;
++	};
++
++	pmu_a53 {
++		compatible = "arm,cortex-a53-pmu";
++		interrupts-extended = <0x05 0x00 0x54 0x04 0x05 0x00 0x55 0x04 0x05 0x00 0x56 0x04 0x05 0x00 0x57 0x04>;
++		interrupt-affinity = <0x06 0x07 0x08 0x09>;
++	};
++
++	psci {
++		compatible = "arm,psci-1.0\0arm,psci-0.2";
++		method = "smc";
++	};
++
++	scif {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0xe10000>;
++		phandle = <0x15>;
++	};
++
++	soc {
++		compatible = "simple-bus";
++		interrupt-parent = <0x05>;
++		#address-cells = <0x02>;
++		#size-cells = <0x02>;
++		ranges;
++
++		eviewitf-mfis@e6260000 {
++			compatible = "eviewitf-mfis";
++			reg = <0x00 0xe6260000 0x00 0x1000>;
++			#hwlock-cells = <0x01>;
++			interrupts = <0x00 0xe0 0x04 0x00 0xe1 0x04 0x00 0xe2 0x04 0x00 0xe3 0x04 0x00 0xe4 0x04 0x00 0xe5 0x04 0x00 0xe6 0x04 0x00 0xe7 0x04>;
++		};
++
++		watchdog@e6020000 {
++			compatible = "renesas,r8a77980-wdt\0renesas,rcar-gen3-wdt";
++			reg = <0x00 0xe6020000 0x00 0x0c>;
++			clocks = <0x01 0x01 0x192>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x192>;
++			status = "okay";
++			timeout-sec = <0x3c>;
++			phandle = <0x45>;
++		};
++
++		gpio@e6050000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6050000 0x00 0x50>;
++			interrupts = <0x00 0x04 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x00 0x16>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x390>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x390>;
++			phandle = <0x46>;
++		};
++
++		gpio@e6051000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6051000 0x00 0x50>;
++			interrupts = <0x00 0x05 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x20 0x1c>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38f>;
++			phandle = <0x10>;
++		};
++
++		gpio@e6052000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6052000 0x00 0x50>;
++			interrupts = <0x00 0x06 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x40 0x1e>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38e>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38e>;
++			phandle = <0x47>;
++		};
++
++		gpio@e6053000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6053000 0x00 0x50>;
++			interrupts = <0x00 0x07 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x60 0x11>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38d>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38d>;
++			phandle = <0x48>;
++		};
++
++		gpio@e6054000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6054000 0x00 0x50>;
++			interrupts = <0x00 0x08 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0x80 0x19>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38c>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38c>;
++			phandle = <0x2b>;
++		};
++
++		gpio@e6055000 {
++			compatible = "renesas,gpio-r8a77980\0renesas,rcar-gen3-gpio";
++			reg = <0x00 0xe6055000 0x00 0x50>;
++			interrupts = <0x00 0x09 0x04>;
++			#gpio-cells = <0x02>;
++			gpio-controller;
++			gpio-ranges = <0x0a 0x00 0xa0 0x0f>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			clocks = <0x01 0x01 0x38b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x38b>;
++			phandle = <0x49>;
++		};
++
++		pin-controller@e6060000 {
++			compatible = "renesas,pfc-r8a77980";
++			reg = <0x00 0xe6060000 0x00 0x50c>;
++			phandle = <0x0a>;
++
++			gether {
++				groups = "gether_mdio_a\0gether_rgmii\0gether_txcrefclk\0gether_txcrefclk_mega";
++				function = "gether";
++				phandle = <0x29>;
++			};
++
++			i2c0 {
++				groups = "i2c0";
++				function = "i2c0";
++				phandle = <0x0f>;
++			};
++
++			mmc {
++				groups = "mmc_data8\0mmc_ctrl\0mmc_ds";
++				function = "mmc";
++				power-source = <0xce4>;
++				phandle = <0x2d>;
++			};
++
++			mmc_uhs {
++				groups = "mmc_data8\0mmc_ctrl\0mmc_ds";
++				function = "mmc";
++				power-source = <0x708>;
++				phandle = <0x2e>;
++			};
++
++			qspi0 {
++				groups = "qspi0_ctrl\0qspi0_data4";
++				function = "qspi0";
++				phandle = <0x1a>;
++			};
++
++			qspi1 {
++				groups = "qspi1_ctrl\0qspi1_data4";
++				function = "qspi1";
++				phandle = <0x1b>;
++			};
++
++			scif0 {
++				groups = "scif0_data";
++				function = "scif0";
++				phandle = <0x18>;
++			};
++
++			scif_clk {
++				groups = "scif_clk_b";
++				function = "scif_clk";
++				phandle = <0x19>;
++			};
++		};
++
++		timer@e60f0000 {
++			compatible = "renesas,r8a77980-cmt0\0renesas,rcar-gen3-cmt0";
++			reg = <0x00 0xe60f0000 0x00 0x1004>;
++			interrupts = <0x00 0x8e 0x04 0x00 0x8f 0x04>;
++			clocks = <0x01 0x01 0x12f>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12f>;
++			status = "okay";
++			phandle = <0x4a>;
++		};
++
++		timer@e6130000 {
++			compatible = "renesas,r8a77980-cmt1\0renesas,rcar-gen3-cmt1";
++			reg = <0x00 0xe6130000 0x00 0x1004>;
++			interrupts = <0x00 0x78 0x04 0x00 0x79 0x04 0x00 0x7a 0x04 0x00 0x7b 0x04 0x00 0x7c 0x04 0x00 0x7d 0x04 0x00 0x7e 0x04 0x00 0x7f 0x04>;
++			clocks = <0x01 0x01 0x12e>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12e>;
++			status = "okay";
++			phandle = <0x4b>;
++		};
++
++		timer@e6140000 {
++			compatible = "renesas,r8a77980-cmt1\0renesas,rcar-gen3-cmt1";
++			reg = <0x00 0xe6140000 0x00 0x1004>;
++			interrupts = <0x00 0x102 0x04 0x00 0x103 0x04 0x00 0x104 0x04 0x00 0x105 0x04 0x00 0x106 0x04 0x00 0x107 0x04 0x00 0x108 0x04 0x00 0x109 0x04>;
++			clocks = <0x01 0x01 0x12d>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12d>;
++			status = "okay";
++			phandle = <0x4c>;
++		};
++
++		timer@e6148000 {
++			compatible = "renesas,r8a77980-cmt1\0renesas,rcar-gen3-cmt1";
++			reg = <0x00 0xe6148000 0x00 0x1004>;
++			interrupts = <0x00 0x111 0x04 0x00 0x112 0x04 0x00 0x113 0x04 0x00 0x114 0x04 0x00 0x115 0x04 0x00 0x116 0x04 0x00 0x117 0x04 0x00 0x118 0x04>;
++			clocks = <0x01 0x01 0x12c>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x12c>;
++			status = "okay";
++			phandle = <0x4d>;
++		};
++
++		clock-controller@e6150000 {
++			compatible = "renesas,r8a77980-cpg-mssr";
++			reg = <0x00 0xe6150000 0x00 0x1000>;
++			clocks = <0x0b 0x0c>;
++			clock-names = "extal\0extalr";
++			#clock-cells = <0x02>;
++			#power-domain-cells = <0x00>;
++			#reset-cells = <0x01>;
++			phandle = <0x01>;
++		};
++
++		reset-controller@e6160000 {
++			compatible = "renesas,r8a77980-rst";
++			reg = <0x00 0xe6160000 0x00 0x200>;
++			phandle = <0x4e>;
++		};
++
++		system-controller@e6180000 {
++			compatible = "renesas,r8a77980-sysc";
++			reg = <0x00 0xe6180000 0x00 0x440>;
++			#power-domain-cells = <0x01>;
++			phandle = <0x02>;
++		};
++
++		thermal@e6198000 {
++			compatible = "renesas,r8a77980-thermal";
++			reg = <0x00 0xe6198000 0x00 0x100 0x00 0xe61a0000 0x00 0x100>;
++			interrupts = <0x00 0x43 0x04 0x00 0x44 0x04 0x00 0x45 0x04>;
++			clocks = <0x01 0x01 0x20a>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20a>;
++			#thermal-sensor-cells = <0x01>;
++			phandle = <0x40>;
++		};
++
++		interrupt-controller@e61c0000 {
++			compatible = "renesas,intc-ex-r8a77980\0renesas,irqc";
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++			reg = <0x00 0xe61c0000 0x00 0x200>;
++			interrupts = <0x00 0x00 0x04 0x00 0x01 0x04 0x00 0x02 0x04 0x00 0x03 0x04 0x00 0x12 0x04 0x00 0xa1 0x04>;
++			clocks = <0x01 0x01 0x197>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x197>;
++			phandle = <0x4f>;
++		};
++
++		timer@e61e0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe61e0000 0x00 0x30>;
++			interrupts = <0x00 0x88 0x04 0x00 0x89 0x04 0x00 0x8a 0x04>;
++			clocks = <0x01 0x01 0x7d>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7d>;
++			status = "disabled";
++			phandle = <0x50>;
++		};
++
++		timer@e6fc0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe6fc0000 0x00 0x30>;
++			interrupts = <0x00 0x80 0x04 0x00 0x81 0x04 0x00 0x82 0x04>;
++			clocks = <0x01 0x01 0x7c>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7c>;
++			status = "disabled";
++			phandle = <0x51>;
++		};
++
++		timer@e6fd0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe6fd0000 0x00 0x30>;
++			interrupts = <0x00 0x12f 0x04 0x00 0x130 0x04 0x00 0x131 0x04>;
++			clocks = <0x01 0x01 0x7b>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7b>;
++			status = "disabled";
++			phandle = <0x52>;
++		};
++
++		timer@e6fe0000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xe6fe0000 0x00 0x30>;
++			interrupts = <0x00 0x83 0x04 0x00 0x84 0x04 0x00 0x85 0x04>;
++			clocks = <0x01 0x01 0x7a>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x7a>;
++			status = "disabled";
++			phandle = <0x53>;
++		};
++
++		timer@ffc00000 {
++			compatible = "renesas,tmu-r8a77980\0renesas,tmu";
++			reg = <0x00 0xffc00000 0x00 0x30>;
++			interrupts = <0x00 0x74 0x04 0x00 0x75 0x04 0x00 0x76 0x04>;
++			clocks = <0x01 0x01 0x79>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x79>;
++			status = "disabled";
++			phandle = <0x54>;
++		};
++
++		i2c@e6500000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe6500000 0x00 0x40>;
++			interrupts = <0x00 0x11f 0x04>;
++			clocks = <0x01 0x01 0x3a3>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a3>;
++			dmas = <0x0d 0x91 0x0d 0x90 0x0e 0x91 0x0e 0x90>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			pinctrl-0 = <0x0f>;
++			pinctrl-names = "default";
++			clock-frequency = <0x61a80>;
++			phandle = <0x55>;
++
++			hdmi@39 {
++				compatible = "adi,adv7511w";
++				#sound-dai-cells = <0x00>;
++				reg = <0x39>;
++				interrupt-parent = <0x10>;
++				interrupts = <0x14 0x08>;
++				avdd-supply = <0x11>;
++				dvdd-supply = <0x11>;
++				pvdd-supply = <0x11>;
++				bgvdd-supply = <0x11>;
++				dvdd-3v-supply = <0x12>;
++				adi,input-depth = <0x08>;
++				adi,input-colorspace = "rgb";
++				adi,input-clock = "1x";
++				adi,input-style = <0x01>;
++				adi,input-justification = "evenly";
++
++				ports {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++
++					port@0 {
++						reg = <0x00>;
++
++						endpoint {
++							remote-endpoint = <0x13>;
++							phandle = <0x43>;
++						};
++					};
++
++					port@1 {
++						reg = <0x01>;
++
++						endpoint {
++							remote-endpoint = <0x14>;
++							phandle = <0x41>;
++						};
++					};
++				};
++			};
++		};
++
++		i2c@e6508000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe6508000 0x00 0x40>;
++			interrupts = <0x00 0x120 0x04>;
++			clocks = <0x01 0x01 0x3a2>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a2>;
++			dmas = <0x0d 0x93 0x0d 0x92 0x0e 0x93 0x0e 0x92>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x56>;
++		};
++
++		i2c@e6510000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe6510000 0x00 0x40>;
++			interrupts = <0x00 0x11e 0x04>;
++			clocks = <0x01 0x01 0x3a1>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a1>;
++			dmas = <0x0d 0x95 0x0d 0x94 0x0e 0x95 0x0e 0x94>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x57>;
++		};
++
++		i2c@e66d0000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe66d0000 0x00 0x40>;
++			interrupts = <0x00 0x122 0x04>;
++			clocks = <0x01 0x01 0x3a0>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x3a0>;
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x58>;
++		};
++
++		i2c@e66d8000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe66d8000 0x00 0x40>;
++			interrupts = <0x00 0x13 0x04>;
++			clocks = <0x01 0x01 0x39f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x39f>;
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x59>;
++		};
++
++		i2c@e66e0000 {
++			compatible = "renesas,i2c-r8a77980\0renesas,rcar-gen3-i2c";
++			reg = <0x00 0xe66e0000 0x00 0x40>;
++			interrupts = <0x00 0x14 0x04>;
++			clocks = <0x01 0x01 0x397>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x397>;
++			dmas = <0x0d 0x9b 0x0d 0x9a 0x0e 0x9b 0x0e 0x9a>;
++			dma-names = "tx\0rx\0tx\0rx";
++			i2c-scl-internal-delay-ns = <0x06>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x5a>;
++		};
++
++		serial@e6540000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe6540000 0x00 0x60>;
++			interrupts = <0x00 0x9a 0x04>;
++			clocks = <0x01 0x01 0x208 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x31 0x0d 0x30 0x0e 0x31 0x0e 0x30>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x208>;
++			status = "disabled";
++			phandle = <0x5b>;
++		};
++
++		serial@e6550000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe6550000 0x00 0x60>;
++			interrupts = <0x00 0x9b 0x04>;
++			clocks = <0x01 0x01 0x207 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x33 0x0d 0x32 0x0e 0x33 0x0e 0x32>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x207>;
++			status = "disabled";
++			phandle = <0x5c>;
++		};
++
++		serial@e6560000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe6560000 0x00 0x60>;
++			interrupts = <0x00 0x90 0x04>;
++			clocks = <0x01 0x01 0x206 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x35 0x0d 0x34 0x0e 0x35 0x0e 0x34>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x206>;
++			status = "disabled";
++			phandle = <0x5d>;
++		};
++
++		serial@e66a0000 {
++			compatible = "renesas,hscif-r8a77980\0renesas,rcar-gen3-hscif\0renesas,hscif";
++			reg = <0x00 0xe66a0000 0x00 0x60>;
++			interrupts = <0x00 0x91 0x04>;
++			clocks = <0x01 0x01 0x205 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x37 0x0d 0x36 0x0e 0x37 0x0e 0x36>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x205>;
++			status = "disabled";
++			phandle = <0x5e>;
++		};
++
++		pcie-phy@e65d0000 {
++			compatible = "renesas,r8a77980-pcie-phy";
++			reg = <0x00 0xe65d0000 0x00 0x8000>;
++			#phy-cells = <0x00>;
++			clocks = <0x01 0x01 0x13f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x13f>;
++			status = "okay";
++			phandle = <0x31>;
++		};
++
++		can@e66c0000 {
++			compatible = "renesas,r8a77980-canfd\0renesas,rcar-gen3-canfd";
++			reg = <0x00 0xe66c0000 0x00 0x8000>;
++			interrupts = <0x00 0x1d 0x04 0x00 0x1e 0x04>;
++			clocks = <0x01 0x01 0x392 0x01 0x00 0x20 0x16>;
++			clock-names = "fck\0canfd\0can_clk";
++			assigned-clocks = <0x01 0x00 0x20>;
++			assigned-clock-rates = <0x2625a00>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x392>;
++			status = "okay";
++			phandle = <0x5f>;
++
++			channel0 {
++				status = "okay";
++			};
++
++			channel1 {
++				status = "okay";
++			};
++		};
++
++		ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77980\0renesas,etheravb-rcar-gen3";
++			reg = <0x00 0xe6800000 0x00 0x800>;
++			interrupts = <0x00 0x27 0x04 0x00 0x28 0x04 0x00 0x29 0x04 0x00 0x2a 0x04 0x00 0x2b 0x04 0x00 0x2c 0x04 0x00 0x2d 0x04 0x00 0x2e 0x04 0x00 0x2f 0x04 0x00 0x30 0x04 0x00 0x31 0x04 0x00 0x32 0x04 0x00 0x33 0x04 0x00 0x34 0x04 0x00 0x35 0x04 0x00 0x36 0x04 0x00 0x37 0x04 0x00 0x38 0x04 0x00 0x39 0x04 0x00 0x3a 0x04 0x00 0x3b 0x04 0x00 0x3c 0x04 0x00 0x3d 0x04 0x00 0x3e 0x04 0x00 0x3f 0x04>;
++			interrupt-names = "ch0\0ch1\0ch2\0ch3\0ch4\0ch5\0ch6\0ch7\0ch8\0ch9\0ch10\0ch11\0ch12\0ch13\0ch14\0ch15\0ch16\0ch17\0ch18\0ch19\0ch20\0ch21\0ch22\0ch23\0ch24";
++			clocks = <0x01 0x01 0x32c>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x32c>;
++			phy-mode = "rgmii";
++			iommus = <0x17 0x21>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x60>;
++		};
++
++		pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e30000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x61>;
++		};
++
++		pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e31000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x62>;
++		};
++
++		pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e32000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x63>;
++		};
++
++		pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e33000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x64>;
++		};
++
++		pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a77980\0renesas,pwm-rcar";
++			reg = <0x00 0xe6e34000 0x00 0x10>;
++			#pwm-cells = <0x02>;
++			clocks = <0x01 0x01 0x20b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x20b>;
++			status = "disabled";
++			phandle = <0x65>;
++		};
++
++		serial@e6e60000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6e60000 0x00 0x40>;
++			interrupts = <0x00 0x98 0x04>;
++			clocks = <0x01 0x01 0xcf 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x51 0x0d 0x50 0x0e 0x51 0x0e 0x50>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xcf>;
++			status = "okay";
++			pinctrl-0 = <0x18 0x19>;
++			pinctrl-names = "default";
++			phandle = <0x66>;
++		};
++
++		serial@e6e68000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6e68000 0x00 0x40>;
++			interrupts = <0x00 0x99 0x04>;
++			clocks = <0x01 0x01 0xce 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x53 0x0d 0x52 0x0e 0x53 0x0e 0x52>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xce>;
++			status = "disabled";
++			phandle = <0x67>;
++		};
++
++		serial@e6c50000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6c50000 0x00 0x40>;
++			interrupts = <0x00 0x17 0x04>;
++			clocks = <0x01 0x01 0xcc 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x57 0x0d 0x56 0x0e 0x57 0x0e 0x56>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xcc>;
++			status = "disabled";
++			phandle = <0x68>;
++		};
++
++		serial@e6c40000 {
++			compatible = "renesas,scif-r8a77980\0renesas,rcar-gen3-scif\0renesas,scif";
++			reg = <0x00 0xe6c40000 0x00 0x40>;
++			interrupts = <0x00 0x10 0x04>;
++			clocks = <0x01 0x01 0xcb 0x01 0x00 0x13 0x15>;
++			clock-names = "fck\0brg_int\0scif_clk";
++			dmas = <0x0d 0x59 0x0d 0x58 0x0e 0x59 0x0e 0x58>;
++			dma-names = "tx\0rx\0tx\0rx";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xcb>;
++			status = "disabled";
++			phandle = <0x69>;
++		};
++
++		pwm@e6e80000 {
++			compatible = "renesas,tpu-r8a77980\0renesas,tpu";
++			reg = <0x00 0xe6e80000 0x00 0x148>;
++			interrupts = <0x00 0x87 0x04>;
++			clocks = <0x01 0x01 0x130>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x130>;
++			#pwm-cells = <0x03>;
++			status = "disabled";
++			phandle = <0x6a>;
++		};
++
++		spi@ee200000 {
++			compatible = "renesas,rpc-r8a77980\0renesas,rpc";
++			reg = <0x00 0xee200000 0x00 0x1f0 0x00 0x8000000 0x00 0x4000000 0x00 0xee208000 0x00 0x100>;
++			interrupts = <0x00 0x26 0x04>;
++			clocks = <0x01 0x01 0x395>;
++			power-domains = <0x02 0x20>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "okay";
++			pinctrl-0 = <0x1a 0x1b>;
++			pinctrl-names = "default";
++			phandle = <0x6b>;
++
++			flash@0 {
++				compatible = "spansion,s25fs512s\0jedec,spi-nor";
++				reg = <0x00>;
++				spi-max-frequency = <0x2faf080>;
++				spi-rx-bus-width = <0x04>;
++
++				partitions {
++					compatible = "fixed-partitions";
++					#address-cells = <0x01>;
++					#size-cells = <0x01>;
++
++					bootparam@0 {
++						reg = <0x00 0x40000>;
++						read-only;
++					};
++
++					cr7@00040000 {
++						reg = <0x40000 0x80000>;
++						read-only;
++					};
++
++					cert_header_sa3@000C0000 {
++						reg = <0xc0000 0x80000>;
++						read-only;
++					};
++
++					bl2@00140000 {
++						reg = <0x140000 0x40000>;
++						read-only;
++					};
++
++					cert_header_sa6@00180000 {
++						reg = <0x180000 0x40000>;
++						read-only;
++					};
++
++					bl31@001C0000 {
++						reg = <0x1c0000 0x480000>;
++						read-only;
++					};
++
++					uboot@00640000 {
++						reg = <0x640000 0xc0000>;
++						read-only;
++					};
++
++					uboot-env@00700000 {
++						reg = <0x700000 0x40000>;
++						read-only;
++					};
++
++					dtb@00740000 {
++						reg = <0x740000 0x80000>;
++					};
++
++					kernel@007C0000 {
++						reg = <0x7c0000 0x1400000>;
++					};
++
++					user@01BC0000 {
++						reg = <0x1bc0000 0x2440000>;
++					};
++				};
++			};
++		};
++
++		spi@e6e90000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6e90000 0x00 0x64>;
++			interrupts = <0x00 0x9c 0x04>;
++			clocks = <0x01 0x01 0xd3>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd3>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6c>;
++		};
++
++		spi@e6ea0000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6ea0000 0x00 0x64>;
++			interrupts = <0x00 0x9d 0x04>;
++			clocks = <0x01 0x01 0xd2>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd2>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6d>;
++		};
++
++		spi@e6c00000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6c00000 0x00 0x64>;
++			interrupts = <0x00 0x9e 0x04>;
++			clocks = <0x01 0x01 0xd1>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd1>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6e>;
++		};
++
++		spi@e6c10000 {
++			compatible = "renesas,msiof-r8a77980\0renesas,rcar-gen3-msiof";
++			reg = <0x00 0xe6c10000 0x00 0x64>;
++			interrupts = <0x00 0x9f 0x04>;
++			clocks = <0x01 0x01 0xd0>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd0>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "disabled";
++			phandle = <0x6f>;
++		};
++
++		vin_00@e6ef0000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef0000 0x00 0x1000>;
++			interrupts = <0x00 0xbc 0x04>;
++			clocks = <0x01 0x01 0x32b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x32b>;
++			renesas,id = <0x00>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x70>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1c>;
++						phandle = <0x33>;
++					};
++				};
++			};
++		};
++
++		vin_01@e6ef1000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef1000 0x00 0x1000>;
++			interrupts = <0x00 0xbd 0x04>;
++			clocks = <0x01 0x01 0x32a>;
++			power-domains = <0x02 0x20>;
++			status = "enabled";
++			renesas,id = <0x01>;
++			resets = <0x01 0x32a>;
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x71>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1d>;
++						phandle = <0x34>;
++					};
++				};
++			};
++		};
++
++		vin_02@e6ef2000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef2000 0x00 0x1000>;
++			interrupts = <0x00 0xbe 0x04>;
++			clocks = <0x01 0x01 0x329>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x329>;
++			renesas,id = <0x02>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x72>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1e>;
++						phandle = <0x35>;
++					};
++				};
++			};
++		};
++
++		vin_03@e6ef3000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef3000 0x00 0x1000>;
++			interrupts = <0x00 0xbf 0x04>;
++			clocks = <0x01 0x01 0x328>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x328>;
++			renesas,id = <0x03>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x73>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x1f>;
++						phandle = <0x36>;
++					};
++				};
++			};
++		};
++
++		vin_04@e6ef4000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef4000 0x00 0x1000>;
++			interrupts = <0x00 0xae 0x04>;
++			clocks = <0x01 0x01 0x327>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x327>;
++			renesas,id = <0x04>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x74>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x20>;
++						phandle = <0x37>;
++					};
++				};
++			};
++		};
++
++		vin_05@e6ef5000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef5000 0x00 0x1000>;
++			interrupts = <0x00 0xaf 0x04>;
++			clocks = <0x01 0x01 0x326>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x326>;
++			renesas,id = <0x05>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x75>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x21>;
++						phandle = <0x38>;
++					};
++				};
++			};
++		};
++
++		vin_06@e6ef6000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef6000 0x00 0x1000>;
++			interrupts = <0x00 0xb0 0x04>;
++			clocks = <0x01 0x01 0x325>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x325>;
++			renesas,id = <0x06>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x76>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x22>;
++						phandle = <0x39>;
++					};
++				};
++			};
++		};
++
++		vin_07@e6ef7000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef7000 0x00 0x1000>;
++			interrupts = <0x00 0xab 0x04>;
++			clocks = <0x01 0x01 0x324>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x324>;
++			renesas,id = <0x07>;
++			status = "enabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x77>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x23>;
++						phandle = <0x3a>;
++					};
++				};
++			};
++		};
++
++		vin_08@e6ef8000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef8000 0x00 0x1000>;
++			interrupts = <0x00 0x10c 0x04>;
++			clocks = <0x01 0x01 0x274>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x274>;
++			renesas,id = <0x08>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x78>;
++		};
++
++		vin_09@e6ef9000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6ef9000 0x00 0x1000>;
++			interrupts = <0x00 0x10d 0x04>;
++			clocks = <0x01 0x01 0x273>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x273>;
++			renesas,id = <0x09>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x79>;
++		};
++
++		vin_10@e6efa000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efa000 0x00 0x1000>;
++			interrupts = <0x00 0x121 0x04>;
++			clocks = <0x01 0x01 0x271>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x271>;
++			renesas,id = <0x0a>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7a>;
++		};
++
++		vin_11@e6efb000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efb000 0x00 0x1000>;
++			interrupts = <0x00 0x128 0x04>;
++			clocks = <0x01 0x01 0x26a>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x26a>;
++			renesas,id = <0x0b>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7b>;
++		};
++
++		vin_12@e6efc000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efc000 0x00 0x1000>;
++			interrupts = <0x00 0x12a 0x04>;
++			clocks = <0x01 0x01 0x264>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x264>;
++			renesas,id = <0x0c>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7c>;
++		};
++
++		vin_13@e6efd000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efd000 0x00 0x1000>;
++			interrupts = <0x00 0x12b 0x04>;
++			clocks = <0x01 0x01 0x260>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x260>;
++			renesas,id = <0x0d>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7d>;
++		};
++
++		vin_14@e6efe000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6efe000 0x00 0x1000>;
++			interrupts = <0x00 0x12d 0x04>;
++			clocks = <0x01 0x01 0x25d>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x25d>;
++			renesas,id = <0x0e>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7e>;
++		};
++
++		vin_15@e6eff000 {
++			compatible = "renesas,vin-r8a77980\0generic-uio";
++			reg = <0x00 0xe6eff000 0x00 0x1000>;
++			interrupts = <0x00 0x12e 0x04>;
++			clocks = <0x01 0x01 0x25c>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x25c>;
++			renesas,id = <0x0f>;
++			status = "disabled";
++			ipmmu-id = <0x02 0x00>;
++			phandle = <0x7f>;
++		};
++
++		imp_top_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x119 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++			resets = <0x01 0x33e>;
++			interrupt-controller;
++			#interrupt-cells = <0x01>;
++			ipmmu-id = <0x0c 0x00>;
++			iommus = <0x24 0x00 0x24 0x01>;
++			phandle = <0x80>;
++		};
++
++		irq_imp_top_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11a 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		irq_imp_top_00_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11b 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		irq_imp_top_00_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11c 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		irq_imp_top_00_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa00000 0x00 0x10000>;
++			interrupts = <0x00 0x11d 0x04>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++		};
++
++		imp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff900000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x33b>;
++			power-domains = <0x02 0x17>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33b>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff920000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x33a>;
++			power-domains = <0x02 0x1b>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33a>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff940000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x339>;
++			power-domains = <0x02 0x1c>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x339>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff960000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x338>;
++			power-domains = <0x02 0x1d>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x338>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa80000 0x00 0x20000>;
++			clocks = <0x01 0x01 0x209>;
++			power-domains = <0x02 0x0f>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x209>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_slim_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9c0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x1f4>;
++			power-domains = <0x02 0x0c>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x1f4>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff980000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x33d>;
++			power-domains = <0x02 0x1e>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33d>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff990000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x33c>;
++			power-domains = <0x02 0x1f>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33c>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9a0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x213>;
++			power-domains = <0x02 0x00>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x213>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9b0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x211>;
++			power-domains = <0x02 0x01>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x211>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_ocv_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa40000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x210>;
++			power-domains = <0x02 0x02>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x210>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_dma_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa10000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20f>;
++			power-domains = <0x02 0x03>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20f>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_dma_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa14000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20e>;
++			power-domains = <0x02 0x04>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20e>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_psc_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa20000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20d>;
++			power-domains = <0x02 0x03>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20d>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_cnn_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff9e0000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x33f>;
++			power-domains = <0x02 0x0a>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x33f>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imp_spmi_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xed000000 0x00 0x200000>;
++			clocks = <0x01 0x01 0x33e>;
++			power-domains = <0x02 0x18>;
++			ipmmu-id = <0x0c 0x00>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++
++		imr_alloc {
++			dma-coherent;
++			phandle = <0x25>;
++		};
++
++		ims_00@fe860000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe860000 0x00 0x2000>;
++			interrupts = <0x00 0xc0 0x04>;
++			clocks = <0x01 0x01 0x337>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x337>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x04>;
++			phandle = <0x81>;
++		};
++
++		ims_01@fe870000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe870000 0x00 0x2000>;
++			interrupts = <0x00 0xc1 0x04>;
++			clocks = <0x01 0x01 0x336>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x336>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x05>;
++			phandle = <0x82>;
++		};
++
++		ims_02@fe880000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe880000 0x00 0x2000>;
++			interrupts = <0x00 0xc2 0x04>;
++			clocks = <0x01 0x01 0x335>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x335>;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x06>;
++			phandle = <0x83>;
++		};
++
++		imr_00@fe8a0000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe8a0000 0x00 0x2000>;
++			interrupts = <0x00 0xfe 0x04>;
++			clocks = <0x01 0x01 0x2c3>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2c3>;
++			rse;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x00 0x26 0x01>;
++			phandle = <0x84>;
++		};
++
++		imr_01@fe8b0000 {
++			compatible = "generic-uio\0renesas,imr-lx4";
++			reg = <0x00 0xfe8b0000 0x00 0x2000>;
++			interrupts = <0x00 0xff 0x04>;
++			clocks = <0x01 0x01 0x2c2>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2c2>;
++			rse;
++			alloc-dev = <0x25>;
++			ipmmu-id = <0x06 0x00>;
++			iommus = <0x26 0x02 0x26 0x03>;
++			phandle = <0x85>;
++		};
++
++		stv_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a00000 0x00 0x10000>;
++			interrupts = <0x00 0xee 0x04>;
++			clocks = <0x01 0x01 0x65>;
++			power-domains = <0x02 0x0b>;
++			ipmmu-id = <0x13 0x00>;
++			resets = <0x01 0x65>;
++		};
++
++		irq_stv_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a00000 0x00 0x10000>;
++			interrupts = <0x00 0xef 0x04>;
++			clocks = <0x01 0x01 0x65>;
++			power-domains = <0x02 0x0b>;
++		};
++
++		dof_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a10000 0x00 0x10000>;
++			interrupts = <0x00 0xf2 0x04>;
++			clocks = <0x01 0x01 0x66>;
++			power-domains = <0x02 0x19>;
++			ipmmu-id = <0x13 0x00>;
++			resets = <0x01 0x66>;
++			iommus = <0x27 0x01>;
++		};
++
++		irq_dof_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a10000 0x00 0x10000>;
++			interrupts = <0x00 0xf3 0x04>;
++			clocks = <0x01 0x01 0x66>;
++			power-domains = <0x02 0x19>;
++		};
++
++		acf_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a50000 0x00 0x10000>;
++			interrupts = <0x00 0x47 0x04>;
++			clocks = <0x01 0x01 0x3ec>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3ec>;
++		};
++
++		irq_acf_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a50000 0x00 0x10000>;
++			interrupts = <0x00 0x61 0x04>;
++			clocks = <0x01 0x01 0x3ec>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a60000 0x00 0x10000>;
++			interrupts = <0x00 0x62 0x04>;
++			clocks = <0x01 0x01 0x3eb>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3eb>;
++		};
++
++		irq_acf_01_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a60000 0x00 0x10000>;
++			interrupts = <0x00 0x63 0x04>;
++			clocks = <0x01 0x01 0x3eb>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a70000 0x00 0x10000>;
++			interrupts = <0x00 0x64 0x04>;
++			clocks = <0x01 0x01 0x3ea>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3ea>;
++		};
++
++		irq_acf_02_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a70000 0x00 0x10000>;
++			interrupts = <0x00 0x65 0x04>;
++			clocks = <0x01 0x01 0x3ea>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a80000 0x00 0x10000>;
++			interrupts = <0x00 0x66 0x04>;
++			clocks = <0x01 0x01 0x3e9>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3e9>;
++		};
++
++		irq_acf_03_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a80000 0x00 0x10000>;
++			interrupts = <0x00 0x67 0x04>;
++			clocks = <0x01 0x01 0x3e9>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		acf_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a90000 0x00 0x10000>;
++			interrupts = <0x00 0x68 0x04>;
++			clocks = <0x01 0x01 0x3e8>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++			resets = <0x01 0x3e8>;
++		};
++
++		irq_acf_04_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7a90000 0x00 0x10000>;
++			interrupts = <0x00 0x6c 0x04>;
++			clocks = <0x01 0x01 0x3e8>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		fcprr_stv_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa0000 0x00 0x1000>;
++		};
++
++		fcprw_dof_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7ab1000 0x00 0x1000>;
++		};
++
++		fcprr_dof_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa1000 0x00 0x1000>;
++		};
++
++		fcprr_acf_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa5000 0x00 0x1000>;
++		};
++
++		fcprr_acf_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa6000 0x00 0x1000>;
++		};
++
++		fcprr_acf_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa7000 0x00 0x1000>;
++		};
++
++		fcprr_acf_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa8000 0x00 0x1000>;
++		};
++
++		fcprr_acf_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aa9000 0x00 0x1000>;
++		};
++
++		fcprw_imp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8da000 0x00 0x1000>;
++		};
++
++		fcprr_imp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d8000 0x00 0x1000>;
++		};
++
++		fcprw_imp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8db000 0x00 0x1000>;
++		};
++
++		fcprr_imp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d9000 0x00 0x1000>;
++		};
++
++		fcprr_ims_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c0000 0x00 0x1000>;
++		};
++
++		fcprr_ims_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c1000 0x00 0x1000>;
++		};
++
++		fcprr_ims_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c2000 0x00 0x1000>;
++		};
++
++		fcprw_imr_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c6000 0x00 0x1000>;
++		};
++
++		fcprr_imr_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c4000 0x00 0x1000>;
++		};
++
++		fcprw_imr_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c7000 0x00 0x1000>;
++		};
++
++		fcprr_imr_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9c5000 0x00 0x1000>;
++		};
++
++		fcprr_vspd_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea90000 0x00 0x1000>;
++		};
++
++		fcprr_ivcp1e_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea91000 0x00 0x1000>;
++		};
++
++		fcprr_pcie_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea92000 0x00 0x1000>;
++		};
++
++		fcprw_isp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea96000 0x00 0x1000>;
++		};
++
++		fcprw_isp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea98000 0x00 0x1000>;
++		};
++
++		fcprr_ca53_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xf12f0000 0x00 0x1000>;
++		};
++
++		fcpra_vip0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7aaa000 0x00 0x1000>;
++		};
++
++		fcpra_vip1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7ab5000 0x00 0x1000>;
++		};
++
++		fcpra_imp {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8dd000 0x00 0x1000>;
++		};
++
++		fcpra_imr {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe9cf000 0x00 0x1000>;
++		};
++
++		fcpra_vio {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea9a000 0x00 0x1000>;
++		};
++
++		fcpra_ca53 {
++			compatible = "generic-uio";
++			reg = <0x00 0xf12a0000 0x00 0x1000>;
++		};
++
++		isp@fec00000 {
++			compatible = "renesas,isp-r8a77980";
++			reg = <0x00 0xfec00000 0x00 0x20000 0x00 0xfed00000 0x00 0x10000>;
++			interrupts = <0x00 0x1a 0x04 0x00 0x19 0x04>;
++			clocks = <0x01 0x01 0x331>;
++			power-domains = <0x02 0x20>;
++			phandle = <0x86>;
++		};
++
++		isp@fee00000 {
++			compatible = "renesas,isp-r8a77980";
++			reg = <0x00 0xfee00000 0x00 0x20000 0x00 0xfed20000 0x00 0x10000>;
++			interrupts = <0x00 0x6d 0x04 0x00 0x1b 0x04>;
++			clocks = <0x01 0x01 0x32e>;
++			power-domains = <0x02 0x20>;
++			phandle = <0x87>;
++		};
++
++		tisp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfed00000 0x00 0x10000>;
++			interrupts = <0x00 0x19 0x04>;
++			clocks = <0x01 0x01 0x331>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0a>;
++			phandle = <0x88>;
++		};
++
++		cisp_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfec00000 0x00 0x20000>;
++			interrupts = <0x00 0x1a 0x04>;
++			clocks = <0x01 0x01 0x331>;
++			resets = <0x01 0x331>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0b>;
++			phandle = <0x89>;
++		};
++
++		tisp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfed20000 0x00 0x10000>;
++			interrupts = <0x00 0x1b 0x04>;
++			clocks = <0x01 0x01 0x32e>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0d>;
++			phandle = <0x8a>;
++		};
++
++		cisp_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfee00000 0x00 0x20000>;
++			interrupts = <0x00 0x6d 0x04>;
++			clocks = <0x01 0x01 0x32e>;
++			resets = <0x01 0x32e>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++			iommus = <0x28 0x0e>;
++			phandle = <0x8b>;
++		};
++
++		dma-controller@e7300000 {
++			compatible = "renesas,dmac-r8a77980\0renesas,rcar-dmac";
++			reg = <0x00 0xe7300000 0x00 0x10000>;
++			interrupts = <0x00 0xdc 0x04 0x00 0xd8 0x04 0x00 0xd9 0x04 0x00 0xda 0x04 0x00 0xdb 0x04 0x00 0x134 0x04 0x00 0x135 0x04 0x00 0x136 0x04 0x00 0x137 0x04 0x00 0x161 0x04 0x00 0x162 0x04 0x00 0x163 0x04 0x00 0x164 0x04 0x00 0x165 0x04 0x00 0x166 0x04 0x00 0x167 0x04 0x00 0x168 0x04>;
++			interrupt-names = "error\0ch0\0ch1\0ch2\0ch3\0ch4\0ch5\0ch6\0ch7\0ch8\0ch9\0ch10\0ch11\0ch12\0ch13\0ch14\0ch15";
++			clocks = <0x01 0x01 0xda>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xda>;
++			#dma-cells = <0x01>;
++			dma-channels = <0x10>;
++			iommus = <0x17 0x00 0x17 0x01 0x17 0x02 0x17 0x03 0x17 0x04 0x17 0x05 0x17 0x06 0x17 0x07 0x17 0x08 0x17 0x09 0x17 0x0a 0x17 0x0b 0x17 0x0c 0x17 0x0d 0x17 0x0e 0x17 0x0f>;
++			phandle = <0x0d>;
++		};
++
++		dma-controller@e7310000 {
++			compatible = "renesas,dmac-r8a77980\0renesas,rcar-dmac";
++			reg = <0x00 0xe7310000 0x00 0x10000>;
++			interrupts = <0x00 0x133 0x04 0x00 0x138 0x04 0x00 0x139 0x04 0x00 0x13a 0x04 0x00 0x13b 0x04 0x00 0x13c 0x04 0x00 0x13d 0x04 0x00 0x13e 0x04 0x00 0x13f 0x04 0x00 0x169 0x04 0x00 0x16a 0x04 0x00 0x16b 0x04 0x00 0x16c 0x04 0x00 0x16d 0x04 0x00 0x16e 0x04 0x00 0x16f 0x04 0x00 0x170 0x04>;
++			interrupt-names = "error\0ch0\0ch1\0ch2\0ch3\0ch4\0ch5\0ch6\0ch7\0ch8\0ch9\0ch10\0ch11\0ch12\0ch13\0ch14\0ch15";
++			clocks = <0x01 0x01 0xd9>;
++			clock-names = "fck";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0xd9>;
++			#dma-cells = <0x01>;
++			dma-channels = <0x10>;
++			iommus = <0x17 0x10 0x17 0x11 0x17 0x12 0x17 0x13 0x17 0x14 0x17 0x15 0x17 0x16 0x17 0x17 0x17 0x18 0x17 0x19 0x17 0x1a 0x17 0x1b 0x17 0x1c 0x17 0x1d 0x17 0x1e 0x17 0x1f>;
++			phandle = <0x0e>;
++		};
++
++		ethernet@e7400000 {
++			compatible = "renesas,gether-r8a77980";
++			reg = <0x00 0xe7400000 0x00 0x1000>;
++			interrupts = <0x00 0x15 0x04>;
++			clocks = <0x01 0x01 0x32d>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x32d>;
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++			status = "okay";
++			pinctrl-0 = <0x29>;
++			pinctrl-names = "default";
++			phy-mode = "rgmii";
++			phy-handle = <0x2a>;
++			renesas,no-ether-link;
++			phandle = <0x8c>;
++
++			ethernet-phy@0 {
++				reg = <0x00>;
++				interrupt-parent = <0x2b>;
++				interrupts = <0x17 0x08>;
++				reset-gpios = <0x2b 0x16 0x01>;
++				phandle = <0x2a>;
++			};
++		};
++
++		mmu@e7740000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe7740000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x00>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x17>;
++		};
++
++		mmu@ff8b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xff8b0000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x03>;
++			power-domains = <0x02 0x18>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x24>;
++		};
++
++		mmu@e67b0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe67b0000 0x00 0x1000>;
++			interrupts = <0x00 0xc4 0x04 0x00 0xc5 0x04>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x2c>;
++		};
++
++		mmu@ffc80000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xffc80000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0a>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x8d>;
++		};
++
++		mmu@fe990000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xfe990000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0c>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x26>;
++		};
++
++		mmu@febd0000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xfebd0000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0e>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x28>;
++		};
++
++		mmu@e7b00000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe7b00000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x04>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x8e>;
++		};
++
++		mmu@e7960000 {
++			compatible = "renesas,ipmmu-r8a77980";
++			reg = <0x00 0xe7960000 0x00 0x1000>;
++			renesas,ipmmu-main = <0x2c 0x0b>;
++			power-domains = <0x02 0x20>;
++			#iommu-cells = <0x01>;
++			status = "disabled";
++			phandle = <0x27>;
++		};
++
++		ipmmu_cache_ds1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7740000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x12 0x00>;
++		};
++
++		ipmmu_cache_ir {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8b0000 0x00 0x1000>;
++			power-domains = <0x02 0x18>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		ipmmu_mm_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe67b0000 0x00 0x1000>;
++			interrupts = <0x00 0xc4 0x04>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x01 0x00>;
++		};
++
++		ipmmu_cache_rt0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffc80000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x0e 0x00>;
++		};
++
++		ipmmu_cache_vc0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfe990000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		ipmmu_cache_vi0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfebd0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x02 0x00>;
++		};
++
++		ipmmu_cache_vip0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7b00000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x13 0x00>;
++		};
++
++		ipmmu_cache_vip1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7960000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x14 0x00>;
++		};
++
++		mmc@ee140000 {
++			compatible = "renesas,sdhi-r8a77980\0renesas,rcar-gen3-sdhi";
++			reg = <0x00 0xee140000 0x00 0x2000>;
++			interrupts = <0x00 0xa5 0x04>;
++			clocks = <0x01 0x01 0x13a>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x13a>;
++			max-frequency = <0x5f5e100>;
++			status = "okay";
++			pinctrl-0 = <0x2d>;
++			pinctrl-1 = <0x2e>;
++			pinctrl-names = "default\0state_uhs";
++			vmmc-supply = <0x12>;
++			vqmmc-supply = <0x2f>;
++			mmc-hs200-1_8v;
++			bus-width = <0x08>;
++			non-removable;
++			phandle = <0x8f>;
++		};
++
++		interrupt-controller@f1010000 {
++			compatible = "arm,gic-400";
++			#interrupt-cells = <0x03>;
++			#address-cells = <0x00>;
++			interrupt-controller;
++			reg = <0x00 0xf1010000 0x00 0x1000 0x00 0xf1020000 0x00 0x20000 0x00 0xf1040000 0x00 0x20000 0x00 0xf1060000 0x00 0x20000>;
++			interrupts = <0x01 0x09 0xf04>;
++			clocks = <0x01 0x01 0x198>;
++			clock-names = "clk";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x198>;
++			phandle = <0x05>;
++		};
++
++		pcie@fe000000 {
++			compatible = "renesas,pcie-r8a77980\0renesas,pcie-rcar-gen3";
++			reg = <0x00 0xfe000000 0x00 0x80000>;
++			#address-cells = <0x03>;
++			#size-cells = <0x02>;
++			bus-range = <0x00 0xff>;
++			device_type = "pci";
++			ranges = <0x1000000 0x00 0x00 0x00 0xfe100000 0x00 0x100000 0x2000000 0x00 0xfe200000 0x00 0xfe200000 0x00 0x200000 0x2000000 0x00 0x30000000 0x00 0x30000000 0x00 0x8000000 0x42000000 0x00 0x38000000 0x00 0x38000000 0x00 0x8000000>;
++			dma-ranges = <0x42000000 0x00 0x40000000 0x00 0x40000000 0x00 0x80000000>;
++			interrupts = <0x00 0x94 0x04 0x00 0x95 0x04 0x00 0x96 0x04>;
++			#interrupt-cells = <0x01>;
++			interrupt-map-mask = <0x00 0x00 0x00 0x00>;
++			interrupt-map = <0x00 0x00 0x00 0x00 0x05 0x00 0x94 0x04>;
++			clocks = <0x01 0x01 0x13f 0x30>;
++			clock-names = "pcie\0pcie_bus";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x13f>;
++			phys = <0x31>;
++			phy-names = "pcie";
++			status = "okay";
++			phandle = <0x90>;
++		};
++
++		vsp_00@fea20000 {
++			compatible = "renesas,vsp2\0generic-uio";
++			reg = <0x00 0xfea20000 0x00 0x5000>;
++			interrupts = <0x00 0xa9 0x04>;
++			clocks = <0x01 0x01 0x26f>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x26f>;
++			renesas,fcp = <0x32>;
++			status = "disabled";
++			phandle = <0x3c>;
++		};
++
++		fcp@fea27000 {
++			compatible = "renesas,fcpv";
++			reg = <0x00 0xfea27000 0x00 0x200>;
++			clocks = <0x01 0x01 0x25b>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x25b>;
++			status = "disabled";
++			phandle = <0x32>;
++		};
++
++		csi_00@feaa0000 {
++			compatible = "renesas,r8a77980-csi2\0generic-uio";
++			reg = <0x00 0xfeaa0000 0x00 0x10000>;
++			interrupts = <0x00 0xf6 0x04>;
++			clocks = <0x01 0x01 0x2cc>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2cc>;
++			status = "disabled";
++			phandle = <0x91>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@0 {
++						reg = <0x00>;
++						remote-endpoint = <0x33>;
++						phandle = <0x1c>;
++					};
++
++					endpoint@1 {
++						reg = <0x01>;
++						remote-endpoint = <0x34>;
++						phandle = <0x1d>;
++					};
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x35>;
++						phandle = <0x1e>;
++					};
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x36>;
++						phandle = <0x1f>;
++					};
++				};
++			};
++		};
++
++		csi_01@feab0000 {
++			compatible = "renesas,r8a77980-csi2\0generic-uio";
++			reg = <0x00 0xfeab0000 0x00 0x10000>;
++			interrupts = <0x00 0xf1 0x04>;
++			clocks = <0x01 0x01 0x2cb>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2cb>;
++			status = "disabled";
++			phandle = <0x92>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@1 {
++					#address-cells = <0x01>;
++					#size-cells = <0x00>;
++					reg = <0x01>;
++
++					endpoint@0 {
++						reg = <0x00>;
++						remote-endpoint = <0x37>;
++						phandle = <0x20>;
++					};
++
++					endpoint@1 {
++						reg = <0x01>;
++						remote-endpoint = <0x38>;
++						phandle = <0x21>;
++					};
++
++					endpoint@2 {
++						reg = <0x02>;
++						remote-endpoint = <0x39>;
++						phandle = <0x22>;
++					};
++
++					endpoint@3 {
++						reg = <0x03>;
++						remote-endpoint = <0x3a>;
++						phandle = <0x23>;
++					};
++				};
++			};
++		};
++
++		du_00@feb00000 {
++			compatible = "renesas,du-r8a77980\0generic-uio\0renesas,du-r8a77970";
++			reg = <0x00 0xfeb00000 0x00 0x80000>;
++			interrupts = <0x00 0x100 0x04>;
++			clocks = <0x01 0x01 0x2d4 0x3b>;
++			clock-names = "du.0\0dclkin.0";
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2d4>;
++			vsps = <0x3c>;
++			status = "disabled";
++			phandle = <0x93>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@0 {
++					reg = <0x00>;
++
++					endpoint {
++						phandle = <0x94>;
++					};
++				};
++
++				port@1 {
++					reg = <0x01>;
++
++					endpoint {
++						remote-endpoint = <0x3d>;
++						phandle = <0x3e>;
++					};
++				};
++			};
++		};
++
++		lvds_00@feb90000 {
++			compatible = "renesas,r8a77980-lvds\0generic-uio";
++			reg = <0x00 0xfeb90000 0x00 0x1000>;
++			clocks = <0x01 0x01 0x2d7>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x2d7>;
++			status = "disabled";
++			phandle = <0x95>;
++
++			ports {
++				#address-cells = <0x01>;
++				#size-cells = <0x00>;
++
++				port@0 {
++					reg = <0x00>;
++
++					endpoint {
++						remote-endpoint = <0x3e>;
++						phandle = <0x3d>;
++					};
++				};
++
++				port@1 {
++					reg = <0x01>;
++
++					endpoint {
++						remote-endpoint = <0x3f>;
++						phandle = <0x42>;
++					};
++				};
++			};
++		};
++
++		chipid@fff00044 {
++			compatible = "renesas,prr";
++			reg = <0x00 0xfff00044 0x00 0x04>;
++			phandle = <0x96>;
++		};
++
++		qos@e67e0000 {
++			compatible = "renesas,qos";
++			reg = <0x00 0xe67e0000 0x00 0x10090>;
++		};
++
++		ivcp1e_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea00000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x7f>;
++			power-domains = <0x02 0x20>;
++			interrupts = <0x00 0x12c 0x04>;
++			ipmmu-id = <0x02 0x00>;
++			resets = <0x01 0x7f>;
++			iommus = <0x28 0x04>;
++		};
++
++		irq_ivcp1e_00_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfea00000 0x00 0x10000>;
++			clocks = <0x01 0x01 0x7f>;
++			power-domains = <0x02 0x20>;
++			interrupts = <0x00 0xaa 0x04>;
++		};
++
++		fbc_00 {
++			compatible = "renesas,uio-fbc";
++			reg = <0x00 0xff830000 0x00 0x2000>;
++			clocks = <0x01 0x00 0x26 0x01 0x00 0x27 0x01 0x00 0x28>;
++			clock-names = "fbc_post\0fbc_post2\0fbc_post4";
++			power-domains = <0x02 0x20>;
++			interrupts = <0x00 0x0e 0x04>;
++		};
++
++		wwdt_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffc90000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x145>;
++		};
++
++		wwdt_01 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffca0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x144>;
++		};
++
++		wwdt_02 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffcb0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x141>;
++		};
++
++		wwdt_03 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffcc0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x135>;
++		};
++
++		wwdt_04 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffcf0000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			resets = <0x01 0x193>;
++		};
++
++		fba_imr0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff80000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_imr0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff80000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_imr1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff81000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_imr1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff81000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff90000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff90000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff91000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff91000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_ims2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff92000 0x00 0x1000>;
++			power-domains = <0x02 0x20>;
++			ipmmu-id = <0x06 0x00>;
++		};
++
++		post_fba_ims2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff92000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x20>;
++		};
++
++		fba_dof0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7930000 0x00 0x1000>;
++			clocks = <0x01 0x01 0x66>;
++			power-domains = <0x02 0x19>;
++			ipmmu-id = <0x13 0x00>;
++		};
++
++		post_fba_dof0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7930000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x19>;
++		};
++
++		fba_stv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7950000 0x00 0x1000>;
++			power-domains = <0x02 0x0b>;
++			ipmmu-id = <0x13 0x00>;
++		};
++
++		post_fba_stv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7950000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x0b>;
++		};
++
++		fba_acf0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7940000 0x00 0x1000>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++		};
++
++		post_fba_acf0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7940000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		fba_acf1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7941000 0x00 0x1000>;
++			power-domains = <0x02 0x1a>;
++			ipmmu-id = <0x14 0x00>;
++		};
++
++		post_fba_acf1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xe7941000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x28>;
++			power-domains = <0x02 0x1a>;
++		};
++
++		fba_imp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d0000 0x00 0x1000>;
++			power-domains = <0x02 0x17>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d0000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x17>;
++		};
++
++		fba_imp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff50000 0x00 0x1000>;
++			power-domains = <0x02 0x1b>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff50000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1b>;
++		};
++
++		fba_imp2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff60000 0x00 0x1000>;
++			power-domains = <0x02 0x1c>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff60000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1c>;
++		};
++
++		fba_imp3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff70000 0x00 0x1000>;
++			power-domains = <0x02 0x1d>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfff70000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1d>;
++		};
++
++		fba_imp4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d1000 0x00 0x1000>;
++			power-domains = <0x02 0x0f>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d1000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x0f>;
++		};
++
++		fba_imp_ocv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffa0000 0x00 0x1000>;
++			power-domains = <0x02 0x1e>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffa0000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1e>;
++		};
++
++		fba_imp_ocv1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffb0000 0x00 0x1000>;
++			power-domains = <0x02 0x1f>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xfffb0000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x1f>;
++		};
++
++		fba_imp_ocv2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d2000 0x00 0x1000>;
++			power-domains = <0x02 0x00>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv2 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d2000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x00>;
++		};
++
++		fba_imp_ocv3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d3000 0x00 0x1000>;
++			power-domains = <0x02 0x01>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv3 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d3000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x01>;
++		};
++
++		fba_imp_ocv4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d4000 0x00 0x1000>;
++			power-domains = <0x02 0x02>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_ocv4 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d4000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x02>;
++		};
++
++		fba_imp_dp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d5000 0x00 0x1000>;
++			power-domains = <0x02 0x03>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_dp0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d5000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x03>;
++		};
++
++		fba_imp_dp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d6000 0x00 0x1000>;
++			power-domains = <0x02 0x04>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_dp1 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d6000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x04>;
++		};
++
++		fba_imp_cnn0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d7000 0x00 0x1000>;
++			power-domains = <0x02 0x0a>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_cnn0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8d7000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x0a>;
++		};
++
++		fba_imp_slim0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8dc000 0x00 0x1000>;
++			power-domains = <0x02 0x0c>;
++			ipmmu-id = <0x0c 0x00>;
++		};
++
++		post_fba_imp_slim0 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff8dc000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x26>;
++			power-domains = <0x02 0x0c>;
++		};
++
++		rfso@ffe80000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe80000 0x00 0x1000>;
++			interrupts = <0x00 0x20 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_00";
++			phandle = <0x97>;
++		};
++
++		rfso@ffe81000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe81000 0x00 0x1000>;
++			interrupts = <0x00 0x21 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_01";
++			phandle = <0x98>;
++		};
++
++		rfso@ffe82000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe82000 0x00 0x1000>;
++			interrupts = <0x00 0x22 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_02";
++			phandle = <0x99>;
++		};
++
++		rfso@ffe83000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe83000 0x00 0x1000>;
++			interrupts = <0x00 0x23 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_03";
++			phandle = <0x9a>;
++		};
++
++		rfso@ffe84000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe84000 0x00 0x1000>;
++			interrupts = <0x00 0x24 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_04";
++			phandle = <0x9b>;
++		};
++
++		rfso@ffe85000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe85000 0x00 0x1000>;
++			interrupts = <0x00 0x25 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_05";
++			phandle = <0x9c>;
++		};
++
++		rfso@ffe86000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe86000 0x00 0x1000>;
++			interrupts = <0x00 0xdd 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_06";
++			phandle = <0x9d>;
++		};
++
++		rfso@ffe87000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe87000 0x00 0x1000>;
++			interrupts = <0x00 0xba 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_07";
++			phandle = <0x9e>;
++		};
++
++		rfso@ffe88000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe88000 0x00 0x1000>;
++			interrupts = <0x00 0xbb 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_08";
++			phandle = <0x9f>;
++		};
++
++		rfso@ffe89000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe89000 0x00 0x1000>;
++			interrupts = <0x00 0xb9 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_09";
++			phandle = <0xa0>;
++		};
++
++		rfso@ffe8A000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffe8a000 0x00 0x1000>;
++			interrupts = <0x00 0xf7 0x04>;
++			power-domains = <0x02 0x20>;
++			linux,uio-name = "rfso_10";
++			phandle = <0xa1>;
++		};
++
++		fba@ff87c000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87c000 0x00 0x1000>;
++			linux,uio-name = "fba_ca53d";
++			phandle = <0xa2>;
++		};
++
++		post_fba_ca53d {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87c000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca53d";
++		};
++
++		fba@ff877000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff877000 0x00 0x1000>;
++			linux,uio-name = "fba_ca530";
++			phandle = <0xa3>;
++		};
++
++		post_fba_ca530 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff877000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca530";
++		};
++
++		fba@ff878000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff878000 0x00 0x1000>;
++			linux,uio-name = "fba_ca531";
++			phandle = <0xa4>;
++		};
++
++		post_fba_ca531 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff878000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca531";
++		};
++
++		fba@ff879000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff879000 0x00 0x1000>;
++			linux,uio-name = "fba_ca532";
++			phandle = <0xa5>;
++		};
++
++		post_fba_ca532 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff879000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca532";
++		};
++
++		fba@ff87a000 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87a000 0x00 0x1000>;
++			linux,uio-name = "fba_ca533";
++			phandle = <0xa6>;
++		};
++
++		post_fba_ca533 {
++			compatible = "generic-uio";
++			reg = <0x00 0xff87a000 0x00 0x1000>;
++			clocks = <0x01 0x00 0x27>;
++			linux,uio-name = "post_fba_ca533";
++		};
++
++		imp_dma_slim_00 {
++			compatible = "generic-uio";
++			reg = <0x00 0xffa18000 0x00 0x4000>;
++			clocks = <0x01 0x01 0x20c>;
++			power-domains = <0x02 0x04>;
++			ipmmu-id = <0x0c 0x00>;
++			resets = <0x01 0x20c>;
++			iommus = <0x24 0x00 0x24 0x01>;
++		};
++	};
++
++	thermal-zones {
++
++		thermal-sensor-1 {
++			polling-delay-passive = <0xfa>;
++			polling-delay = <0x3e8>;
++			thermal-sensors = <0x40 0x00>;
++
++			trips {
++
++				sensor1-passive {
++					temperature = <0x17318>;
++					hysteresis = <0x3e8>;
++					type = "passive";
++				};
++
++				sensor1-critical {
++					temperature = <0x1d4c0>;
++					hysteresis = <0x3e8>;
++					type = "critical";
++				};
++			};
++		};
++
++		thermal-sensor-2 {
++			polling-delay-passive = <0xfa>;
++			polling-delay = <0x3e8>;
++			thermal-sensors = <0x40 0x01>;
++
++			trips {
++
++				sensor2-passive {
++					temperature = <0x17318>;
++					hysteresis = <0x3e8>;
++					type = "passive";
++				};
++
++				sensor2-critical {
++					temperature = <0x1d4c0>;
++					hysteresis = <0x3e8>;
++					type = "critical";
++				};
++			};
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts-extended = <0x05 0x01 0x0d 0xf08 0x05 0x01 0x0e 0xf08 0x05 0x01 0x0b 0xf08 0x05 0x01 0x0a 0xf08>;
++	};
++
++	spi-mfis {
++		compatible = "spi-mfis";
++		#address-cells = <0x01>;
++		#size-cells = <0x00>;
++
++		spidev@0 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x00>;
++		};
++
++		spidev@1 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x01>;
++		};
++
++		spidev@2 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x02>;
++		};
++
++		spidev@3 {
++			compatible = "spi-mfis";
++			spi-max-frequency = <0xf4240>;
++			reg = <0x03>;
++		};
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	hdmi-out {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++
++			endpoint {
++				remote-endpoint = <0x41>;
++				phandle = <0x14>;
++			};
++		};
++	};
++
++	lvds-decoder {
++		compatible = "thine,thc63lvd1024";
++		vcc-supply = <0x12>;
++
++		ports {
++			#address-cells = <0x01>;
++			#size-cells = <0x00>;
++
++			port@1 {
++				reg = <0x01>;
++
++				endpoint {
++					remote-endpoint = <0x42>;
++					phandle = <0x3f>;
++				};
++			};
++
++			port@2 {
++				reg = <0x02>;
++
++				endpoint {
++					remote-endpoint = <0x43>;
++					phandle = <0x13>;
++				};
++			};
++		};
++	};
++
++	memory@48000000 {
++		device_type = "memory";
++		reg = <0x00 0x48000000 0x00 0x78000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <0x02>;
++		#size-cells = <0x02>;
++		ranges;
++
++		linux,cma@58000000 {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00 0x58000000 0x00 0x18000000>;
++			linux,cma-default;
++		};
++
++		linux,multimedia@7f000000 {
++			compatible = "shared-dma-pool";
++			reusable;
++			reg = <0x00 0x7f000000 0x00 0x1000000>;
++			phandle = <0x44>;
++		};
++	};
++
++	mmngr {
++		compatible = "renesas,mmngr";
++		memory-region = <0x44>;
++	};
++
++	mmngrbuf {
++		compatible = "renesas,mmngrbuf";
++	};
++
++	osc1-clock {
++		compatible = "fixed-clock";
++		#clock-cells = <0x00>;
++		clock-frequency = <0x8d9ee20>;
++		phandle = <0x3b>;
++	};
++
++	regulator-0 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC1V8_D4";
++		regulator-min-microvolt = <0x1b7740>;
++		regulator-max-microvolt = <0x1b7740>;
++		regulator-boot-on;
++		regulator-always-on;
++		phandle = <0x11>;
++	};
++
++	regulator-1 {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC3V3_D5";
++		regulator-min-microvolt = <0x325aa0>;
++		regulator-max-microvolt = <0x325aa0>;
++		regulator-boot-on;
++		regulator-always-on;
++		phandle = <0x12>;
++	};
++
++	regulator-2 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDQ_VIN01";
++		regulator-min-microvolt = <0x1b7740>;
++		regulator-max-microvolt = <0x1b7740>;
++		regulator-boot-on;
++		regulator-always-on;
++		phandle = <0x2f>;
++	};
++
++	__symbols__ {
++		can_clk = "/can";
++		a53_0 = "/cpus/cpu@0";
++		a53_1 = "/cpus/cpu@1";
++		a53_2 = "/cpus/cpu@2";
++		a53_3 = "/cpus/cpu@3";
++		L2_CA53 = "/cpus/cache-controller";
++		cluster0_opp_tb0 = "/opp_table0";
++		extal_clk = "/extal";
++		extalr_clk = "/extalr";
++		pcie_bus_clk = "/pcie_bus";
++		scif_clk = "/scif";
++		rwdt = "/soc/watchdog@e6020000";
++		gpio0 = "/soc/gpio@e6050000";
++		gpio1 = "/soc/gpio@e6051000";
++		gpio2 = "/soc/gpio@e6052000";
++		gpio3 = "/soc/gpio@e6053000";
++		gpio4 = "/soc/gpio@e6054000";
++		gpio5 = "/soc/gpio@e6055000";
++		pfc = "/soc/pin-controller@e6060000";
++		gether_pins = "/soc/pin-controller@e6060000/gether";
++		i2c0_pins = "/soc/pin-controller@e6060000/i2c0";
++		mmc_pins = "/soc/pin-controller@e6060000/mmc";
++		mmc_pins_uhs = "/soc/pin-controller@e6060000/mmc_uhs";
++		qspi0_pins = "/soc/pin-controller@e6060000/qspi0";
++		qspi1_pins = "/soc/pin-controller@e6060000/qspi1";
++		scif0_pins = "/soc/pin-controller@e6060000/scif0";
++		scif_clk_pins = "/soc/pin-controller@e6060000/scif_clk";
++		cmt0 = "/soc/timer@e60f0000";
++		cmt1 = "/soc/timer@e6130000";
++		cmt2 = "/soc/timer@e6140000";
++		cmt3 = "/soc/timer@e6148000";
++		cpg = "/soc/clock-controller@e6150000";
++		rst = "/soc/reset-controller@e6160000";
++		sysc = "/soc/system-controller@e6180000";
++		tsc = "/soc/thermal@e6198000";
++		intc_ex = "/soc/interrupt-controller@e61c0000";
++		tmu0 = "/soc/timer@e61e0000";
++		tmu1 = "/soc/timer@e6fc0000";
++		tmu2 = "/soc/timer@e6fd0000";
++		tmu3 = "/soc/timer@e6fe0000";
++		tmu4 = "/soc/timer@ffc00000";
++		i2c0 = "/soc/i2c@e6500000";
++		adv7511_in = "/soc/i2c@e6500000/hdmi@39/ports/port@0/endpoint";
++		adv7511_out = "/soc/i2c@e6500000/hdmi@39/ports/port@1/endpoint";
++		i2c1 = "/soc/i2c@e6508000";
++		i2c2 = "/soc/i2c@e6510000";
++		i2c3 = "/soc/i2c@e66d0000";
++		i2c4 = "/soc/i2c@e66d8000";
++		i2c5 = "/soc/i2c@e66e0000";
++		hscif0 = "/soc/serial@e6540000";
++		hscif1 = "/soc/serial@e6550000";
++		hscif2 = "/soc/serial@e6560000";
++		hscif3 = "/soc/serial@e66a0000";
++		pcie_phy = "/soc/pcie-phy@e65d0000";
++		canfd = "/soc/can@e66c0000";
++		avb = "/soc/ethernet@e6800000";
++		pwm0 = "/soc/pwm@e6e30000";
++		pwm1 = "/soc/pwm@e6e31000";
++		pwm2 = "/soc/pwm@e6e32000";
++		pwm3 = "/soc/pwm@e6e33000";
++		pwm4 = "/soc/pwm@e6e34000";
++		scif0 = "/soc/serial@e6e60000";
++		scif1 = "/soc/serial@e6e68000";
++		scif3 = "/soc/serial@e6c50000";
++		scif4 = "/soc/serial@e6c40000";
++		tpu = "/soc/pwm@e6e80000";
++		rpc0 = "/soc/spi@ee200000";
++		msiof0 = "/soc/spi@e6e90000";
++		msiof1 = "/soc/spi@e6ea0000";
++		msiof2 = "/soc/spi@e6c00000";
++		msiof3 = "/soc/spi@e6c10000";
++		vin0 = "/soc/vin_00@e6ef0000";
++		vin0csi40 = "/soc/vin_00@e6ef0000/ports/port@1/endpoint@2";
++		vin1 = "/soc/vin_01@e6ef1000";
++		vin1csi40 = "/soc/vin_01@e6ef1000/ports/port@1/endpoint@2";
++		vin2 = "/soc/vin_02@e6ef2000";
++		vin2csi40 = "/soc/vin_02@e6ef2000/ports/port@1/endpoint@2";
++		vin3 = "/soc/vin_03@e6ef3000";
++		vin3csi40 = "/soc/vin_03@e6ef3000/ports/port@1/endpoint@2";
++		vin4 = "/soc/vin_04@e6ef4000";
++		vin4csi41 = "/soc/vin_04@e6ef4000/ports/port@1/endpoint@3";
++		vin5 = "/soc/vin_05@e6ef5000";
++		vin5csi41 = "/soc/vin_05@e6ef5000/ports/port@1/endpoint@3";
++		vin6 = "/soc/vin_06@e6ef6000";
++		vin6csi41 = "/soc/vin_06@e6ef6000/ports/port@1/endpoint@3";
++		vin7 = "/soc/vin_07@e6ef7000";
++		vin7csi41 = "/soc/vin_07@e6ef7000/ports/port@1/endpoint@3";
++		vin8 = "/soc/vin_08@e6ef8000";
++		vin9 = "/soc/vin_09@e6ef9000";
++		vin10 = "/soc/vin_10@e6efa000";
++		vin11 = "/soc/vin_11@e6efb000";
++		vin12 = "/soc/vin_12@e6efc000";
++		vin13 = "/soc/vin_13@e6efd000";
++		vin14 = "/soc/vin_14@e6efe000";
++		vin15 = "/soc/vin_15@e6eff000";
++		imp_distributer = "/soc/imp_top_00";
++		imr_v4l2_alloc = "/soc/imr_alloc";
++		imrlx4_ch0 = "/soc/ims_00@fe860000";
++		imrlx4_ch1 = "/soc/ims_01@fe870000";
++		imrlx4_ch2 = "/soc/ims_02@fe880000";
++		imrlx4_ch4 = "/soc/imr_00@fe8a0000";
++		imrlx4_ch5 = "/soc/imr_01@fe8b0000";
++		isp0 = "/soc/isp@fec00000";
++		isp1 = "/soc/isp@fee00000";
++		tisp0 = "/soc/tisp_00";
++		cisp0 = "/soc/cisp_00";
++		tisp1 = "/soc/tisp_01";
++		cisp1 = "/soc/cisp_01";
++		dmac1 = "/soc/dma-controller@e7300000";
++		dmac2 = "/soc/dma-controller@e7310000";
++		gether = "/soc/ethernet@e7400000";
++		phy0 = "/soc/ethernet@e7400000/ethernet-phy@0";
++		ipmmu_ds1 = "/soc/mmu@e7740000";
++		ipmmu_ir = "/soc/mmu@ff8b0000";
++		ipmmu_mm = "/soc/mmu@e67b0000";
++		ipmmu_rt = "/soc/mmu@ffc80000";
++		ipmmu_vc0 = "/soc/mmu@fe990000";
++		ipmmu_vi0 = "/soc/mmu@febd0000";
++		ipmmu_vip0 = "/soc/mmu@e7b00000";
++		ipmmu_vip1 = "/soc/mmu@e7960000";
++		mmc0 = "/soc/mmc@ee140000";
++		gic = "/soc/interrupt-controller@f1010000";
++		pciec = "/soc/pcie@fe000000";
++		vspd0 = "/soc/vsp_00@fea20000";
++		fcpvd0 = "/soc/fcp@fea27000";
++		csi40 = "/soc/csi_00@feaa0000";
++		csi40vin0 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@0";
++		csi40vin1 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@1";
++		csi40vin2 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@2";
++		csi40vin3 = "/soc/csi_00@feaa0000/ports/port@1/endpoint@3";
++		csi41 = "/soc/csi_01@feab0000";
++		csi41vin4 = "/soc/csi_01@feab0000/ports/port@1/endpoint@0";
++		csi41vin5 = "/soc/csi_01@feab0000/ports/port@1/endpoint@1";
++		csi41vin6 = "/soc/csi_01@feab0000/ports/port@1/endpoint@2";
++		csi41vin7 = "/soc/csi_01@feab0000/ports/port@1/endpoint@3";
++		du = "/soc/du_00@feb00000";
++		du_out_rgb = "/soc/du_00@feb00000/ports/port@0/endpoint";
++		du_out_lvds0 = "/soc/du_00@feb00000/ports/port@1/endpoint";
++		lvds0 = "/soc/lvds_00@feb90000";
++		lvds0_in = "/soc/lvds_00@feb90000/ports/port@0/endpoint";
++		lvds0_out = "/soc/lvds_00@feb90000/ports/port@1/endpoint";
++		prr = "/soc/chipid@fff00044";
++		rfso0 = "/soc/rfso@ffe80000";
++		rfso1 = "/soc/rfso@ffe81000";
++		rfso2 = "/soc/rfso@ffe82000";
++		rfso3 = "/soc/rfso@ffe83000";
++		rfso4 = "/soc/rfso@ffe84000";
++		rfso5 = "/soc/rfso@ffe85000";
++		rfso6 = "/soc/rfso@ffe86000";
++		rfso7 = "/soc/rfso@ffe87000";
++		rfso8 = "/soc/rfso@ffe88000";
++		rfso9 = "/soc/rfso@ffe89000";
++		rfso10 = "/soc/rfso@ffe8A000";
++		fba_ca53d = "/soc/fba@ff87c000";
++		fba_ca530 = "/soc/fba@ff877000";
++		fba_ca531 = "/soc/fba@ff878000";
++		fba_ca532 = "/soc/fba@ff879000";
++		fba_ca533 = "/soc/fba@ff87a000";
++		hdmi_con = "/hdmi-out/port/endpoint";
++		thc63lvd1024_in = "/lvds-decoder/ports/port@1/endpoint";
++		thc63lvd1024_out = "/lvds-decoder/ports/port@2/endpoint";
++		mmp_reserved = "/reserved-memory/linux,multimedia@7f000000";
++		osc1_clk = "/osc1-clock";
++		vcc1v8_d4 = "/regulator-0";
++		vcc3v3_d5 = "/regulator-1";
++		vddq_vin01 = "/regulator-2";
++	};
++};
