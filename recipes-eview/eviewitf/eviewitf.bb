@@ -7,12 +7,12 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "kernel-module-eviewitf-mfis"
 
-SRCTAG = "1.5.2"
-#SRCREV = "efb9e33b1d8fa990df7778c5aae5027cb97a4ed2"
-#SRCBRANCH = "feature/EMIRROR-836-eviewitf-update-license-file"
+SRCTAG = "1.6.0"
+#SRCREV = "e07e0407292bea52d37b03294d8e4bc905fd57c8"
+#SRCBRANCH = "develop"
 
 SRC_URI = "git://github.com/LACROIX-Impulse/eview_itf.git;protocol=https;tag=${SRCTAG}"
-#SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;tag=${SRCTAG}"
+#SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git/"
 
