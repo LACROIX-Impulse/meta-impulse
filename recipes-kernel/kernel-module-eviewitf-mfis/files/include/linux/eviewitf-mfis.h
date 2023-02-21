@@ -24,40 +24,43 @@
 #define EVIEWITF_MFIS_MAX_BLENDING 2
 
 /* Must be kept in sync with other eView components. */
-typedef enum {
-	EVIEWITF_MFIS_FCT_INIT					= 0,
-	EVIEWITF_MFIS_FCT_DEINIT				= 1,
-	EVIEWITF_MFIS_FCT_IOCTL					= 5,
-	EVIEWITF_MFIS_FCT_CAM_GET_REGISTER		= 10,
-	EVIEWITF_MFIS_FCT_CAM_SET_REGISTER		= 11,
-	EVIEWITF_MFIS_FCT_CAM_SET_FPS			= 12,
-	EVIEWITF_MFIS_FCT_CAM_RESET				= 13,
-	EVIEWITF_MFIS_FCT_SET_HEARTBEAT			= 20,
-	EVIEWITF_MFIS_FCT_SET_BOOT_MODE			= 21,
-	EVIEWITF_MFIS_FCT_SET_DISPLAY			= 22,
-	EVIEWITF_MFIS_FCT_SET_BLENDING 			= 23,
-	EVIEWITF_MFIS_FCT_SET_CROPPING 			= 24,
-	EVIEWITF_MFIS_FCT_GET_EVIEW_VERSION		= 30,
-	EVIEWITF_MFIS_FCT_GET_MONITORING_INFO	= 31,
-	EVIEWITF_MFIS_FCT_GET_BOOT_MODE			= 32,
-	EVIEWITF_MFIS_FCT_MFIS_SPI				= 50,
-}eviewitf_mfis_fct_id_t;
+typedef enum eviewitf_mfis_fct_id
+{
+    EVIEWITF_MFIS_FCT_INIT = 0,
+    EVIEWITF_MFIS_FCT_DEINIT = 1,
+    EVIEWITF_MFIS_FCT_IOCTL = 5,
+    EVIEWITF_MFIS_FCT_CAM_GET_REGISTER = 10,
+    EVIEWITF_MFIS_FCT_CAM_SET_REGISTER = 11,
+    EVIEWITF_MFIS_FCT_CAM_SET_FPS = 12,
+    EVIEWITF_MFIS_FCT_CAM_RESET = 13,
+    EVIEWITF_MFIS_FCT_SET_HEARTBEAT = 20,
+    EVIEWITF_MFIS_FCT_SET_BOOT_MODE = 21,
+    EVIEWITF_MFIS_FCT_SET_DISPLAY = 22,
+    EVIEWITF_MFIS_FCT_SET_BLENDING = 23,
+    EVIEWITF_MFIS_FCT_SET_CROPPING = 24,
+    EVIEWITF_MFIS_FCT_GET_EVIEW_VERSION = 30,
+    EVIEWITF_MFIS_FCT_GET_MONITORING_INFO = 31,
+    EVIEWITF_MFIS_FCT_GET_BOOT_MODE = 32,
+    EVIEWITF_MFIS_FCT_MFIS_SPI = 50,
+} eviewitf_mfis_fct_id_t;
 
 /* Function return codes */
-typedef enum {
+typedef enum eviewitf_mfis_return_code
+{
     EVIEWITF_MFIS_FCT_RETURN_OK = 1,
     EVIEWITF_MFIS_FCT_RETURN_BLOCKED,
     EVIEWITF_MFIS_FCT_INV_PARAM,
     EVIEWITF_MFIS_FCT_RETURN_ERROR,
-}eviewitf_mfis_return_code_t;
+} eviewitf_mfis_return_code_t;
 
 /* Enumerate the different types of cameras possible */
-typedef enum {
+typedef enum eviewitf_mfis_camera_type
+{
     EVIEWITF_MFIS_CAM_TYPE_NONE,
     EVIEWITF_MFIS_CAM_TYPE_GENERIC,
     EVIEWITF_MFIS_CAM_TYPE_VIRTUAL,
     EVIEWITF_MFIS_CAM_TYPE_SEEK,
-}eviewitf_mfis_camera_type_t;
+} eviewitf_mfis_camera_type_t;
 
 /* Structure to get the cameras attributes through an ioctl call */
 typedef struct eviewitf_mfis_camera_attributes {
