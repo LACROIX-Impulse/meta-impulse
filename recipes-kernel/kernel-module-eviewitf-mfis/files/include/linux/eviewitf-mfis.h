@@ -69,7 +69,7 @@ typedef struct eviewitf_mfis_camera_attributes {
 }eviewitf_mfis_camera_attributes_t;
 
 /* Structure to get the blending attributes through an ioctl call */
-typdef struct eviewitf_mfis_blending_attributes {
+typedef struct eviewitf_mfis_blending_attributes {
     uint32_t buffer_size;
     uint32_t width;
     uint32_t height;
