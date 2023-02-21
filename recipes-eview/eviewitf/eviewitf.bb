@@ -7,12 +7,12 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "kernel-module-eviewitf-mfis"
 
-SRCTAG = "1.6.0"
-#SRCREV = "e07e0407292bea52d37b03294d8e4bc905fd57c8"
-#SRCBRANCH = "develop"
+#SRCTAG = "1.6.0"
+SRCREV = "07b1175d605bc9ee74b84e9f84a83626967125d7"
+SRCBRANCH = "feature/EMIRROR-2744-eviewitf-code-convention"
 
-SRC_URI = "git://github.com/LACROIX-Impulse/eview_itf.git;protocol=https;tag=${SRCTAG}"
-#SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
+#SRC_URI = "git://github.com/LACROIX-Impulse/eview_itf.git;protocol=https;tag=${SRCTAG}"
+SRC_URI = "git://git@10.224.240.124:7999/em/eview_itf.git;protocol=ssh;branch=${SRCBRANCH}"
 
 S = "${WORKDIR}/git/"
 
