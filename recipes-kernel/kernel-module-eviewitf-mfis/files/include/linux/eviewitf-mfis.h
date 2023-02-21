@@ -24,7 +24,7 @@
 #define EVIEWITF_MFIS_MAX_BLENDING 2
 
 /* Must be kept in sync with other eView components. */
-typedef enum eviewitf_mfis_fct_id {
+typedef enum {
 	EVIEWITF_MFIS_FCT_INIT					= 0,
 	EVIEWITF_MFIS_FCT_DEINIT				= 1,
 	EVIEWITF_MFIS_FCT_IOCTL					= 5,
@@ -44,7 +44,7 @@ typedef enum eviewitf_mfis_fct_id {
 }eviewitf_mfis_fct_id_t;
 
 /* Function return codes */
-struct enum eviewitf_mfis_return_code {
+typedef enum {
     EVIEWITF_MFIS_FCT_RETURN_OK = 1,
     EVIEWITF_MFIS_FCT_RETURN_BLOCKED,
     EVIEWITF_MFIS_FCT_INV_PARAM,
@@ -52,7 +52,7 @@ struct enum eviewitf_mfis_return_code {
 }eviewitf_mfis_return_code_t;
 
 /* Enumerate the different types of cameras possible */
-typedef enum eviewitf_mfis_camera_type {
+typedef enum {
     EVIEWITF_MFIS_CAM_TYPE_NONE,
     EVIEWITF_MFIS_CAM_TYPE_GENERIC,
     EVIEWITF_MFIS_CAM_TYPE_VIRTUAL,
