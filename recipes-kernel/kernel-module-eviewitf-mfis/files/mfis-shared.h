@@ -33,7 +33,7 @@
 /**
  * @brief MFIS function types
  */
-typedef enum
+typedef enum mfis_function_id
 {
     FCT_INIT = 0,
     FCT_DEINIT = 1,
@@ -60,7 +60,7 @@ typedef enum
 /**
  * @brief MFIS return codes
  */
-typedef enum
+typedef enum mfis_return_code
 {
     FCT_RETURN_OK = 1,
     FCT_BLOCKED,   /* Operation not allowed */

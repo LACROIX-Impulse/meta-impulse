@@ -20,7 +20,7 @@
 #define SPIMFIS_NUM_CS			4
 #define SPIMFIS_RX_TIMEOUT_MS		100
 
-typedef enum
+typedef enum spimfis_msg_type
 {
 	SPIMFIS_MSG_TYPE_ECHO = 0x10,
 	SPIMFIS_MSG_TYPE_INIT = 0x11,
