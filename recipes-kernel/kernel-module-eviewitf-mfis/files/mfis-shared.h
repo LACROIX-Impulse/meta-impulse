@@ -33,7 +33,8 @@
 /**
  * @brief MFIS function types
  */
-enum mfis_function_id {
+typedef enum mfis_function_id
+{
     FCT_INIT = 0,
     FCT_DEINIT = 1,
     FCT_INIT_END = 2,
@@ -54,17 +55,18 @@ enum mfis_function_id {
     FCT_UPDATE_STREAMER = 40,
     FCT_UPDATE_BLENDING = 41,
     FCT_MFIS_SPI = 50,
-};
+} mfis_function_id_t;
 
 /**
  * @brief MFIS return codes
  */
-enum mfis_return_code {
+typedef enum mfis_return_code
+{
     FCT_RETURN_OK = 1,
     FCT_BLOCKED,   /* Operation not allowed */
     FCT_INV_PARAM, /* Invalid parameter */
     FCT_ERROR,     /* Generic failure */
-};
+} mfis_return_code_t;
 
 #endif /* _MFIS_SHARED_H */
 /* @} */

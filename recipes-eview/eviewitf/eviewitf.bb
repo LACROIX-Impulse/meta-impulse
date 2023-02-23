@@ -7,8 +7,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DEPENDS = "kernel-module-eviewitf-mfis"
 
-SRCTAG = "1.6.0"
-#SRCREV = "e07e0407292bea52d37b03294d8e4bc905fd57c8"
+SRCTAG = "1.7.0"
+#SRCREV = "199f40421baca2317ff8677f61a90e62da68ee4b"
 #SRCBRANCH = "develop"
 
 SRC_URI = "git://github.com/LACROIX-Impulse/eview_itf.git;protocol=https;tag=${SRCTAG}"

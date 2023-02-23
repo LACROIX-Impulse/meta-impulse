@@ -20,20 +20,21 @@
 #define SPIMFIS_NUM_CS			4
 #define SPIMFIS_RX_TIMEOUT_MS		100
 
-enum spimfis_msg_type {
-	SPIMFIS_MSG_TYPE_ECHO		= 0x10,
-	SPIMFIS_MSG_TYPE_INIT		= 0x11,
-	SPIMFIS_MSG_TYPE_MAPPING	= 0x12,
-	SPIMFIS_MSG_TYPE_CONFIG		= 0x13,
-	SPIMFIS_MSG_TYPE_READ		= 0x14,
-	SPIMFIS_MSG_TYPE_WRITE		= 0x15,
-	SPIMFIS_MSG_TYPE_WRITE_READ	= 0x16,
-	SPIMFIS_MSG_TYPE_READ_COMPLETE	= 0x17,
-	SPIMFIS_MSG_TYPE_ACK		= 0x18,
-	SPIMFIS_MSG_TYPE_RESETN		= 0x19,
-	SPIMFIS_MSG_TYPE_SYNC		= 0x1A,
-	SPIMFIS_MSG_TYPE_NACK		= 0x1B,
-};
+typedef enum spimfis_msg_type
+{
+	SPIMFIS_MSG_TYPE_ECHO = 0x10,
+	SPIMFIS_MSG_TYPE_INIT = 0x11,
+	SPIMFIS_MSG_TYPE_MAPPING = 0x12,
+	SPIMFIS_MSG_TYPE_CONFIG = 0x13,
+	SPIMFIS_MSG_TYPE_READ = 0x14,
+	SPIMFIS_MSG_TYPE_WRITE = 0x15,
+	SPIMFIS_MSG_TYPE_WRITE_READ = 0x16,
+	SPIMFIS_MSG_TYPE_READ_COMPLETE = 0x17,
+	SPIMFIS_MSG_TYPE_ACK = 0x18,
+	SPIMFIS_MSG_TYPE_RESETN = 0x19,
+	SPIMFIS_MSG_TYPE_SYNC = 0x1A,
+	SPIMFIS_MSG_TYPE_NACK = 0x1B,
+} spimfis_msg_type_t;
 
 /**
  * struct spimfis_master - private data of the SPI controller
@@ -94,15 +95,15 @@ const char *spimfis_msg_type_str[] = {
 };
 
 static void _spimfis_format_header(uint32_t *mfis_buf,
-				   enum spimfis_msg_type msg_type,
+				   spimfis_msg_type_t msg_type,
 				   uint8_t chip_select);
 
 static int _spimfis_send_msg(struct spi_device *spidev, uint32_t *mfis_buf);
 static int _spimfis_expect_msg(struct spi_device *spidev,
-			       enum spimfis_msg_type msg_type);
+			       spimfis_msg_type_t msg_type);
 static int _spimfis_send_receive_msg(struct spi_device *spidev,
-				     enum spimfis_msg_type msg_type,
-				     enum spimfis_msg_type expected_msg_type,
+				     spimfis_msg_type_t msg_type,
+				     spimfis_msg_type_t expected_msg_type,
 				     uint32_t *mfis_buf,
 				     struct spi_transfer *transfer);
 
@@ -153,7 +154,7 @@ static int _spimfis_receive_msg_atomic(struct notifier_block *nb,
 }
 
 static void _spimfis_format_header(uint32_t *mfis_buf,
-				   enum spimfis_msg_type msg_type,
+				   spimfis_msg_type_t msg_type,
 				   uint8_t chip_select)
 {
 	mfis_buf[0] = EVIEWITF_MFIS_FCT_MFIS_SPI;
@@ -183,10 +184,10 @@ static int _spimfis_send_msg(struct spi_device *spidev,
 
 /* Receive next message and check its type */
 static int _spimfis_expect_msg(struct spi_device *spidev,
-			       enum spimfis_msg_type msg_type)
+			       spimfis_msg_type_t msg_type)
 {
 	struct spimfis_master *spimfis = spi_master_get_devdata(spidev->master);
-	enum spimfis_msg_type rx_msg_type;
+	spimfis_msg_type_t rx_msg_type;
 	uint8_t chip_select;
 	int ret;
 
@@ -225,8 +226,8 @@ static int _spimfis_expect_msg(struct spi_device *spidev,
 }
 
 static int _spimfis_send_receive_msg(struct spi_device *spidev,
-				     enum spimfis_msg_type msg_type,
-				     enum spimfis_msg_type expected_msg_type,
+				     spimfis_msg_type_t msg_type,
+				     spimfis_msg_type_t expected_msg_type,
 				     uint32_t *mfis_buf,
 				     struct spi_transfer *transfer)
 {
